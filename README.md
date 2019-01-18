@@ -2,6 +2,10 @@
 
 [Docomentation](https://github.com/FluxxChat/FluxxChat-dokumentaatio)
 
+### Heroku link
+
+[Link](https://fluxxchat-webasiakas.herokuapp.com/)
+
 ### Setup
 
 Install dependencies
