@@ -1774,6 +1774,10 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.1"
     readable-stream "^2.0.4"
 
+"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
+  version "1.0.0"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#9b4499ad10097efb3cdc13659c5d31ac1bed103d"
+
 follow-redirects@^1.0.0:
   version "1.6.1"
   resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.6.1.tgz#514973c44b5757368bad8bddfe52f81f015c94cb"
