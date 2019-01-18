@@ -1,5 +1,9 @@
 # FluxxChat webasiakas
 
+### Heroku link
+
+https://fluxxchat-webasiakas.herokuapp.com/
+
 ### Setup
 
 Install dependencies
