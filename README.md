@@ -1,5 +1,13 @@
 # FluxxChat webasiakas
 
+### Setup
+
+Install dependencies
+
+```
+$ yarn
+```
+
 ### Development
 
 Build sources and run server in development environment:
