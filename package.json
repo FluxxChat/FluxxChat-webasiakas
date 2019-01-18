@@ -9,6 +9,7 @@
     "dev": "webpack-dev-server --mode development",
     "build": "webpack --mode production && cp src/index.js dist/index.js",
     "start": "node ./dist/index.js",
+    "commit": "git-cz",
     "lint": "tslint --fix \"src/client/**/*.{ts,tsx}\""
   },
   "devDependencies": {
