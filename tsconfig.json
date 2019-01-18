@@ -3,7 +3,6 @@
 		"emitDecoratorMetadata": true,
 		"experimentalDecorators": true,
 		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
 		"jsx": "react",
 		"lib": ["es2018", "dom"],
 		"module": "commonjs",
