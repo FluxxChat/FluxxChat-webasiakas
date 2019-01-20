@@ -26,6 +26,7 @@ class ChatRoom extends React.Component<Props, State> {
 
 		connection.addEventListener('open', () => {
 			this.setState({connection, status: 'Connected to server'});
+			this.sendMessage('System', this.props.nickname + ' has joined the chatroom');
 		});
 
 		connection.addEventListener('close', () => {
@@ -46,19 +47,21 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public handleSendMessage = () => {
-		const {messageDraft, connection} = this.state;
+		const {messageDraft} = this.state;
+		this.sendMessage(this.props.nickname, messageDraft);
+		this.setState({messageDraft: ''});
+	}
 
+	public sendMessage = (name: string, content: string) => {
+		const {connection} = this.state;
 		if (connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
-				textContent: messageDraft,
-				senderNickname: this.props.nickname
+				textContent: content,
+				senderNickname: name
 			};
-
 			connection.send(JSON.stringify(protocolMessage));
 		}
-
-		this.setState({messageDraft: ''});
 	}
 
 	public handleChangeMessageDraft = (evt: React.ChangeEvent<HTMLInputElement>) => {
