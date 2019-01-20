@@ -1,56 +1,43 @@
 import React from 'react';
-import {TextMessage, NewRuleMessage} from 'fluxxchat-protokolla';
-import Home from '../scenes/Home';
+import ChatRoom from '../scenes/ChatRoom';
 
 interface State {
-	socket: WebSocket | null;
-	status: string;
-	messages: Array<TextMessage | NewRuleMessage>;
+	nickname: string | null;
+	nicknameValue: string;
 }
 
 class App extends React.Component<{}, State> {
 	public state: State = {
-		socket: null,
-		status: '',
-		messages: []
+		nickname: null,
+		nicknameValue: ''
 	};
 
-	public componentDidMount() {
-		const socket = new WebSocket('ws://localhost:3030');
-
-		socket.addEventListener('open', () => {
-			const msg: TextMessage = {
-				type: 'TEXT',
-				textContent: 'herranjestas',
-				senderNickname: 'SomeDude'
-			};
-
-			socket.send(JSON.stringify(msg));
-			this.setState({socket, status: 'Connected to server'});
-		});
-
-		socket.addEventListener('close', () => {
-			this.setState({socket: null, status: 'Connection lost'});
-		});
-
-		socket.addEventListener('message', evt => {
-			const msg: TextMessage | NewRuleMessage = JSON.parse(evt.data);
-			this.setState({messages: [...this.state.messages, msg]});
-		});
+	public handleChangeNickname = (evt: React.ChangeEvent<HTMLInputElement>) => {
+		this.setState({nicknameValue: evt.target.value});
 	}
 
-	public componentWillUnmount() {
-		const socket = this.state.socket;
-		if (socket) {
-			socket.close();
-		}
+	public handleSelectNickname = () => {
+		this.setState(state => ({nickname: state.nicknameValue}));
 	}
 
 	public render() {
+		const {nickname} = this.state;
+
 		return (
 			<div>
-				{this.state.status}
-				<Home messages={this.state.messages}/>
+				{!nickname && (
+					<div>
+						<span>Username:</span>
+						<input type="text" value={this.state.nicknameValue} onChange={this.handleChangeNickname}/>
+						<button onClick={this.handleSelectNickname}>OK</button>
+					</div>
+				)}
+				{nickname && (
+					<ChatRoom
+						nickname={nickname}
+						roomId=""
+					/>
+				)}
 			</div>
 		);
 	}
