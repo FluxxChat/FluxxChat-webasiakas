@@ -1,0 +1,23 @@
+.padded {
+    padding: 2px;
+}
+
+.navbar_back {
+	background: black;
+	padding: 0.5%;
+	margin-left: -0.55em;
+    margin-top: -0.55em;
+}
+
+.navbar_front {
+    color: white;
+    font-size: 200%;
+}
+
+.padded_right {
+    margin-right: 5px;
+}
+
+.padded_left {
+    margin-left: 15px;
+}

@@ -1,5 +1,7 @@
 import React from 'react';
 import ChatRoom from '../scenes/ChatRoom';
+import NavigationBar from '../scenes/NavigationBar/navbar';
+import '../styles.css';
 
 interface State {
 	nickname: string | null;
@@ -25,10 +27,11 @@ class App extends React.Component<{}, State> {
 
 		return (
 			<div>
+				<NavigationBar/>
 				{!nickname && (
-					<div>
-						<span>Username:</span>
-						<input type="text" value={this.state.nicknameValue} onChange={this.handleChangeNickname}/>
+					<div className="padded">
+						<span className="padded_right">Username</span>
+						<input className="padded_right" type="text" value={this.state.nicknameValue} onChange={this.handleChangeNickname}/>
 						<button onClick={this.handleSelectNickname}>OK</button>
 					</div>
 				)}

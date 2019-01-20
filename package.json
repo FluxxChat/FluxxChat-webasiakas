@@ -30,10 +30,12 @@
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
+    "css-loader": "^2.1.0",
     "express": "^4.16.4",
     "fluxxchat-protokolla": "git://github.com/FluxxChat/FluxxChat-protokolla.git",
     "react": "^16.7.0",
-    "react-dom": "^16.7.0"
+    "react-dom": "^16.7.0",
+    "style-loader": "^0.23.1"
   },
   "config": {
     "commitizen": {

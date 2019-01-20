@@ -1,5 +1,6 @@
 import React from 'react';
 import {NewRuleMessage, TextMessage} from 'fluxxchat-protokolla';
+import '../../styles.css';
 
 interface Props {
 	nickname: string;
@@ -73,23 +74,26 @@ class ChatRoom extends React.Component<Props, State> {
 
 		return (
 			<div>
-				{messages.map((msg, index) => {
-					let message;
-					switch (msg.type) {
-						case 'NEW_RULE':
-							message = `New Rule: ${msg.ruleName}`;
-							break;
-						default:
-							message = `${msg.senderNickname} > ${msg.textContent}`;
-							break;
-					}
-
-					return (
-						<div key={index}>{message}</div>
-					);
-				})}
-				<input type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
-				<button onClick={this.handleSendMessage}>Send</button>
+				<div className="padded">
+					{messages.map((msg, index) => {
+						let message;
+						switch (msg.type) {
+							case 'NEW_RULE':
+								message = `New Rule: ${msg.ruleName}`;
+								break;
+							default:
+								message = `${msg.senderNickname} > ${msg.textContent}`;
+								break;
+						}
+						return (
+							<div className="padded_left" key={index}>{message}</div>
+						);
+					})}
+				</div>
+				<div className="padded">
+					<input type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+					<button onClick={this.handleSendMessage}>Send</button>
+				</div>
 			</div>
 		);
 	}
