@@ -114,8 +114,8 @@ class ChatRoom extends React.Component<Props, State> {
 						<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
 						<button type="button" className="send_button" onClick={this.handleSendMessage}>Send</button>
 					</form>
-				</div>;
-			</div > ;
+				</div>
+			</div > 
 		)
 	}
 }
