@@ -35,6 +35,7 @@
     "fluxxchat-protokolla": "git://github.com/FluxxChat/FluxxChat-protokolla.git",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-scroll": "^1.7.10",
     "style-loader": "^0.23.1"
   },
   "config": {

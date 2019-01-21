@@ -29,7 +29,7 @@ class App extends React.Component<{}, State> {
 			<div>
 				<NavigationBar/>
 				{!nickname && (
-					<div className="padded">
+					<div className="padded_top">
 						<span className="padded_right">Username</span>
 						<input className="padded_right" type="text" value={this.state.nicknameValue} onChange={this.handleChangeNickname}/>
 						<button onClick={this.handleSelectNickname}>OK</button>

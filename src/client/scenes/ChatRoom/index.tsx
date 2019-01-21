@@ -1,6 +1,7 @@
 import React from 'react';
 import {NewRuleMessage, TextMessage} from 'fluxxchat-protokolla';
 import '../../styles.css';
+import {animateScroll} from 'react-scroll';
 
 interface Props {
 	nickname: string;
@@ -37,6 +38,13 @@ class ChatRoom extends React.Component<Props, State> {
 		connection.addEventListener('message', evt => {
 			const msg: TextMessage | NewRuleMessage = JSON.parse(evt.data);
 			this.setState({messages: [...this.state.messages, msg]});
+			this.scrollToBottom();
+		});
+	}
+
+	public scrollToBottom() {
+		animateScroll.scrollToBottom({
+			containerId: 'message-box'
 		});
 	}
 
@@ -70,12 +78,18 @@ class ChatRoom extends React.Component<Props, State> {
 		this.setState({messageDraft: evt.target.value});
 	}
 
+	public handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			e.preventDefault(); e.stopPropagation(); this.handleSendMessage();
+		}
+	}
+
 	public render() {
 		const {messages, messageDraft} = this.state;
 
 		return (
 			<div>
-				<div className="message_box">
+				<div className="message_box" id="message-box">
 					{messages.map((msg, index) => {
 						let message;
 						switch (msg.type) {
@@ -83,20 +97,26 @@ class ChatRoom extends React.Component<Props, State> {
 								message = `New Rule: ${msg.ruleName}`;
 								break;
 							default:
-								message = `${msg.senderNickname} > ${msg.textContent}`;
+								let direction = '<';
+								if (msg.senderNickname === this.props.nickname) {
+									direction = '>';
+								}
+								message = `${msg.senderNickname} ${direction} ${msg.textContent}`;
 								break;
 						}
 						return (
-							<div className="padded_left" key={index}>{message}</div>
+							<div className="message" key={index}>{message}</div>
 						);
 					})}
 				</div>
-				<div className="padded">
-					<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
-					<button className="send_button" onClick={this.handleSendMessage}>Send</button>
-				</div>
-			</div>
-		);
+				<div>
+					<form onKeyDown={this.handleKeyDown}>
+						<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+						<button type="button" className="send_button" onClick={this.handleSendMessage}>Send</button>
+					</form>
+				</div>;
+			</div > ;
+		)
 	}
 }
 
