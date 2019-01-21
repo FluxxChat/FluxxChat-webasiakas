@@ -54,21 +54,6 @@ class ChatRoom extends React.Component<Props, State> {
 
 	}
 
-	public scrollToBottom() {
-		const out = document.getElementById('messageBox');
-		if (out != null) {
-			const isScrolledToBottom = out.scrollHeight - out.clientHeight <= out.scrollTop + 1;
-			const newElement = document.createElement('div');
-			newElement.textContent = 'Scroll position:' + out.scrollTop;
-			out.appendChild(newElement);
-
-			// scroll to bottom if isScrolledToBottom is true
-			if (isScrolledToBottom) {
-			out.scrollTop = out.scrollHeight - out.clientHeight;
-			}
-		}
-	}
-
 	public sendMessage = (name: string, content: string) => {
 		const {connection} = this.state;
 		if (connection) {
@@ -90,7 +75,7 @@ class ChatRoom extends React.Component<Props, State> {
 
 		return (
 			<div>
-				<div className="message_box" id="messageBox">
+				<div className="message_box">
 					{messages.map((msg, index) => {
 						let message;
 						switch (msg.type) {
