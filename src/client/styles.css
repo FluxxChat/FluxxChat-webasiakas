@@ -4,7 +4,7 @@
 
 .navbar_back {
 	background: black;
-	padding: 0.5%;
+	height: 45px;
 	margin-left: -0.55em;
     margin-top: -0.55em;
 }
@@ -20,4 +20,20 @@
 
 .padded_left {
     margin-left: 15px;
+}
+
+.message_field {
+    width: calc(100vw - 135px);
+}
+
+.send_button {
+    width: 100px;
+}
+
+.message_box {
+    margin-top: 5px;
+    height: calc(100vh - 85px);
+    width: calc(100vw - 15px);
+    border: 1px solid black;
+    overflow-x: hidden;
 }

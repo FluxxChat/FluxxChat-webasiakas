@@ -51,6 +51,22 @@ class ChatRoom extends React.Component<Props, State> {
 		const {messageDraft} = this.state;
 		this.sendMessage(this.props.nickname, messageDraft);
 		this.setState({messageDraft: ''});
+
+	}
+
+	public scrollToBottom() {
+		const out = document.getElementById('messageBox');
+		if (out != null) {
+			const isScrolledToBottom = out.scrollHeight - out.clientHeight <= out.scrollTop + 1;
+			const newElement = document.createElement('div');
+			newElement.textContent = 'Scroll position:' + out.scrollTop;
+			out.appendChild(newElement);
+
+			// scroll to bottom if isScrolledToBottom is true
+			if (isScrolledToBottom) {
+			out.scrollTop = out.scrollHeight - out.clientHeight;
+			}
+		}
 	}
 
 	public sendMessage = (name: string, content: string) => {
@@ -74,7 +90,7 @@ class ChatRoom extends React.Component<Props, State> {
 
 		return (
 			<div>
-				<div className="padded">
+				<div className="message_box" id="messageBox">
 					{messages.map((msg, index) => {
 						let message;
 						switch (msg.type) {
@@ -91,8 +107,8 @@ class ChatRoom extends React.Component<Props, State> {
 					})}
 				</div>
 				<div className="padded">
-					<input type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
-					<button onClick={this.handleSendMessage}>Send</button>
+					<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+					<button className="send_button" onClick={this.handleSendMessage}>Send</button>
 				</div>
 			</div>
 		);
