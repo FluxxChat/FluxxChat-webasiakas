@@ -1,0 +1,28 @@
+{
+  "addons": [
+
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "BROWSER_WS_API_URL": {
+      "required": true,
+      "value": "wss://fluxxchat-palvelin.herokuapp.com"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "FluxxChat-webasiakas",
+  "scripts": {
+    "build": "webpack --mode production && cp src/index.js dist/index.js",
+    "start": "node ./dist/index.js",
+    "heroku-postbuild": "yarn build"
+  },
+  "stack": "heroku-18"
+}
