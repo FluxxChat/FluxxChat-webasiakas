@@ -36,7 +36,7 @@ module.exports = {
 			app.get('/env.js', (_req, res) => {
 				const envStr = Object.keys(process.env)
 					.filter(key => key.startsWith(BROWSER_ENV_PREFIX))
-					.map(key => `${key.substr(0, BROWSER_ENV_PREFIX.length)}:'${process.env[key]}'`)
+					.map(key => `${key.substr(BROWSER_ENV_PREFIX.length)}:'${process.env[key]}'`)
 					.join(',');
 				res.end(`window.env = {${envStr}}`);
 			});
