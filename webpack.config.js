@@ -1,6 +1,8 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const BROWSER_ENV_PREFIX = 'BROWSER_';
+
 module.exports = {
 	entry: './src/client/index.tsx',
 	module: {
@@ -33,6 +35,15 @@ module.exports = {
 			rewrites: [
 				{from: /^(\/.*)?$/, to: '/'}
 			]
+		},
+		before(app) {
+			app.get('/env.js', (_req, res) => {
+				const envStr = Object.keys(process.env)
+					.filter(key => key.startsWith(BROWSER_ENV_PREFIX))
+					.map(key => `${key.substr(BROWSER_ENV_PREFIX.length)}:'${process.env[key]}'`)
+					.join(',');
+				res.end(`window.env = {${envStr}}`);
+			});
 		}
 	},
 	plugins: [
