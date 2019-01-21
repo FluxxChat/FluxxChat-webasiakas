@@ -22,7 +22,7 @@ class ChatRoom extends React.Component<Props, State> {
 	};
 
 	public componentDidMount() {
-		const connection = new WebSocket(window.env.WS_API_URL || 'ws://localhost:3030');
+		const connection = new WebSocket(window.env.WS_API_URL || 'ws://localhost:3000');
 
 		connection.addEventListener('open', () => {
 			this.setState({connection, status: 'Connected to server'});
