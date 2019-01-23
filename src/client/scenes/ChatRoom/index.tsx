@@ -88,34 +88,55 @@ class ChatRoom extends React.Component<Props, State> {
 		const {messages, messageDraft} = this.state;
 
 		return (
-			<div>
-				<div className="message_box" id="message-box">
-					{messages.map((msg, index) => {
-						let message;
-						switch (msg.type) {
-							case 'NEW_RULE':
-								message = `New Rule: ${msg.ruleName}`;
-								break;
-							default:
-								let direction = '<';
-								if (msg.senderNickname === this.props.nickname) {
-									direction = '>';
-								}
-								message = `${msg.senderNickname} ${direction} ${msg.textContent}`;
-								break;
-						}
-						return (
-							<div className="message" key={index}>{message}</div>
-						);
-					})}
-				</div>
+			<div className="chat_app">
+				<div className="chat_area">
+					<div className="message_box" id="message-box">
+						{messages.map((msg, index) => {
+							let message;
+							switch (msg.type) {
+								case 'NEW_RULE':
+									message = `New Rule: ${msg.ruleName}`;
+									break;
+								default:
+									let direction = '<';
+									if (msg.senderNickname === this.props.nickname) {
+										direction = '>';
+									}
+									message = `${msg.senderNickname} ${direction} ${msg.textContent}`;
+									break;
+							}
+							return (
+								<div className="message" key={index}>{message}</div>
+							);
+						})}
+					</div>
+					<div>
+						<form onKeyDown={this.handleKeyDown}>
+							<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+							<button type="button" className="send_button" onClick={this.handleSendMessage}>Send</button>
+						</form>
+					</div>
+				</div >
 				<div>
-					<form onKeyDown={this.handleKeyDown}>
-						<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
-						<button type="button" className="send_button" onClick={this.handleSendMessage}>Send</button>
-					</form>
+					<div className="card_div_active">
+						<div className="caption">
+							Active Cards
+						</div>
+						<div className="card">
+							Active Card 1
+						</div>
+					</div>
+					<div className="card_div_own">
+						<div className="caption">
+							Your Cards
+						</div>
+						<div className="card">
+							Own Card 1
+							<button type="button" className="play_button">Play</button>
+						</div>
+					</div>
 				</div>
-			</div >
+			</div>
 		);
 	}
 }
