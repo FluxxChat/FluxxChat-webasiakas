@@ -35,15 +35,17 @@
 }
 
 .message_field {
-    width: calc(100% - 110px);
+	width: calc(100% - 110px);
+	max-height: 34px;
     margin-top: 5px;
-    height: 25px;
+	height: 34px;
+	line-height: 34px;
     box-sizing: border-box;
 }
 
 .send_button {
     width: 100px;
-    height: 25px;
+    height: 34px;
     box-sizing: border-box;
 }
 
@@ -115,7 +117,7 @@
 
 .message_box {
     margin-top: 5px;
-    height: calc(100vh - 89px);
+    height: calc(100vh - 98px);
     width: calc(100% - 10px);
     border: 1px solid black;
     min-height: 450px;
