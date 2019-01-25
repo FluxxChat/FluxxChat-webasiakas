@@ -4,6 +4,8 @@ import {TextMessage, CreateRoomMessage, JoinRoomMessage, Message} from 'fluxxcha
 import {get} from 'lodash';
 import Menu from './Menu';
 import ChatRoom from '../scenes/ChatRoom';
+import NavigationBar from '../scenes/NavigationBar/navbar';
+import '../styles.css';
 
 interface State {
 	connection: WebSocket | null;
@@ -99,6 +101,7 @@ class App extends React.Component<RouteComponentProps, State> {
 
 		return (
 			<div>
+				<NavigationBar/>
 				{(!nickname || !roomId) && (
 					<Menu
 						type={roomId ? 'join' : 'create'}

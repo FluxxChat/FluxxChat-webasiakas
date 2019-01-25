@@ -1,0 +1,145 @@
+.body_default {
+    background: gray;
+    color: gray;
+}
+
+.navbar_back {
+	background: black;
+    height: 31px;
+    padding: 7px;
+	margin-left: -0.55em;
+    margin-top: -0.55em;
+    margin-bottom: 3px;
+}
+
+.navbar_front {
+    color: white;
+    font-size: 25px;
+}
+
+.padded_right {
+    margin-right: 5px;
+}
+
+.padded_left {
+    margin-left: 15px;
+}
+
+.padded_top {
+    margin-top: 5px;
+}
+
+.message {
+    margin-left: 5px;
+    margin-top: 2px;
+}
+
+.message_field {
+	width: calc(100% - 110px);
+	max-height: 34px;
+    margin-top: 5px;
+	height: 34px;
+	line-height: 34px;
+    box-sizing: border-box;
+}
+
+.send_button {
+    width: 100px;
+    height: 34px;
+    box-sizing: border-box;
+}
+
+.send_div {
+    margin-top: 5px;
+    margin-right: 8px;
+    float: right;
+}
+
+.play_button {
+    width: 95px;
+    margin-top: 5px;
+    height: 23px;
+    bottom: 3px;
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    width: calc(100% - 4px);
+}
+
+.chat_app {
+    width: 100%;
+    height: 100%;
+    min-width: 600px;
+}
+
+.chat_area {
+    width: calc(60% - 5px);
+    float: left;
+}
+
+.turn_div {
+    width: calc(40% - 11px);
+    height: 32px;
+    border: 1px solid black;
+    margin-top: 5px;
+    float:right;
+    margin-right: 14px;
+}
+
+.turn_text {
+    margin-top: 6px;
+    margin-left: 6px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.card_div_active {
+    width: calc(40% - 11px);
+    height: calc(50vh - 55px);
+    border: 1px solid black;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    min-height: 232px;
+    float: right;
+    overflow-x: hidden;
+    margin-right: 14px;
+}
+
+.card_div_own {
+    width: calc(40% - 11px);
+    height: calc(50vh - 55px);
+    border: 1px solid black;
+    min-height: 232px;
+    float: right;
+    overflow-x: hidden;
+    margin-right: 14px;
+}
+
+.message_box {
+    margin-top: 5px;
+    height: calc(100vh - 98px);
+    width: calc(100% - 10px);
+    border: 1px solid black;
+    min-height: 450px;
+    overflow-x: hidden;
+}
+
+.card {
+    width: calc(33% - 20px);
+    height: calc(50% - 20px);
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-right: 1px;
+    margin-bottom: 2px;
+    border: 1px solid black;
+    float: left;
+    position: relative;
+}
+
+.caption {
+    font-size: 17px;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
