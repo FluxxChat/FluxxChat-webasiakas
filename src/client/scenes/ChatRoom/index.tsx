@@ -1,5 +1,5 @@
 import React from 'react';
-import {NewRuleMessage, TextMessage} from 'fluxxchat-protokolla';
+import {Message} from 'fluxxchat-protokolla';
 import '../../styles.css';
 import {animateScroll} from 'react-scroll';
 import {Card, OwnCard} from '../Card/card';
@@ -7,20 +7,16 @@ import {Card, OwnCard} from '../Card/card';
 interface Props {
 	nickname: string;
 	roomId: string;
+	messages: Message[];
+	onSendMessage: (message: string) => any;
 }
 
 interface State {
-	connection: WebSocket | null;
-	status: string;
-	messages: Array<TextMessage | NewRuleMessage>;
 	messageDraft: string;
 }
 
 class ChatRoom extends React.Component<Props, State> {
 	public state: State = {
-		connection: null,
-		status: '',
-		messages: [],
 		messageDraft: ''
 	};
 
@@ -58,9 +54,9 @@ class ChatRoom extends React.Component<Props, State> {
 
 	public handleSendMessage = () => {
 		const {messageDraft} = this.state;
-		this.sendMessage(this.props.nickname, messageDraft);
-		this.setState({messageDraft: ''});
-
+		this.setState({messageDraft: ''}, () => {
+			this.props.onSendMessage(messageDraft);
+		});
 	}
 
 	public sendMessage = (name: string, content: string) => {
@@ -90,7 +86,8 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {messages, messageDraft} = this.state;
+		const {messages} = this.props;
+		const {messageDraft} = this.state;
 
 		return (
 			<div className="chat_app">
