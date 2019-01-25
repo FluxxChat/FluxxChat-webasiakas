@@ -112,12 +112,19 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 					<div>
 						<form onKeyDown={this.handleKeyDown}>
-							<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
-							<button type="button" className="send_button" onClick={this.handleSendMessage}>Send</button>
+						<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+							<div className="send_div">
+								<button type="button" className="send_button" onClick={this.handleSendMessage}>Send</button>
+							</div>
 						</form>
 					</div>
 				</div >
 				<div>
+					<div className="turn_div">
+						<div className="turn_text">
+							It is someone's turn!
+						</div>
+					</div>
 					<div className="card_div_active">
 						<div className="caption">
 							Active Cards

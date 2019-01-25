@@ -36,16 +36,23 @@
 
 .message_field {
     width: calc(100% - 110px);
-    margin-right: 2px;
     margin-top: 5px;
-    height: 15px;
+    height: 25px;
+    box-sizing: border-box;
 }
 
 .send_button {
-    width: 95px;
-    margin-top: 5px;
-    height: 23px;
+    width: 100px;
+    height: 25px;
+    box-sizing: border-box;
 }
+
+.send_div {
+    margin-top: 5px;
+    margin-right: 8px;
+    float: right;
+}
+
 .play_button {
     width: 95px;
     margin-top: 5px;
@@ -68,31 +75,47 @@
     float: left;
 }
 
+.turn_div {
+    width: calc(40% - 11px);
+    height: 32px;
+    border: 1px solid black;
+    margin-top: 5px;
+    float:right;
+    margin-right: 14px;
+}
+
+.turn_text {
+    margin-top: 6px;
+    margin-left: 6px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
 .card_div_active {
     width: calc(40% - 11px);
-    height: calc(50vh - 35px);
+    height: calc(50vh - 55px);
     border: 1px solid black;
     margin-bottom: 10px;
     margin-top: 5px;
-    margin-right: 14px;
     min-height: 232px;
     float: right;
     overflow-x: hidden;
+    margin-right: 14px;
 }
 
 .card_div_own {
     width: calc(40% - 11px);
-    height: calc(50vh - 35px);
+    height: calc(50vh - 55px);
     border: 1px solid black;
-    margin-right: 14px;
     min-height: 232px;
     float: right;
     overflow-x: hidden;
+    margin-right: 14px;
 }
 
 .message_box {
     margin-top: 5px;
-    height: calc(100vh - 85px);
+    height: calc(100vh - 89px);
     width: calc(100% - 10px);
     border: 1px solid black;
     min-height: 450px;
