@@ -20,36 +20,10 @@ class ChatRoom extends React.Component<Props, State> {
 		messageDraft: ''
 	};
 
-	public componentDidMount() {
-		const connection = new WebSocket(window.env.WS_API_URL || 'ws://localhost:3000');
-
-		connection.addEventListener('open', () => {
-			this.setState({connection, status: 'Connected to server'});
-			this.sendMessage('System', this.props.nickname + ' has joined the chatroom');
-		});
-
-		connection.addEventListener('close', () => {
-			this.setState({connection: null, status: 'Connection lost'});
-		});
-
-		connection.addEventListener('message', evt => {
-			const msg: TextMessage | NewRuleMessage = JSON.parse(evt.data);
-			this.setState({messages: [...this.state.messages, msg]});
-			this.scrollToBottom();
-		});
-	}
-
 	public scrollToBottom() {
 		animateScroll.scrollToBottom({
 			containerId: 'message-box'
 		});
-	}
-
-	public componentWillUnmount() {
-		const connection = this.state.connection;
-		if (connection) {
-			connection.close();
-		}
 	}
 
 	public handleSendMessage = () => {
@@ -57,18 +31,6 @@ class ChatRoom extends React.Component<Props, State> {
 		this.setState({messageDraft: ''}, () => {
 			this.props.onSendMessage(messageDraft);
 		});
-	}
-
-	public sendMessage = (name: string, content: string) => {
-		const {connection} = this.state;
-		if (connection) {
-			const protocolMessage: TextMessage = {
-				type: 'TEXT',
-				textContent: content,
-				senderNickname: name
-			};
-			connection.send(JSON.stringify(protocolMessage));
-		}
 	}
 
 	public handleChangeMessageDraft = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,13 +61,15 @@ class ChatRoom extends React.Component<Props, State> {
 								case 'NEW_RULE':
 									message = `New Rule: ${msg.ruleName}`;
 									break;
-								default:
+								case 'TEXT':
 									let direction = '<';
 									if (msg.senderNickname === this.props.nickname) {
 										direction = '>';
 									}
 									message = `${msg.senderNickname} ${direction} ${msg.textContent}`;
 									break;
+								default:
+									return null;
 							}
 							return (
 								<div className="message" key={index}>{message}</div>
