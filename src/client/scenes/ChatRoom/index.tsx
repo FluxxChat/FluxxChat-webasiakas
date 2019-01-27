@@ -1,5 +1,5 @@
 import React from 'react';
-import {NewRuleMessage, TextMessage} from 'fluxxchat-protokolla';
+import {Message} from 'fluxxchat-protokolla';
 import '../../styles.css';
 import {animateScroll} from 'react-scroll';
 import {ActiveCard, OwnCard} from '../../components';
@@ -7,41 +7,18 @@ import {ActiveCard, OwnCard} from '../../components';
 interface Props {
 	nickname: string;
 	roomId: string;
+	messages: Message[];
+	onSendMessage: (message: string) => any;
 }
 
 interface State {
-	connection: WebSocket | null;
-	status: string;
-	messages: Array<TextMessage | NewRuleMessage>;
 	messageDraft: string;
 }
 
 class ChatRoom extends React.Component<Props, State> {
 	public state: State = {
-		connection: null,
-		status: '',
-		messages: [],
 		messageDraft: ''
 	};
-
-	public componentDidMount() {
-		const connection = new WebSocket(window.env.WS_API_URL || 'ws://localhost:3000');
-
-		connection.addEventListener('open', () => {
-			this.setState({connection, status: 'Connected to server'});
-			this.sendMessage('System', this.props.nickname + ' has joined the chatroom');
-		});
-
-		connection.addEventListener('close', () => {
-			this.setState({connection: null, status: 'Connection lost'});
-		});
-
-		connection.addEventListener('message', evt => {
-			const msg: TextMessage | NewRuleMessage = JSON.parse(evt.data);
-			this.setState({messages: [...this.state.messages, msg]});
-			this.scrollToBottom();
-		});
-	}
 
 	public scrollToBottom() {
 		animateScroll.scrollToBottom({
@@ -49,30 +26,11 @@ class ChatRoom extends React.Component<Props, State> {
 		});
 	}
 
-	public componentWillUnmount() {
-		const connection = this.state.connection;
-		if (connection) {
-			connection.close();
-		}
-	}
-
 	public handleSendMessage = () => {
 		const {messageDraft} = this.state;
-		this.sendMessage(this.props.nickname, messageDraft);
-		this.setState({messageDraft: ''});
-
-	}
-
-	public sendMessage = (name: string, content: string) => {
-		const {connection} = this.state;
-		if (connection) {
-			const protocolMessage: TextMessage = {
-				type: 'TEXT',
-				textContent: content,
-				senderNickname: name
-			};
-			connection.send(JSON.stringify(protocolMessage));
-		}
+		this.setState({messageDraft: ''}, () => {
+			this.props.onSendMessage(messageDraft);
+		});
 	}
 
 	public handleChangeMessageDraft = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,7 +48,8 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {messages, messageDraft} = this.state;
+		const {messages} = this.props;
+		const {messageDraft} = this.state;
 
 		return (
 			<div className="chat_app">
@@ -102,13 +61,15 @@ class ChatRoom extends React.Component<Props, State> {
 								case 'NEW_RULE':
 									message = `New Rule: ${msg.ruleName}`;
 									break;
-								default:
+								case 'TEXT':
 									let direction = '<';
 									if (msg.senderNickname === this.props.nickname) {
 										direction = '>';
 									}
 									message = `${msg.senderNickname} ${direction} ${msg.textContent}`;
 									break;
+								default:
+									return null;
 							}
 							return (
 								<div className="message" key={index}>{message}</div>
