@@ -1,6 +1,6 @@
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {TextMessage, CreateRoomMessage, JoinRoomMessage, Message} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message} from 'fluxxchat-protokolla';
 import {get} from 'lodash';
 import Menu from './Menu';
 import ChatRoom from '../scenes/ChatRoom';
@@ -11,13 +11,17 @@ interface State {
 	connection: WebSocket | null;
 	nickname: string | null;
 	messages: Message[];
+	owncards: Card[];
+	activecards: Card[];
 }
 
 class App extends React.Component<RouteComponentProps, State> {
 	public state: State = {
 		connection: null,
 		nickname: null,
-		messages: []
+		messages: [],
+		owncards: [],
+		activecards: []
 	};
 
 	public componentDidMount() {
@@ -42,10 +46,32 @@ class App extends React.Component<RouteComponentProps, State> {
 					this.props.history.push(`/room/${msg.roomId}`);
 					this.joinRoom(msg.roomId);
 					break;
+				case 'CARD':
+					this.setState({owncards: [...this.state.owncards, msg.card]});
+					break;
 				default:
 					break;
 			}
 		});
+
+		const card1: Card = {
+			name: "Test",
+			description: "Lel",
+			ruleName: "Noob",
+			parameters: []
+		}
+
+		this.setState({owncards: [...this.state.owncards, card1]});
+
+		const card2: Card = {
+			name: "Test123",
+			description: "Lel321",
+			ruleName: "Noob1414",
+			parameters: []
+		}
+
+		this.setState({activecards: [...this.state.activecards, card2]});
+
 	}
 
 	public componentWillUnmount() {
@@ -94,7 +120,7 @@ class App extends React.Component<RouteComponentProps, State> {
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match} = this.props;
-		const {nickname, messages} = this.state;
+		const {nickname, messages, activecards, owncards} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
@@ -114,6 +140,8 @@ class App extends React.Component<RouteComponentProps, State> {
 						nickname={nickname}
 						roomId={roomId}
 						messages={messages}
+						activecards={activecards}
+						owncards={owncards}
 						onSendMessage={this.handleSendTextMessage}
 					/>
 				)}
