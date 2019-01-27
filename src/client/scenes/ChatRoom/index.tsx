@@ -2,7 +2,7 @@ import React from 'react';
 import {NewRuleMessage, TextMessage} from 'fluxxchat-protokolla';
 import '../../styles.css';
 import {animateScroll} from 'react-scroll';
-import {Card, OwnCard} from '../Card/card';
+import {ActiveCard, OwnCard} from '../../components';
 
 interface Props {
 	nickname: string;
@@ -134,7 +134,7 @@ class ChatRoom extends React.Component<Props, State> {
 						<div className="caption">
 							Active Cards
 						</div>
-						<Card content="this is a test" action={this.playCard}/>
+						<ActiveCard content="this is a test" action={this.playCard}/>
 					</div>
 					<div className="card_div_own">
 						<div className="caption">
