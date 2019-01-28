@@ -1,9 +1,9 @@
 import React from 'react';
 import {Message} from 'fluxxchat-protokolla';
-import '../../styles.css';
 import {animateScroll} from 'react-scroll';
 import {Card, OwnCard} from '../Card/card';
 import MessageContainer from '../../components/MessageContainer';
+import '../../styles.scss';
 
 interface Props {
 	nickname: string;
@@ -58,7 +58,7 @@ class ChatRoom extends React.Component<Props, State> {
 					<div className="message_box" id="message-box">
 						{messages.map((msg, index) => {
 							return (
-								<MessageContainer 
+								<MessageContainer
 									key={index}
 									clientName={this.props.nickname}
 									message={msg}

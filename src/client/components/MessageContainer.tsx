@@ -1,6 +1,6 @@
 import React from 'react';
 import {Message} from 'fluxxchat-protokolla';
-import '../styles.css';
+import '../styles.scss';
 
 interface Props {
 	message: Message;
@@ -11,7 +11,7 @@ class MessageContainer extends React.Component<Props> {
 
 	public render() {
 		let message;
-		let msg = this.props.message;
+		const msg = this.props.message;
 		switch (msg.type) {
 			case 'NEW_RULE':
 				message = `New Rule: ${msg.ruleName}`;

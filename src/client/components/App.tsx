@@ -5,7 +5,7 @@ import {get} from 'lodash';
 import Menu from './Menu';
 import ChatRoom from '../scenes/ChatRoom';
 import NavigationBar from './NavBar';
-import '../styles.css';
+import '../styles.scss';
 
 interface State {
 	connection: WebSocket | null;
