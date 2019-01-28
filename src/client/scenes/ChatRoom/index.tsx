@@ -3,6 +3,7 @@ import {Message} from 'fluxxchat-protokolla';
 import '../../styles.css';
 import {animateScroll} from 'react-scroll';
 import {Card, OwnCard} from '../Card/card';
+import MessageContainer from '../../components/MessageContainer';
 
 interface Props {
 	nickname: string;
@@ -56,23 +57,12 @@ class ChatRoom extends React.Component<Props, State> {
 				<div className="chat_area">
 					<div className="message_box" id="message-box">
 						{messages.map((msg, index) => {
-							let message;
-							switch (msg.type) {
-								case 'NEW_RULE':
-									message = `New Rule: ${msg.ruleName}`;
-									break;
-								case 'TEXT':
-									let direction = '<';
-									if (msg.senderNickname === this.props.nickname) {
-										direction = '>';
-									}
-									message = `${msg.senderNickname} ${direction} ${msg.textContent}`;
-									break;
-								default:
-									return null;
-							}
 							return (
-								<div className="message" key={index}>{message}</div>
+								<MessageContainer 
+									key={index}
+									clientName={this.props.nickname}
+									message={msg}
+								/>
 							);
 						})}
 					</div>
