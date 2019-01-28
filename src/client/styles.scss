@@ -1,10 +1,15 @@
+$body_color: gray;
+$primary_color: black;
+$border_color: $primary_color;
+$contrast_color: white;
+
 .body_default {
-    background: gray;
-    color: gray;
+    background: $body_color;
+    color: $body_color;
 }
 
 .navbar_back {
-	background: black;
+	background: $primary_color;
     height: 31px;
     padding: 7px;
 	margin-left: -0.55em;
@@ -13,7 +18,7 @@
 }
 
 .navbar_front {
-    color: white;
+    color: $contrast_color;
     font-size: 25px;
 }
 
@@ -80,7 +85,7 @@
 .turn_div {
     width: calc(40% - 11px);
     height: 32px;
-    border: 1px solid black;
+    border: 1px solid $border_color;
     margin-top: 5px;
     float:right;
     margin-right: 14px;
@@ -96,7 +101,7 @@
 .card_div_active {
     width: calc(40% - 11px);
     height: calc(50vh - 55px);
-    border: 1px solid black;
+    border: 1px solid $border_color;
     margin-bottom: 10px;
     margin-top: 5px;
     min-height: 232px;
@@ -108,7 +113,7 @@
 .card_div_own {
     width: calc(40% - 11px);
     height: calc(50vh - 55px);
-    border: 1px solid black;
+    border: 1px solid $border_color;
     min-height: 232px;
     float: right;
     overflow-x: hidden;
@@ -119,7 +124,7 @@
     margin-top: 5px;
     height: calc(100vh - 98px);
     width: calc(100% - 10px);
-    border: 1px solid black;
+    border: 1px solid $border_color;
     min-height: 450px;
     overflow-x: hidden;
 }
@@ -131,7 +136,7 @@
     margin-top: 5px;
     margin-right: 1px;
     margin-bottom: 2px;
-    border: 1px solid black;
+    border: 1px solid $border_color;
     float: left;
     position: relative;
 }
