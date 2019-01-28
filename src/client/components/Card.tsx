@@ -5,8 +5,8 @@ import { RuleParameterTypes, RuleParameters } from 'fluxxchat-protokolla';
 interface Props {
 	cardName: string;
 	cardDescription: string;
-	parameterTypes: string[] | RuleParameterTypes;
-	parameters: string | RuleParameters;
+	parameterTypes: RuleParameterTypes;
+	parameters: RuleParameters;
 	action?: any;
 }
 
@@ -49,7 +49,7 @@ export class ActiveCard extends React.Component<Props, State> {
 export class OwnCard extends React.Component<Props, State> {
 
 	public handleClick = () => {
-
+		this.props.action();
 	}
 
 	public render() {
@@ -61,24 +61,30 @@ export class OwnCard extends React.Component<Props, State> {
 					this.state.users.forEach(user => {
 						options.push(<option value={user}>{user}</option>);
 					});
-					playButton += (<div className="add_parameter_div">
-									Select target:
-									<select className="select_rule_target">
-										{options}
-									</select>
-								</div>);
+					playButton += (
+						<div className="add_parameter_div">
+							Select target:
+							<select className="select_rule_target">
+								{options}
+							</select>
+						</div>
+					);
 					break;
 				case 'number':
-					playButton += (<div className="add_parameter_div">
-										Give number:
-										<input className="set_parameter_number" type="text"></input>
-									</div>);
+					playButton += (
+						<div className="add_parameter_div">
+							Give number:
+							<input className="set_parameter_number" type="text"></input>
+						</div>
+					);
 					break;
 			}
-			playButton = (<div className="play_buttons_container">
-							{playButton}
-							<button type="button" className="play_button" onClick={this.handleClick}>Play</button>
-						</div>);
+			playButton = (
+				<div className="play_buttons_container">
+					{playButton}
+					<button type="button" className="play_button" onClick={this.handleClick}>Play</button>
+				</div>
+			);
 		});
 		return (
 			<div className="card_container">

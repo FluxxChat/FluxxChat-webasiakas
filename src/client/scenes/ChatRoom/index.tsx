@@ -99,11 +99,13 @@ class ChatRoom extends React.Component<Props, State> {
 						</div>
 						{this.props.activecards.map((card, index) => {
 							return (
-								<ActiveCard key={index}
+								<ActiveCard
+									key={index}
 									cardName={card.name}
 									cardDescription={card.description}
-									parameterTypes={['number', 'number']}
-									parameters={card.parameters}/>
+									parameterTypes={card.parameterTypes}
+									parameters={card.parameters}
+								/>
 							);
 						})}
 					</div>
@@ -113,12 +115,14 @@ class ChatRoom extends React.Component<Props, State> {
 						</div>
 						{this.props.owncards.map((card, index) => {
 							return (
-								<OwnCard key={index}
+								<OwnCard
+									key={index}
 									cardName={card.name}
 									cardDescription={card.description}
-									parameterTypes={['number', 'number']}
+									parameterTypes={card.parameterTypes}
 									parameters={card.parameters}
-									action={this.playCard}/>
+									action={this.playCard}
+								/>
 							);
 						})}
 					</div>
