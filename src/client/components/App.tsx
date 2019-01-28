@@ -54,23 +54,7 @@ class App extends React.Component<RouteComponentProps, State> {
 			}
 		});
 
-		const card1: Card = {
-			name: 'Test',
-			description: 'Lel',
-			ruleName: 'Noob',
-			parameters: []
-		};
-
-		this.setState({owncards: [...this.state.owncards, card1]});
-
-		const card2: Card = {
-			name: 'Test123',
-			description: 'Lel321',
-			ruleName: 'Noob1414',
-			parameters: []
-		};
-
-		this.setState({activecards: [...this.state.activecards, card2]});
+		this.setState({activecards: [...this.state.activecards]});
 
 	}
 
