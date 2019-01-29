@@ -11,8 +11,8 @@ interface State {
 	connection: WebSocket | null;
 	nickname: string | null;
 	messages: Message[];
-	owncards: Card[];
-	activecards: Card[];
+	ownCards: Card[];
+	activeCards: Card[];
 }
 
 class App extends React.Component<RouteComponentProps, State> {
@@ -20,8 +20,8 @@ class App extends React.Component<RouteComponentProps, State> {
 		connection: null,
 		nickname: null,
 		messages: [],
-		owncards: [],
-		activecards: []
+		ownCards: [],
+		activeCards: []
 	};
 
 	public componentDidMount() {
@@ -47,7 +47,7 @@ class App extends React.Component<RouteComponentProps, State> {
 					this.joinRoom(msg.roomId);
 					break;
 				case 'CARD':
-					this.setState({owncards: [...this.state.owncards, msg.card]});
+					this.setState({ownCards: [...this.state.ownCards, msg.card]});
 					break;
 				default:
 					break;
@@ -102,7 +102,7 @@ class App extends React.Component<RouteComponentProps, State> {
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match} = this.props;
-		const {nickname, messages, activecards, owncards} = this.state;
+		const {nickname, messages, activeCards: activecards, ownCards: owncards} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');

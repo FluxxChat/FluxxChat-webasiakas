@@ -8,8 +8,8 @@ interface Props {
 	nickname: string;
 	roomId: string;
 	messages: Message[];
-	owncards: Card[];
-	activecards: Card[];
+	ownCards: Card[];
+	activeCards: Card[];
 	onSendMessage: (message: string) => any;
 }
 
@@ -97,7 +97,7 @@ class ChatRoom extends React.Component<Props, State> {
 						<div className="caption">
 							Active Cards
 						</div>
-						{this.props.activecards.map((card, index) => {
+						{this.props.activeCards.map((card, index) => {
 							return (
 								<ActiveCard key={index} content={`${card.name}: ${card.description}`} action={null}/>
 							);
@@ -107,7 +107,7 @@ class ChatRoom extends React.Component<Props, State> {
 						<div className="caption">
 							Your Cards
 						</div>
-						{this.props.owncards.map((card, index) => {
+						{this.props.ownCards.map((card, index) => {
 							return (
 								<OwnCard key={index} content={`${card.name}: ${card.description}`} action={this.playCard}/>
 							);
