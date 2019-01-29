@@ -1,15 +1,16 @@
 import React from 'react';
-import {Message, Card} from 'fluxxchat-protokolla';
+import {Message, Card, EnabledRule} from 'fluxxchat-protokolla';
 import '../../styles.css';
 import {animateScroll} from 'react-scroll';
 import {ActiveCard, OwnCard} from '../../components/Card';
+import MessageContainer from '../../components/MessageContainer';
 
 interface Props {
 	nickname: string;
 	roomId: string;
 	messages: Message[];
 	ownCards: Card[];
-	activeCards: Card[];
+	activeCards: EnabledRule[];
 	onSendMessage: (message: string) => any;
 }
 
@@ -58,23 +59,12 @@ class ChatRoom extends React.Component<Props, State> {
 				<div className="chat_area">
 					<div className="message_box" id="message-box">
 						{messages.map((msg, index) => {
-							let message;
-							switch (msg.type) {
-								case 'NEW_RULE':
-									message = `New Rule: ${msg.ruleName}`;
-									break;
-								case 'TEXT':
-									let direction = '<';
-									if (msg.senderNickname === this.props.nickname) {
-										direction = '>';
-									}
-									message = `${msg.senderNickname} ${direction} ${msg.textContent}`;
-									break;
-								default:
-									return null;
-							}
 							return (
-								<div className="message" key={index}>{message}</div>
+								<MessageContainer
+									key={index}
+									clientName={this.props.nickname}
+									message={msg}
+								/>
 							);
 						})}
 					</div>
@@ -99,7 +89,7 @@ class ChatRoom extends React.Component<Props, State> {
 						</div>
 						{this.props.activeCards.map((card, index) => {
 							return (
-								<ActiveCard key={index} content={`${card.name}: ${card.description}`} action={null}/>
+								<ActiveCard key={index} content={`${card.rule.title}: ${card.rule.description}`} action={null}/>
 							);
 						})}
 					</div>
