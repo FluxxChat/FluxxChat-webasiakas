@@ -1,12 +1,12 @@
 import React from 'react';
-import '../../styles.css';
+import '../styles.css';
 
 interface Props {
 	content: string;
 	action: any;
 }
 
-export class Card extends React.Component<Props> {
+export class ActiveCard extends React.Component<Props> {
 
 	public render() {
 		return (
@@ -32,5 +32,3 @@ export class OwnCard extends React.Component<Props> {
 		);
 	}
 }
-
-export default Card;

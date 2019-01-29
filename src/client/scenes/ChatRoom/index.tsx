@@ -1,14 +1,16 @@
 import React from 'react';
-import {Message} from 'fluxxchat-protokolla';
+import {Message, Card, EnabledRule} from 'fluxxchat-protokolla';
 import '../../styles.css';
 import {animateScroll} from 'react-scroll';
-import {Card, OwnCard} from '../Card/card';
+import {ActiveCard, OwnCard} from '../../components/Card';
 import MessageContainer from '../../components/MessageContainer';
 
 interface Props {
 	nickname: string;
 	roomId: string;
 	messages: Message[];
+	ownCards: Card[];
+	activeCards: EnabledRule[];
 	onSendMessage: (message: string) => any;
 }
 
@@ -85,13 +87,21 @@ class ChatRoom extends React.Component<Props, State> {
 						<div className="caption">
 							Active Cards
 						</div>
-						<Card content="this is a test" action={this.playCard}/>
+						{this.props.activeCards.map((card, index) => {
+							return (
+								<ActiveCard key={index} content={`${card.rule.title}: ${card.rule.description}`} action={null}/>
+							);
+						})}
 					</div>
 					<div className="card_div_own">
 						<div className="caption">
 							Your Cards
 						</div>
-						<OwnCard content="this is a test" action={this.playCard}/>
+						{this.props.ownCards.map((card, index) => {
+							return (
+								<OwnCard key={index} content={`${card.name}: ${card.description}`} action={this.playCard}/>
+							);
+						})}
 					</div>
 				</div>
 			</div>

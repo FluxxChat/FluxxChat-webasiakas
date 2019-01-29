@@ -1832,7 +1832,7 @@ flush-write-stream@^1.0.0:
 
 "fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
   version "1.0.0"
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#6a8d3f8e6176ab8669c882adc190e4743c147959"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#50d0f1d9c5befcfd6a6845b672c3058e65cf3573"
 
 follow-redirects@^1.0.0:
   version "1.6.1"
