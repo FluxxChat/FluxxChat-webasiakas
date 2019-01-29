@@ -58,7 +58,7 @@ class ChatRoom extends React.Component<Props, State> {
 					<div className="message_box" id="message-box">
 						{messages.map((msg, index) => {
 							return (
-								<MessageContainer 
+								<MessageContainer
 									key={index}
 									clientName={this.props.nickname}
 									message={msg}
