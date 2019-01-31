@@ -65,12 +65,10 @@
 
 .add_parameter_div {
     width: 100%;
-	padding-bottom: 25px;
-	margin-bottom: 30px;
+	margin-bottom: 26px;
 	bottom: 3px;
     position: absolute;
-    bottom: 2px;
-    left: 2px;
+	bottom: 2px;
 }
 
 .play_buttons_container {
@@ -79,17 +77,19 @@
     bottom: 3px;
     position: absolute;
     bottom: 2px;
-    left: 2px;
+	left: 2px;
 }
 
 .select_rule_target {
     width: 60%;
 	float: right;
+	margin-right: 2px;
 }
 
 .set_parameter_number {
     width: 60%;
 	float: right;
+	margin-right: 2px;
 }
 
 .chat_app {

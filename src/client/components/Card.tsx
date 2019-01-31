@@ -53,7 +53,7 @@ export class OwnCard extends React.Component<Props, State> {
 	}
 
 	public render() {
-		let playButton;
+		let playButton = <div/>;
 		Object.keys(this.props.parameterTypes).forEach(key => {
 			switch (this.props.parameterTypes[key]) {
 				case 'player':
@@ -61,30 +61,34 @@ export class OwnCard extends React.Component<Props, State> {
 					this.state.users.forEach(user => {
 						options.push(<option value={user}>{user}</option>);
 					});
-					playButton += (
+					playButton = (
 						<div className="add_parameter_div">
 							Select target:
 							<select className="select_rule_target">
 								{options}
 							</select>
+							{playButton}
 						</div>
 					);
 					break;
 				case 'number':
-					playButton += (
+					playButton = (
 						<div className="add_parameter_div">
 							Give number:
-							<input className="set_parameter_number" type="text"></input>
+							<input className="set_parameter_number" type="text"/>>
+							{playButton}
+						</div>
+					);
+					break;
+				case '':
+					playButton = (
+						<div className="play_buttons_container">
+							{playButton}
+							<button type="button" className="play_button" onClick={this.handleClick}>Play</button>
 						</div>
 					);
 					break;
 			}
-			playButton = (
-				<div className="play_buttons_container">
-					{playButton}
-					<button type="button" className="play_button" onClick={this.handleClick}>Play</button>
-				</div>
-			);
 		});
 		return (
 			<div className="card_container">
