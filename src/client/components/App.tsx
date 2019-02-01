@@ -12,7 +12,7 @@ interface State {
 	nickname: string | null;
 	messages: Message[];
 	ownCards: Card[];
-	activeCards: EnabledRule[];
+	activeCards: Card[];
 }
 
 class App extends React.Component<RouteComponentProps, State> {
@@ -53,8 +53,7 @@ class App extends React.Component<RouteComponentProps, State> {
 					break;
 			}
 		});
-		
-		this.setState({activecards: [...this.state.activecards]});
+		this.setState({activeCards: [...this.state.activeCards]});
 	}
 
 	public componentWillUnmount() {

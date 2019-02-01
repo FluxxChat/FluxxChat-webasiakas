@@ -14,7 +14,7 @@ class MessageContainer extends React.Component<Props> {
 		const msg = this.props.message;
 		switch (msg.type) {
 			case 'NEW_RULE':
-				message = `New Rule: ${msg.ruleName}`;
+				message = `New Rule: ${msg.card.ruleName}`;
 				break;
 			case 'TEXT':
 				const direction = msg.senderNickname === this.props.clientName ? '>' : '<';
