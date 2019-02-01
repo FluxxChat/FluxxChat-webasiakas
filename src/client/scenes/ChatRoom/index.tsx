@@ -9,9 +9,10 @@ interface Props {
 	nickname: string;
 	roomId: string;
 	messages: Message[];
-	ownCards: Card[];
-	activeCards: EnabledRule[];
-	onSendMessage: (message: string) => any;
+	owncards: Card[];
+	activecards: Card[];
+	onSendMessage: (message: string) => void;
+	onSendNewRule: (card: Card) => void;
 }
 
 interface State {
@@ -46,8 +47,8 @@ class ChatRoom extends React.Component<Props, State> {
 		}
 	}
 
-	public playCard(action: string) {
-		alert(action);
+	public playCard = (card: Card) => {
+		this.props.onSendNewRule(card);
 	}
 
 	public render() {
@@ -89,7 +90,10 @@ class ChatRoom extends React.Component<Props, State> {
 						</div>
 						{this.props.activeCards.map((card, index) => {
 							return (
-								<ActiveCard key={index} content={`${card.rule.title}: ${card.rule.description}`} action={null}/>
+								<ActiveCard
+									key={index}
+									card={card}
+								/>
 							);
 						})}
 					</div>
@@ -99,7 +103,11 @@ class ChatRoom extends React.Component<Props, State> {
 						</div>
 						{this.props.ownCards.map((card, index) => {
 							return (
-								<OwnCard key={index} content={`${card.name}: ${card.description}`} action={this.playCard}/>
+								<OwnCard
+									key={index}
+									card={card}
+									action={this.playCard}
+								/>
 							);
 						})}
 					</div>
