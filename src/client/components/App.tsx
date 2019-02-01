@@ -57,7 +57,6 @@ class App extends React.Component<RouteComponentProps, State> {
 					break;
 			}
 		});
-		this.setState({activeCards: [...this.state.activeCards]});
 	}
 
 	public componentWillUnmount() {

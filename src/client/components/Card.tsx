@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles.css';
 import {Card, User} from 'fluxxchat-protokolla';
+import { FormattedMessage } from 'react-intl';
 
 interface ActiveCardProps {
 	card: Card;
@@ -62,7 +63,7 @@ export class OwnCard extends React.Component<OwnCardProps> {
 					}));
 					parameters.push(
 						<div key="1" className="add_parameter_div">
-							Select target:
+							<FormattedMessage id="card.selectTarget"/>:
 							<select className="select_rule_target">
 								{options}
 							</select>
@@ -72,8 +73,8 @@ export class OwnCard extends React.Component<OwnCardProps> {
 				case 'number':
 				parameters.push(
 						<div key="2" className="add_parameter_div">
-							Give number:
-							<input className="set_parameter_number" type="text"/>>
+							<FormattedMessage id="card.giveNumber"/>:
+							<input className="set_parameter_number" type="text"/>
 						</div>
 					);
 				break;
@@ -91,7 +92,7 @@ export class OwnCard extends React.Component<OwnCardProps> {
 				</div>
 				<div className="play_buttons_container">
 					{parameters}
-					<button type="button" className="play_button" onClick={this.handleClick}>Play</button>
+					<button type="button" className="play_button" onClick={this.handleClick}><FormattedMessage id="card.play"/></button>
 				</div>
 			</div>
 		);
