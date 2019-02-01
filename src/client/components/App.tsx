@@ -4,15 +4,15 @@ import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleM
 import {get} from 'lodash';
 import Menu from './Menu';
 import ChatRoom from '../scenes/ChatRoom';
-import NavigationBar from '../scenes/NavigationBar/navbar';
+import NavigationBar from './NavBar';
 import '../styles.css';
 
 interface State {
 	connection: WebSocket | null;
 	nickname: string | null;
 	messages: Message[];
-	owncards: Card[];
-	activecards: Card[];
+	ownCards: Card[];
+	activeCards: EnabledRule[];
 }
 
 class App extends React.Component<RouteComponentProps, State> {
@@ -20,8 +20,8 @@ class App extends React.Component<RouteComponentProps, State> {
 		connection: null,
 		nickname: null,
 		messages: [],
-		owncards: [],
-		activecards: []
+		ownCards: [],
+		activeCards: []
 	};
 
 	public componentDidMount() {
@@ -47,15 +47,14 @@ class App extends React.Component<RouteComponentProps, State> {
 					this.joinRoom(msg.roomId);
 					break;
 				case 'CARD':
-					this.setState({owncards: [...this.state.owncards, msg.card]});
+					this.setState({ownCards: [...this.state.ownCards, msg.card]});
 					break;
 				default:
 					break;
 			}
 		});
-
+		
 		this.setState({activecards: [...this.state.activecards]});
-
 	}
 
 	public componentWillUnmount() {
@@ -115,7 +114,7 @@ class App extends React.Component<RouteComponentProps, State> {
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match} = this.props;
-		const {nickname, messages, activecards, owncards} = this.state;
+		const {nickname, messages, activeCards: activeCards, ownCards: ownCards} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
@@ -135,8 +134,8 @@ class App extends React.Component<RouteComponentProps, State> {
 						nickname={nickname}
 						roomId={roomId}
 						messages={messages}
-						activecards={activecards}
-						owncards={owncards}
+						activeCards={activeCards}
+						ownCards={ownCards}
 						onSendMessage={this.handleSendTextMessage}
 						onSendNewRule={this.handleSendNewRule}
 					/>
