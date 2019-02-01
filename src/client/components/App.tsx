@@ -52,7 +52,7 @@ class App extends React.Component<RouteComponentProps, State> {
 					this.setState({ownCards: [...this.state.ownCards, msg.card]});
 					break;
 				case 'ROOM_STATE':
-					this.setState({users: msg.users});
+					this.setState({users: msg.users, activeCards: msg.enabledRules});
 				default:
 					break;
 			}

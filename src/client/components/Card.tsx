@@ -55,10 +55,11 @@ export class OwnCard extends React.Component<OwnCardProps> {
 		Object.keys(this.props.card.parameterTypes).forEach(key => {
 			switch (this.props.card.parameterTypes[key]) {
 				case 'player':
-					const options: any[] = [];
-					this.props.users.forEach(user => {
-						options.push(<option value={user.nickname}>{user.nickname}</option>);
-					});
+					const options = (this.props.users.map((user, index) => {
+						return (
+							<option key={index} value={user.nickname}>{user.nickname}</option>
+						);
+					}));
 					parameters.push(
 						<div key="1" className="add_parameter_div">
 							Select target:
