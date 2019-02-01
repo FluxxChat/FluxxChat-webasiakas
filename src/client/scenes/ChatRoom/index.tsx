@@ -10,7 +10,8 @@ interface Props {
 	messages: Message[];
 	owncards: Card[];
 	activecards: Card[];
-	onSendMessage: (message: string) => any;
+	onSendMessage: (message: string) => void;
+	onSendNewRule: (card: Card) => void;
 }
 
 interface State {
@@ -45,8 +46,8 @@ class ChatRoom extends React.Component<Props, State> {
 		}
 	}
 
-	public playCard(action: string) {
-		alert(action);
+	public playCard = (card: Card) => {
+		this.props.onSendNewRule(card);
 	}
 
 	public render() {
@@ -61,7 +62,7 @@ class ChatRoom extends React.Component<Props, State> {
 							let message;
 							switch (msg.type) {
 								case 'NEW_RULE':
-									message = `New Rule: ${msg.ruleName}`;
+									message = `New Rule: ${msg.card.name}`;
 									break;
 								case 'TEXT':
 									let direction = '<';
@@ -101,10 +102,7 @@ class ChatRoom extends React.Component<Props, State> {
 							return (
 								<ActiveCard
 									key={index}
-									cardName={card.name}
-									cardDescription={card.description}
-									parameterTypes={card.parameterTypes}
-									parameters={card.parameters}
+									card={card}
 								/>
 							);
 						})}
@@ -117,10 +115,7 @@ class ChatRoom extends React.Component<Props, State> {
 							return (
 								<OwnCard
 									key={index}
-									cardName={card.name}
-									cardDescription={card.description}
-									parameterTypes={card.parameterTypes}
-									parameters={card.parameters}
+									card={card}
 									action={this.playCard}
 								/>
 							);

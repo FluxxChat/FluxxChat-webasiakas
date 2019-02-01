@@ -1,6 +1,6 @@
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage} from 'fluxxchat-protokolla';
 import {get} from 'lodash';
 import Menu from './Menu';
 import ChatRoom from '../scenes/ChatRoom';
@@ -76,6 +76,17 @@ class App extends React.Component<RouteComponentProps, State> {
 		}
 	}
 
+	public handleSendNewRule = (card: Card) => {
+		const {connection} = this.state;
+		if (connection) {
+			const protocolMessage: NewRuleMessage = {
+				type: 'NEW_RULE',
+				card
+			};
+			connection.send(JSON.stringify(protocolMessage));
+		}
+	}
+
 	public joinRoom = (roomId: string) => {
 		if (this.state.connection) {
 			const protocolMessage: JoinRoomMessage = {
@@ -127,6 +138,7 @@ class App extends React.Component<RouteComponentProps, State> {
 						activecards={activecards}
 						owncards={owncards}
 						onSendMessage={this.handleSendTextMessage}
+						onSendNewRule={this.handleSendNewRule}
 					/>
 				)}
 			</div>

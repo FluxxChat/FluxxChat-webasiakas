@@ -1,30 +1,31 @@
 import React from 'react';
 import '../styles.css';
-import { RuleParameterTypes, RuleParameters } from 'fluxxchat-protokolla';
+import {Card} from 'fluxxchat-protokolla';
 
-interface Props {
-	cardName: string;
-	cardDescription: string;
-	parameterTypes: RuleParameterTypes;
-	parameters: RuleParameters;
-	action?: any;
+interface ActiveCardProps {
+	card: Card;
+}
+
+interface OwnCardProps {
+	card: Card;
+	action: (card: Card) => void;
 }
 
 interface State {
 	users: string[];
 }
 
-export class ActiveCard extends React.Component<Props, State> {
+export class ActiveCard extends React.Component<ActiveCardProps, State> {
 
 	public render() {
 		let parameter;
-		Object.keys(this.props.parameterTypes).forEach(key => {
-			switch (this.props.parameterTypes[key]) {
+		Object.keys(this.props.card.parameterTypes).forEach(key => {
+			switch (this.props.card.parameterTypes[key]) {
 				case 'player':
-					parameter += '\nThis card effects ' + this.props.parameters[key];
+					parameter += '\nThis card effects ' + this.props.card.parameters[key];
 					break;
 				case 'number':
-					parameter += '\nSelected value is ' + this.props.parameters[key];
+					parameter += '\nSelected value is ' + this.props.card.parameters[key];
 					break;
 				default:
 					parameter += '';
@@ -35,10 +36,10 @@ export class ActiveCard extends React.Component<Props, State> {
 			<div className="card_container">
 				<div className="card">
 					<div className="card_name">
-						{this.props.cardName}
+						{this.props.card.name}
 					</div>
 					<div className="card_description">
-						{this.props.cardDescription + parameter}
+						{this.props.card.description + parameter}
 					</div>
 				</div>
 			</div>
@@ -46,45 +47,35 @@ export class ActiveCard extends React.Component<Props, State> {
 	}
 }
 
-export class OwnCard extends React.Component<Props, State> {
+export class OwnCard extends React.Component<OwnCardProps, State> {
 
 	public handleClick = () => {
-		this.props.action();
+		this.props.action(this.props.card);
 	}
 
 	public render() {
-		let playButton = <div/>;
-		Object.keys(this.props.parameterTypes).forEach(key => {
-			switch (this.props.parameterTypes[key]) {
+		let parameters: JSX.Element[] = [];
+		Object.keys(this.props.card.parameterTypes).forEach(key => {
+			switch (this.props.card.parameterTypes[key]) {
 				case 'player':
 					const options: any[] = [];
 					this.state.users.forEach(user => {
 						options.push(<option value={user}>{user}</option>);
 					});
-					playButton = (
-						<div className="add_parameter_div">
+					parameters.push(
+						<div key="1" className="add_parameter_div">
 							Select target:
 							<select className="select_rule_target">
 								{options}
 							</select>
-							{playButton}
 						</div>
 					);
 					break;
 				case 'number':
-					playButton = (
-						<div className="add_parameter_div">
+				parameters.push(
+						<div key="2" className="add_parameter_div">
 							Give number:
 							<input className="set_parameter_number" type="text"/>>
-							{playButton}
-						</div>
-					);
-					break;
-				case '':
-					playButton = (
-						<div className="play_buttons_container">
-							{playButton}
-							<button type="button" className="play_button" onClick={this.handleClick}>Play</button>
 						</div>
 					);
 					break;
@@ -94,13 +85,16 @@ export class OwnCard extends React.Component<Props, State> {
 			<div className="card_container">
 				<div className="card">
 					<div className="card_name">
-						{this.props.cardName}
+						{this.props.card.name}
 					</div>
 					<div className="card_description">
-						{this.props.cardDescription}
+						{this.props.card.description}
 					</div>
 				</div>
-				{playButton}
+				<div className="play_buttons_container">
+					{parameters}
+					<button type="button" className="play_button" onClick={this.handleClick}>Play</button>
+				</div>
 			</div>
 		);
 	}
