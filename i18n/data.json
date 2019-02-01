@@ -1,0 +1,26 @@
+{
+    "en": {
+        "login.username": "Nickname",
+        "login.joinRoom": "Join room",
+        "login.createRoom": "Create room",
+        "message.newRule": "New rule:",
+        "card.selectTarget": "Select target:",
+        "card.giveNumber": "Give number:",
+        "card.play": "Play",
+        "room.activeCards": "Rules in force",
+        "room.hand": "Hand",
+        "room.send": "Send"
+    },
+    "fi": {
+        "login.username": "Nimimerkki",
+        "login.joinRoom": "Liity huoneeseen",
+        "login.createRoom": "Luo huone",
+        "message.newRule": "Uusi sääntö:",
+        "card.selectTarget": "Valitse kohde:",
+        "card.giveNumber": "Anna luku:",
+        "card.play": "Pelaa kortti",
+        "room.activeCards": "Voimassa olevat säännöt",
+        "room.hand": "Käsi",
+        "room.send": "Lähetä"
+    }
+}
