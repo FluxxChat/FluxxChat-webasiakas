@@ -65,7 +65,7 @@ export class OwnCard extends React.Component<OwnCardProps, State> {
 					});
 					parameters.push(
 						<div key="1" className="add_parameter_div">
-							<FormattedMessage id="card.selectTarget"/>
+							<FormattedMessage id="card.selectTarget"/>:
 							<select className="select_rule_target">
 								{options}
 							</select>
@@ -75,7 +75,7 @@ export class OwnCard extends React.Component<OwnCardProps, State> {
 				case 'number':
 				parameters.push(
 						<div key="2" className="add_parameter_div">
-							<FormattedMessage id="card.giveNumber"/>
+							<FormattedMessage id="card.giveNumber"/>:
 							<input className="set_parameter_number" type="text"/>
 						</div>
 					);
