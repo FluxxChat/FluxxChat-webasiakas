@@ -1,5 +1,5 @@
 import React from 'react';
-import {Message, Card, EnabledRule} from 'fluxxchat-protokolla';
+import {Message, Card} from 'fluxxchat-protokolla';
 import '../../styles.css';
 import {animateScroll} from 'react-scroll';
 import {ActiveCard, OwnCard} from '../../components/Card';
@@ -9,8 +9,8 @@ interface Props {
 	nickname: string;
 	roomId: string;
 	messages: Message[];
-	owncards: Card[];
-	activecards: Card[];
+	ownCards: Card[];
+	activeCards: Card[];
 	onSendMessage: (message: string) => void;
 	onSendNewRule: (card: Card) => void;
 }
