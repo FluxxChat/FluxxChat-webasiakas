@@ -54,7 +54,7 @@ export class OwnCard extends React.Component<OwnCardProps, State> {
 	}
 
 	public render() {
-		let parameters: JSX.Element[] = [];
+		const parameters: JSX.Element[] = [];
 		Object.keys(this.props.card.parameterTypes).forEach(key => {
 			switch (this.props.card.parameterTypes[key]) {
 				case 'player':
@@ -78,7 +78,7 @@ export class OwnCard extends React.Component<OwnCardProps, State> {
 							<input className="set_parameter_number" type="text"/>>
 						</div>
 					);
-					break;
+				break;
 			}
 		});
 		return (
