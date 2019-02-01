@@ -1,13 +1,15 @@
 import React from 'react';
 import '../styles.css';
 import {Card, User} from 'fluxxchat-protokolla';
-import { FormattedMessage } from 'react-intl';
+import {FormattedMessage} from 'react-intl';
+import {NumberParameter, PlayerParameter} from './CardParameters';
 
 interface ActiveCardProps {
 	card: Card;
 }
 
 interface OwnCardProps {
+	cardId: string;
 	card: Card;
 	users: User[];
 	action: (card: Card) => void;
@@ -48,7 +50,35 @@ export class ActiveCard extends React.Component<ActiveCardProps> {
 export class OwnCard extends React.Component<OwnCardProps> {
 
 	public handleClick = () => {
-		this.props.action(this.props.card);
+		let validateNumberInput = true;
+		const numberParameters = document.getElementsByName('number_parameter');
+		if (numberParameters.length > 0) {
+			numberParameters.forEach(element => {
+				if (element.getAttribute('id') === this.props.cardId) {
+					validateNumberInput = false;
+					if ((element.getAttribute('value') + '').length > 0 && parseInt(element.getAttribute('value') + '', 10) > 0) {
+						validateNumberInput = true;
+						this.props.card.parameters = {length: parseInt(element.getAttribute('value') + '', 10)};
+					}
+				}
+			});
+		}
+		let validatePlayerInput = true;
+		const playerParameters = document.getElementsByName('player_parameter');
+		if (playerParameters.length > 0) {
+			playerParameters.forEach(element => {
+				if (element.getAttribute('id') === this.props.cardId) {
+					validatePlayerInput = false;
+					if (element.getAttribute('placeholder') !== '') {
+						validatePlayerInput = true;
+						this.props.card.parameters = {target: element.getAttribute('placeholder')};
+					}
+				}
+			});
+		}
+		if (validateNumberInput === true && validatePlayerInput === true) {
+			this.props.action(this.props.card);
+		}
 	}
 
 	public render() {
@@ -56,28 +86,21 @@ export class OwnCard extends React.Component<OwnCardProps> {
 		Object.keys(this.props.card.parameterTypes).forEach(key => {
 			switch (this.props.card.parameterTypes[key]) {
 				case 'player':
-					const options = (this.props.users.map((user, index) => {
-						return (
-							<option key={index} value={user.nickname}>{user.nickname}</option>
-						);
-					}));
 					parameters.push(
 						<div key="1" className="add_parameter_div">
 							<FormattedMessage id="card.selectTarget"/>:
-							<select className="select_rule_target">
-								{options}
-							</select>
+							<PlayerParameter cardId={this.props.cardId} users={this.props.users}/>
 						</div>
 					);
 					break;
 				case 'number':
-				parameters.push(
+					parameters.push(
 						<div key="2" className="add_parameter_div">
 							<FormattedMessage id="card.giveNumber"/>:
-							<input className="set_parameter_number" type="text"/>
+							<NumberParameter cardId={this.props.cardId}/>
 						</div>
 					);
-				break;
+					break;
 			}
 		});
 		return (

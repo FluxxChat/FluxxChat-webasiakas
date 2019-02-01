@@ -107,6 +107,7 @@ class ChatRoom extends React.Component<Props, State> {
 							return (
 								<OwnCard
 									key={index}
+									cardId={index.toString()}
 									card={card}
 									users={this.props.users}
 									action={this.playCard}
