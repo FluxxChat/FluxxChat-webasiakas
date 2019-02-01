@@ -1,5 +1,5 @@
 import React from 'react';
-import {Message, Card} from 'fluxxchat-protokolla';
+import {Message, Card, User} from 'fluxxchat-protokolla';
 import '../../styles.css';
 import {animateScroll} from 'react-scroll';
 import {ActiveCard, OwnCard} from '../../components/Card';
@@ -8,6 +8,7 @@ import MessageContainer from '../../components/MessageContainer';
 interface Props {
 	nickname: string;
 	roomId: string;
+	users: User[];
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
@@ -106,6 +107,7 @@ class ChatRoom extends React.Component<Props, State> {
 								<OwnCard
 									key={index}
 									card={card}
+									users={this.props.users}
 									action={this.playCard}
 								/>
 							);

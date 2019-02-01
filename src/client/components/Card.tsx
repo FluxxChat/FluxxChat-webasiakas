@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles.css';
-import {Card} from 'fluxxchat-protokolla';
+import {Card, User} from 'fluxxchat-protokolla';
 
 interface ActiveCardProps {
 	card: Card;
@@ -8,14 +8,11 @@ interface ActiveCardProps {
 
 interface OwnCardProps {
 	card: Card;
+	users: User[];
 	action: (card: Card) => void;
 }
 
-interface State {
-	users: string[];
-}
-
-export class ActiveCard extends React.Component<ActiveCardProps, State> {
+export class ActiveCard extends React.Component<ActiveCardProps> {
 
 	public render() {
 		let parameter;
@@ -47,7 +44,7 @@ export class ActiveCard extends React.Component<ActiveCardProps, State> {
 	}
 }
 
-export class OwnCard extends React.Component<OwnCardProps, State> {
+export class OwnCard extends React.Component<OwnCardProps> {
 
 	public handleClick = () => {
 		this.props.action(this.props.card);
@@ -59,8 +56,8 @@ export class OwnCard extends React.Component<OwnCardProps, State> {
 			switch (this.props.card.parameterTypes[key]) {
 				case 'player':
 					const options: any[] = [];
-					this.state.users.forEach(user => {
-						options.push(<option value={user}>{user}</option>);
+					this.props.users.forEach(user => {
+						options.push(<option value={user.nickname}>{user.nickname}</option>);
 					});
 					parameters.push(
 						<div key="1" className="add_parameter_div">

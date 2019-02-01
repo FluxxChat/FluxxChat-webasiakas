@@ -1,6 +1,6 @@
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User} from 'fluxxchat-protokolla';
 import {get} from 'lodash';
 import Menu from './Menu';
 import ChatRoom from '../scenes/ChatRoom';
@@ -10,6 +10,7 @@ import '../styles.css';
 interface State {
 	connection: WebSocket | null;
 	nickname: string | null;
+	users: User[];
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
@@ -19,6 +20,7 @@ class App extends React.Component<RouteComponentProps, State> {
 	public state: State = {
 		connection: null,
 		nickname: null,
+		users: [],
 		messages: [],
 		ownCards: [],
 		activeCards: []
@@ -49,6 +51,8 @@ class App extends React.Component<RouteComponentProps, State> {
 				case 'CARD':
 					this.setState({ownCards: [...this.state.ownCards, msg.card]});
 					break;
+				case 'ROOM_STATE':
+					this.setState({users: msg.users});
 				default:
 					break;
 			}
@@ -132,6 +136,7 @@ class App extends React.Component<RouteComponentProps, State> {
 					<ChatRoom
 						nickname={nickname}
 						roomId={roomId}
+						users={this.state.users}
 						messages={messages}
 						activeCards={activeCards}
 						ownCards={ownCards}
