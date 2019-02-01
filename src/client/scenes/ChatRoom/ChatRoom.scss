@@ -1,43 +1,4 @@
-$body_color: gray;
-$primary_color: black;
-$border_color: $primary_color;
-$contrast_color: white;
-
-.body_default {
-    background: $body_color;
-    color: $body_color;
-}
-
-.navbar_back {
-	background: $primary_color;
-    height: 31px;
-    padding: 7px;
-	margin-left: -0.55em;
-    margin-top: -0.55em;
-    margin-bottom: 3px;
-}
-
-.navbar_front {
-    color: $contrast_color;
-    font-size: 25px;
-}
-
-.padded_right {
-    margin-right: 5px;
-}
-
-.padded_left {
-    margin-left: 15px;
-}
-
-.padded_top {
-    margin-top: 5px;
-}
-
-.message {
-    margin-left: 5px;
-    margin-top: 2px;
-}
+@import "../../colors.scss";
 
 .message_field {
 	width: calc(100% - 110px);
@@ -58,17 +19,6 @@ $contrast_color: white;
     margin-top: 5px;
     margin-right: 8px;
     float: right;
-}
-
-.play_button {
-    width: 95px;
-    margin-top: 5px;
-    height: 23px;
-    bottom: 3px;
-    position: absolute;
-    bottom: 2px;
-    left: 2px;
-    width: calc(100% - 4px);
 }
 
 .chat_app {
@@ -127,18 +77,6 @@ $contrast_color: white;
     border: 1px solid $border_color;
     min-height: 450px;
     overflow-x: hidden;
-}
-
-.card {
-    width: calc(33% - 20px);
-    height: calc(50% - 20px);
-    margin-left: 5px;
-    margin-top: 5px;
-    margin-right: 1px;
-    margin-bottom: 2px;
-    border: 1px solid $border_color;
-    float: left;
-    position: relative;
 }
 
 .caption {

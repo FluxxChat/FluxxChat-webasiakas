@@ -1,0 +1,67 @@
+@import "../colors.scss";
+
+.card_container {
+    width: calc(33% - 20px);
+    height: calc(50% - 20px);
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-right: 1px;
+    margin-bottom: 2px;
+    border: 1px solid $border_color;
+    float: left;
+    position: relative;
+}
+
+.card_name {
+	width: 100%;
+	height: 30px;
+	padding-top: 16px;
+	padding-left: 10px;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.card_description {
+	width: 100%;
+	height: calc(100% - 30px);
+	padding-top: 16px;
+	padding-left: 10px;
+	font-size: 14px;
+}
+
+.add_parameter_div {
+    width: 100%;
+	margin-bottom: 26px;
+	bottom: 3px;
+    position: absolute;
+	bottom: 2px;
+}
+
+.select_rule_target {
+    width: 60%;
+	float: right;
+	margin-right: 2px;
+}
+
+.set_parameter_number {
+    width: 60%;
+	float: right;
+	margin-right: 2px;
+}
+
+.play_button {
+    width: calc(100% - 4px);
+    margin-top: 5px;
+    height: 23px;
+    bottom: 3px;
+    margin-left: 2px;
+}
+
+.play_buttons_container {
+    width: calc(100% - 4px);
+    margin-top: 5px;
+    bottom: 3px;
+    position: absolute;
+    bottom: 2px;
+	left: 2px;
+}

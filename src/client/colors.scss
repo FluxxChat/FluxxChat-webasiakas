@@ -1,0 +1,16 @@
+$body_color: gray;
+$primary_color: black;
+$border_color: $primary_color;
+$contrast_color: white;
+
+:export {
+    bodyColor: $body_color;
+    primaryColor: $primary_color;
+    borderColor: $border_color;
+    constrastColor: $contrast_color;
+}
+
+.body_default {
+    background: $body_color;
+    color: $body_color;
+}
