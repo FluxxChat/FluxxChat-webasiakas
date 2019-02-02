@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles.css';
+import './Card.scss';
 import {Card} from 'fluxxchat-protokolla';
 import { FormattedMessage } from 'react-intl';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Message, Card} from 'fluxxchat-protokolla';
-import '../../styles.css';
+import './ChatRoom.scss';
 import {animateScroll} from 'react-scroll';
 import {ActiveCard, OwnCard} from '../../components/Card';
 import MessageContainer from '../../components/MessageContainer';

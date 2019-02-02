@@ -5,7 +5,7 @@ import {get} from 'lodash';
 import Menu from './Menu';
 import ChatRoom from '../scenes/ChatRoom';
 import NavigationBar from './NavBar';
-import '../styles.css';
+import './App.scss';
 
 interface State {
 	connection: WebSocket | null;
@@ -13,6 +13,7 @@ interface State {
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
+	theme: string;
 }
 
 class App extends React.Component<RouteComponentProps, State> {
@@ -21,7 +22,8 @@ class App extends React.Component<RouteComponentProps, State> {
 		nickname: null,
 		messages: [],
 		ownCards: [],
-		activeCards: []
+		activeCards: [],
+		theme: 'theme-light'
 	};
 
 	public componentDidMount() {
@@ -119,26 +121,30 @@ class App extends React.Component<RouteComponentProps, State> {
 		const roomId = get(match, 'params.id');
 
 		return (
-			<div>
-				<NavigationBar/>
-				{(!nickname || !roomId) && (
-					<Menu
-						type={roomId ? 'join' : 'create'}
-						onJoinRoom={this.requestJoinRoom}
-						onCreateRoom={this.requestCreateRoom}
-					/>
-				)}
-				{nickname && roomId && (
-					<ChatRoom
-						nickname={nickname}
-						roomId={roomId}
-						messages={messages}
-						activeCards={activeCards}
-						ownCards={ownCards}
-						onSendMessage={this.handleSendTextMessage}
-						onSendNewRule={this.handleSendNewRule}
-					/>
-				)}
+			<div className={this.state.theme}>
+				<div className="default_body">
+					<div className="body_pad">
+					<NavigationBar/>
+					{(!nickname || !roomId) && (
+						<Menu
+							type={roomId ? 'join' : 'create'}
+							onJoinRoom={this.requestJoinRoom}
+							onCreateRoom={this.requestCreateRoom}
+						/>
+					)}
+					{nickname && roomId && (
+						<ChatRoom
+							nickname={nickname}
+							roomId={roomId}
+							messages={messages}
+							activeCards={activeCards}
+							ownCards={ownCards}
+							onSendMessage={this.handleSendTextMessage}
+							onSendNewRule={this.handleSendNewRule}
+						/>
+					)}
+					</div>
+				</div>
 			</div>
 		);
 	}
