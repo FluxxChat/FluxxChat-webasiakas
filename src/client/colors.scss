@@ -1,14 +1,8 @@
 $themes: (
     light: (
-        body_color: lightgray,
+        body_color: white,
         primary_color: black,
         border_color: black,
-        contrast_color: white,
-    ),
-    red: (
-        body_color: lightgray,
-        primary_color: red,
-        border_color: red,
         contrast_color: white,
     ),
 );
@@ -29,19 +23,4 @@ $themes: (
 
 @function themed($key) {
     @return map-get($theme-map, $key);
-}
-
-.default_body {
-    margin-left: -0.55em;
-    margin-top: -0.55em;
-    width: calc(100vw + 0.55em);
-    height: calc(100vh + 0.55em);
-    @include themify($themes) {
-        background: themed('body_color');
-    }
-}
-
-.body_pad {
-    margin-left: 0.55em;
-    margin-top: 0.55em;
 }
