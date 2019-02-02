@@ -1,16 +1,47 @@
-$body_color: gray;
-$primary_color: black;
-$border_color: $primary_color;
-$contrast_color: white;
+$themes: (
+    light: (
+        body_color: lightgray,
+        primary_color: black,
+        border_color: black,
+        contrast_color: white,
+    ),
+    red: (
+        body_color: lightgray,
+        primary_color: red,
+        border_color: red,
+        contrast_color: white,
+    ),
+);
 
-:export {
-    bodyColor: $body_color;
-    primaryColor: $primary_color;
-    borderColor: $border_color;
-    constrastColor: $contrast_color;
+@mixin themify($themes: $themes) {
+    @each $theme, $map in $themes {
+        .theme-#{$theme} & {
+            $theme-map: () !global;
+            @each $key, $submap in $map {
+                $value: map-get(map-get($themes, $theme), '#{$key}');
+                $theme-map: map-merge($theme-map, ($key: $value)) !global;
+            }
+            @content;
+            $theme-map: null !global;
+        }
+    }
 }
 
-.body_default {
-    background: $body_color;
-    color: $body_color;
+@function themed($key) {
+    @return map-get($theme-map, $key);
+}
+
+.default_body {
+    margin-left: -0.55em;
+    margin-top: -0.55em;
+    width: calc(100vw + 0.55em);
+    height: calc(100vh + 0.55em);
+    @include themify($themes) {
+        background: themed('body_color');
+    }
+}
+
+.body_pad {
+    margin-left: 0.55em;
+    margin-top: 0.55em;
 }

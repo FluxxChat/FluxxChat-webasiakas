@@ -72,10 +72,12 @@
 .turn_div {
     width: calc(40% - 11px);
     height: 32px;
-    border: 1px solid $border_color;
     margin-top: 5px;
     float:right;
     margin-right: 14px;
+    @include themify($themes) {
+        border: 1px solid themed('border_color');
+    }
 }
 
 .turn_text {
@@ -88,32 +90,38 @@
 .card_div_active {
     width: calc(40% - 11px);
     height: calc(50vh - 55px);
-    border: 1px solid $border_color;
     margin-bottom: 10px;
     margin-top: 5px;
     min-height: 232px;
     float: right;
     overflow-x: hidden;
     margin-right: 14px;
+    @include themify($themes) {
+        border: 1px solid themed('border_color');
+    }
 }
 
 .card_div_own {
     width: calc(40% - 11px);
     height: calc(50vh - 55px);
-    border: 1px solid $border_color;
     min-height: 232px;
     float: right;
     overflow-x: hidden;
     margin-right: 14px;
+    @include themify($themes) {
+        border: 1px solid themed('border_color');
+    }
 }
 
 .message_box {
     margin-top: 5px;
     height: calc(100vh - 98px);
     width: calc(100% - 10px);
-    border: 1px solid $border_color;
     min-height: 450px;
     overflow-x: hidden;
+    @include themify($themes) {
+        border: 1px solid themed('border_color');
+    }
 }
 
 .card_container {
@@ -123,9 +131,11 @@
     margin-top: 5px;
     margin-right: 1px;
     margin-bottom: 2px;
-    border: 1px solid black;
     float: left;
     position: relative;
+    @include themify($themes) {
+        border: 1px solid themed('border_color');
+    }
 }
 
 .card {

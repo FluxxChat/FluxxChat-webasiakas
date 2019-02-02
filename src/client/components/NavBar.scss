@@ -1,15 +1,19 @@
 @import "../colors.scss";
 
 .navbar_back {
-	background: $primary_color;
     height: 31px;
     padding: 7px;
-	margin-left: -0.55em;
+    margin-left: -0.55em;
     margin-top: -0.55em;
     margin-bottom: 3px;
+    @include themify($themes) {
+        background: themed('primary_color');
+    }
 }
-
+    
 .navbar_front {
-    color: $contrast_color;
     font-size: 25px;
+    @include themify($themes) {
+        color: themed('contrast_color');
+    }
 }

@@ -7,9 +7,11 @@
     margin-top: 5px;
     margin-right: 1px;
     margin-bottom: 2px;
-    border: 1px solid $border_color;
     float: left;
     position: relative;
+    @include themify($themes) {
+        border: 1px solid themed('border_color');
+    }
 }
 
 .card_name {
