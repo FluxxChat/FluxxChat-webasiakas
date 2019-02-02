@@ -29,9 +29,16 @@
     margin-top: 5px;
 }
 
+/* I don't really know why the margins on message and message_content work, but for now they do */
 .message {
     margin-left: 5px;
-    margin-top: 2px;
+    margin-top: 0px;
+    margin-bottom: -15px;
+}
+
+.message_content {
+    margin-top: -15px;
+    display: inline-block;
 }
 
 .message_field {
