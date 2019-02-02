@@ -1,15 +1,19 @@
 import React from 'react';
-import {Message} from 'fluxxchat-protokolla';
+import {Message, Card} from 'fluxxchat-protokolla';
+import './ChatRoom.scss';
 import {animateScroll} from 'react-scroll';
-import {Card, OwnCard} from '../Card/card';
+import {ActiveCard, OwnCard} from '../../components/Card';
 import MessageContainer from '../../components/MessageContainer';
-import '../../styles.scss';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
 	nickname: string;
 	roomId: string;
 	messages: Message[];
-	onSendMessage: (message: string) => any;
+	ownCards: Card[];
+	activeCards: Card[];
+	onSendMessage: (message: string) => void;
+	onSendNewRule: (card: Card) => void;
 }
 
 interface State {
@@ -44,8 +48,8 @@ class ChatRoom extends React.Component<Props, State> {
 		}
 	}
 
-	public playCard(action: string) {
-		alert(action);
+	public playCard = (card: Card) => {
+		this.props.onSendNewRule(card);
 	}
 
 	public render() {
@@ -70,7 +74,7 @@ class ChatRoom extends React.Component<Props, State> {
 						<form onKeyDown={this.handleKeyDown}>
 						<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
 							<div className="send_div">
-								<button type="button" className="send_button" onClick={this.handleSendMessage}>Send</button>
+								<button type="button" className="send_button" onClick={this.handleSendMessage}><FormattedMessage id="room.send"/></button>
 							</div>
 						</form>
 					</div>
@@ -83,15 +87,30 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 					<div className="card_div_active">
 						<div className="caption">
-							Active Cards
+							<FormattedMessage id="room.activeCards"/>
 						</div>
-						<Card content="this is a test" action={this.playCard}/>
+						{this.props.activeCards.map((card, index) => {
+							return (
+								<ActiveCard
+									key={index}
+									card={card}
+								/>
+							);
+						})}
 					</div>
 					<div className="card_div_own">
 						<div className="caption">
-							Your Cards
+							<FormattedMessage id="room.hand"/>
 						</div>
-						<OwnCard content="this is a test" action={this.playCard}/>
+						{this.props.ownCards.map((card, index) => {
+							return (
+								<OwnCard
+									key={index}
+									card={card}
+									action={this.playCard}
+								/>
+							);
+						})}
 					</div>
 				</div>
 			</div>

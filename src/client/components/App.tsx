@@ -1,6 +1,6 @@
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {TextMessage, CreateRoomMessage, JoinRoomMessage, Message} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage} from 'fluxxchat-protokolla';
 import {get} from 'lodash';
 import Menu from './Menu';
 import ChatRoom from '../scenes/ChatRoom';
@@ -10,13 +10,17 @@ interface State {
 	connection: WebSocket | null;
 	nickname: string | null;
 	messages: Message[];
+	ownCards: Card[];
+	activeCards: Card[];
 }
 
 class App extends React.Component<RouteComponentProps, State> {
 	public state: State = {
 		connection: null,
 		nickname: null,
-		messages: []
+		messages: [],
+		ownCards: [],
+		activeCards: []
 	};
 
 	public componentDidMount() {
@@ -41,10 +45,14 @@ class App extends React.Component<RouteComponentProps, State> {
 					this.props.history.push(`/room/${msg.roomId}`);
 					this.joinRoom(msg.roomId);
 					break;
+				case 'CARD':
+					this.setState({ownCards: [...this.state.ownCards, msg.card]});
+					break;
 				default:
 					break;
 			}
 		});
+		this.setState({activeCards: [...this.state.activeCards]});
 	}
 
 	public componentWillUnmount() {
@@ -60,6 +68,17 @@ class App extends React.Component<RouteComponentProps, State> {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
 				textContent: message
+			};
+			connection.send(JSON.stringify(protocolMessage));
+		}
+	}
+
+	public handleSendNewRule = (card: Card) => {
+		const {connection} = this.state;
+		if (connection) {
+			const protocolMessage: NewRuleMessage = {
+				type: 'NEW_RULE',
+				card
 			};
 			connection.send(JSON.stringify(protocolMessage));
 		}
@@ -93,7 +112,7 @@ class App extends React.Component<RouteComponentProps, State> {
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match} = this.props;
-		const {nickname, messages} = this.state;
+		const {nickname, messages, activeCards: activeCards, ownCards: ownCards} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
@@ -113,7 +132,10 @@ class App extends React.Component<RouteComponentProps, State> {
 						nickname={nickname}
 						roomId={roomId}
 						messages={messages}
+						activeCards={activeCards}
+						ownCards={ownCards}
 						onSendMessage={this.handleSendTextMessage}
+						onSendNewRule={this.handleSendNewRule}
 					/>
 				)}
 			</div>

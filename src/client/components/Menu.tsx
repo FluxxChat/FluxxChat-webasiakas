@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormattedMessage } from 'react-intl';
 
 interface Props {
 	type: 'join' | 'create';
@@ -30,10 +31,10 @@ class Menu extends React.Component<Props, State> {
 
 		return (
 			<div>
-				<span>Username:</span>
+				<span><FormattedMessage id="login.username"/>:</span>
 				<input type="text" value={this.state.nickname} onChange={this.handleChangeNickname}/>
 				<button onClick={this.handleClickSubmit}>
-					{type === 'join' ? 'Join Room' : 'Create Room'}
+					{type === 'join' ? <FormattedMessage id="login.joinRoom"/> : <FormattedMessage id="login.createRoom"/>}
 				</button>
 			</div>
 		);
