@@ -1,6 +1,6 @@
 import React from 'react';
 import {Message} from 'fluxxchat-protokolla';
-import '../styles.css';
+import './MessageContainer.scss';
 import { FormattedMessage } from 'react-intl';
 
 interface Props {

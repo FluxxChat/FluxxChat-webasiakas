@@ -2,7 +2,7 @@ import React from 'react';
 import {Card, User, RuleParameters} from 'fluxxchat-protokolla';
 import {FormattedMessage} from 'react-intl';
 import {NumberParameter, PlayerParameter} from './CardParameters';
-import '../styles.css';
+import './Card.scss';
 
 interface ActiveCardProps {
 	card: Card;
@@ -16,6 +16,7 @@ interface OwnCardProps {
 }
 
 interface OwnCardState {
+  users: [];
 	ruleParameters: RuleParameters;
 }
 

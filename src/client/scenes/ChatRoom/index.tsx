@@ -1,10 +1,10 @@
 import React from 'react';
-import {Message, Card, User, RuleParameters} from 'fluxxchat-protokolla';
-import '../../styles.css';
+import {Message, Card, RuleParameters} from 'fluxxchat-protokolla';
 import {animateScroll} from 'react-scroll';
+import {FormattedMessage} from 'react-intl';
 import {ActiveCard, OwnCard} from '../../components/Card';
 import MessageContainer from '../../components/MessageContainer';
-import { FormattedMessage } from 'react-intl';
+import './ChatRoom.scss';
 
 interface Props {
 	nickname: string;
