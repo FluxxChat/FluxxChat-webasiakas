@@ -2,73 +2,43 @@ import React from 'react';
 import { User } from 'fluxxchat-protokolla';
 
 interface NumberParameterProps {
-	cardId: string;
+	value: string;
+	onChange: (evt: React.ChangeEvent<HTMLInputElement>) => any;
 }
 
 interface PlayerParameterProps {
-	cardId: string;
 	users: User[];
-}
-
-interface NumberParameteState {
 	value: string;
+	onChange: (evt: React.ChangeEvent<HTMLSelectElement>) => any;
 }
 
-interface PlayerParameteState {
-	player: string;
-}
-
-export class NumberParameter extends React.Component<NumberParameterProps, NumberParameteState> {
-	public state: NumberParameteState = {
-		value: ''
-	};
-
-	public changeValue = event => {
-		this.setState({value: event.target.value});
-	}
-
+export class NumberParameter extends React.Component<NumberParameterProps> {
 	public render() {
 		return (
 			<div className="set_parameter_number">
 				<input
-					id={this.props.cardId}
-					name="number_parameter"
-					onChange={this.changeValue}
-					value={this.state.value}
+					onChange={this.props.onChange}
+					value={this.props.value || 0}
 					className="set_parameter_number"
-					type="text"
+					type="number"
 				/>
 			</div>
 		);
 	}
 }
 
-export class PlayerParameter extends React.Component<PlayerParameterProps, PlayerParameteState> {
-	public state: PlayerParameteState = {
-		player: ''
-	};
-
-	public changeValue = event => {
-		this.setState({player: event.target.value});
-	}
-
+export class PlayerParameter extends React.Component<PlayerParameterProps> {
 	public render() {
-		const options = (this.props.users.map((user, index) => {
-			return (
-				<option key={index} value={user.nickname}>{user.nickname}</option>
-			);
-		}));
 		return (
 				<select
-					id={this.props.cardId}
-					onChange={this.changeValue}
-					placeholder={this.state.player}
-					defaultValue="Select target"
-					name="player_parameter"
+					value={this.props.value || '-1'}
+					onChange={this.props.onChange}
 					className="select_rule_target"
 				>
-				<option disabled>Select target</option>
-					{options}
+					<option value="-1">Select target</option>
+					{this.props.users.map(user => (
+						<option key={user.id} value={user.id}>{user.nickname}</option>
+					))}
 				</select>
 		);
 	}

@@ -9,15 +9,22 @@ interface Props {
 }
 
 class MessageContainer extends React.Component<Props> {
-
 	public render() {
 		const msg = this.props.message;
 		switch (msg.type) {
 			case 'NEW_RULE':
-				return <div className="message"><FormattedMessage id="message.newRule"/>: {msg.card.name} ({msg.card.description})</div>;
+				return (
+					<div className="message">
+						<FormattedMessage id="message.newRule"/>!
+					</div>
+				);
 			case 'TEXT':
 				const direction = msg.senderNickname === this.props.clientName ? '>' : '<';
-				return <div className="message">{msg.senderNickname} {direction} {msg.textContent}</div>;
+				return (
+					<div className="message">
+						{msg.senderNickname} {direction} {msg.textContent}
+					</div>
+				);
 			default:
 				return null;
 		}
