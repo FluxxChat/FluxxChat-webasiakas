@@ -49,6 +49,7 @@ export class ActiveCard extends React.Component<ActiveCardProps, State> {
 }
 
 export class OwnCard extends React.Component<OwnCardProps, State> {
+	public state: State = {users: []};
 
 	public handleClick = () => {
 		this.props.action(this.props.card);
