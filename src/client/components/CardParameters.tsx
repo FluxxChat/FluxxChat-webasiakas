@@ -15,14 +15,14 @@ interface PlayerParameterProps {
 export class NumberParameter extends React.Component<NumberParameterProps> {
 	public render() {
 		return (
-			<div className="set_parameter_number">
+			<span>
 				<input
 					onChange={this.props.onChange}
 					value={this.props.value || 0}
 					className="set_parameter_number"
 					type="number"
 				/>
-			</div>
+			</span>
 		);
 	}
 }
