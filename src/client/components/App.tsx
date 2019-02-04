@@ -11,9 +11,11 @@ interface State {
 	connection: WebSocket | null;
 	nickname: string | null;
 	users: User[];
+	userMap: { [key: string]: User };
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
+	turnUserId: string | null;
 	theme: string;
 }
 
@@ -22,9 +24,11 @@ class App extends React.Component<RouteComponentProps, State> {
 		connection: null,
 		nickname: null,
 		users: [],
+		userMap: {},
 		messages: [],
 		ownCards: [],
 		activeCards: [],
+		turnUserId: null,
 		theme: 'theme-light'
 	};
 
@@ -54,7 +58,12 @@ class App extends React.Component<RouteComponentProps, State> {
 					this.setState({ownCards: [...this.state.ownCards, msg.card]});
 					break;
 				case 'ROOM_STATE':
-					this.setState({users: msg.users, activeCards: msg.enabledRules});
+					this.setState({
+						users: msg.users,
+						userMap: msg.users.reduce((m, u) => ({...m, [u.id]: u}), {}),
+						activeCards: msg.enabledRules,
+						turnUserId: msg.turnUserId
+					});
 				default:
 					break;
 			}
@@ -141,6 +150,7 @@ class App extends React.Component<RouteComponentProps, State> {
 								nickname={nickname}
 								roomId={roomId}
 								users={this.state.users}
+								turnUser={this.state.userMap[this.state.turnUserId || ''] || { nickname: '' }}
 								messages={messages}
 								activeCards={activeCards}
 								ownCards={ownCards}
