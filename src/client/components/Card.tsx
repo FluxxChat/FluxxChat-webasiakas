@@ -32,10 +32,10 @@ export class ActiveCard extends React.Component<ActiveCardProps> {
 							playerName = user.nickname;
 						}
 					});
-					parameter += '\nThis card effects ' + playerName;
+					parameter += playerName;
 					break;
 				case 'number':
-					parameter += '\nSelected value is ' + this.props.card.parameters[key];
+					parameter += this.props.card.parameters[key];
 					break;
 				default:
 					parameter += '';
@@ -46,10 +46,10 @@ export class ActiveCard extends React.Component<ActiveCardProps> {
 			<div className="card_container">
 				<div className="card">
 					<div className="card_name">
-						{this.props.card.name}
+						{this.props.card.name} ({parameter})
 					</div>
 					<div className="card_description">
-						{this.props.card.description}{parameter}
+						{this.props.card.description}
 					</div>
 				</div>
 			</div>

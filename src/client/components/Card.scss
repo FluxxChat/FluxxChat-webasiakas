@@ -2,7 +2,8 @@
 
 .card_container {
     width: calc(33% - 20px);
-    height: calc(50% - 20px);
+	height: calc(50% - 20px);
+	overflow-wrap: normal;
     margin-left: 5px;
     margin-top: 5px;
     margin-right: 1px;
