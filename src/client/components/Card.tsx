@@ -23,9 +23,16 @@ interface OwnCardState {
 export class ActiveCard extends React.Component<ActiveCardProps> {
 	public render() {
 		let parameter = '';
+		let parameterAmount = 0;
 		Object.keys(this.props.card.parameterTypes).forEach(key => {
 			switch (this.props.card.parameterTypes[key]) {
 				case 'player':
+					if (parameterAmount === 0) {
+						parameter += '(';
+					} else if (parameterAmount > 0) {
+						parameter += ', ';
+					}
+					parameterAmount++;
 					let playerName = '';
 					this.props.users.forEach(user => {
 						if (this.props.card.parameters[key] === user.id) {
@@ -35,18 +42,33 @@ export class ActiveCard extends React.Component<ActiveCardProps> {
 					parameter += playerName;
 					break;
 				case 'number':
+					if (parameterAmount === 0) {
+						parameter += '(';
+					} else if (parameterAmount > 0) {
+						parameter += ', ';
+					}
+					parameterAmount++;
 					parameter += this.props.card.parameters[key];
 					break;
 				default:
+					if (parameterAmount === 0) {
+						parameter += '(';
+					} else if (parameterAmount > 0) {
+						parameter += ', ';
+					}
+					parameterAmount++;
 					parameter += '';
 					break;
 			}
 		});
+		if (parameterAmount > 0) {
+			parameter += ')';
+		}
 		return (
 			<div className="card_container">
 				<div className="card">
 					<div className="card_name">
-						{this.props.card.name} ({parameter})
+						{this.props.card.name} {parameter}
 					</div>
 					<div className="card_description">
 						{this.props.card.description}
