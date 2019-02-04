@@ -9,7 +9,8 @@
         "card.play": "Play",
         "room.activeCards": "Rules in effect",
         "room.hand": "Hand",
-        "room.send": "Send"
+        "room.send": "Send",
+        "room.turnUser": "It's {turnUser}'s turn!"
     },
     "fi": {
         "login.username": "Nimimerkki",
@@ -21,6 +22,7 @@
         "card.play": "Pelaa kortti",
         "room.activeCards": "Voimassa olevat säännöt",
         "room.hand": "Käsi",
-        "room.send": "Lähetä"
+        "room.send": "Lähetä",
+        "room.turnUser": "{turnUser} pelaa seuraavaksi!"
     }
 }

@@ -10,6 +10,7 @@ interface Props {
 	nickname: string;
 	roomId: string;
 	users: User[];
+	turnUser: User;
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
@@ -81,7 +82,7 @@ class ChatRoom extends React.Component<Props, State> {
 				<div>
 					<div className="turn_div">
 						<div className="turn_text">
-							It is someone's turn!
+							<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname}}/>
 						</div>
 					</div>
 					<div className="card_div_active">
