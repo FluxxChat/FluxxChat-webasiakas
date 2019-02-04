@@ -130,23 +130,23 @@ class App extends React.Component<RouteComponentProps, State> {
 					<div className="body_pad">
             <NavigationBar/>
             {(!nickname || !roomId) && (
-              <Menu
-                type={roomId ? 'join' : 'create'}
-                onJoinRoom={this.requestJoinRoom}
-                onCreateRoom={this.requestCreateRoom}
-              />
+				<Menu
+					type={roomId ? 'join' : 'create'}
+					onJoinRoom={this.requestJoinRoom}
+					onCreateRoom={this.requestCreateRoom}
+				/>
             )}
             {nickname && roomId && (
-              <ChatRoom
-                nickname={nickname}
-                roomId={roomId}
-                users={this.state.users}
-                messages={messages}
-                activeCards={activeCards}
-                ownCards={ownCards}
-                onSendMessage={this.handleSendTextMessage}
-                onSendNewRule={this.handleSendNewRule}
-              />
+				<ChatRoom
+					nickname={nickname}
+					roomId={roomId}
+					users={this.state.users}
+					messages={messages}
+					activeCards={activeCards}
+					ownCards={ownCards}
+					onSendMessage={this.handleSendTextMessage}
+					onSendNewRule={this.handleSendNewRule}
+				/>
             )}
 					</div>
 				</div>

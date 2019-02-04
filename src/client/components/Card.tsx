@@ -6,6 +6,7 @@ import './Card.scss';
 
 interface ActiveCardProps {
 	card: Card;
+	users: User[];
 }
 
 interface OwnCardProps {
@@ -16,7 +17,6 @@ interface OwnCardProps {
 }
 
 interface OwnCardState {
-  users: [];
 	ruleParameters: RuleParameters;
 }
 
@@ -26,7 +26,13 @@ export class ActiveCard extends React.Component<ActiveCardProps> {
 		Object.keys(this.props.card.parameterTypes).forEach(key => {
 			switch (this.props.card.parameterTypes[key]) {
 				case 'player':
-					parameter += '\nThis card effects ' + this.props.card.parameters[key];
+					let playerName = '';
+					this.props.users.forEach(user => {
+						if (this.props.card.parameters[key] === user.id) {
+							playerName = user.nickname;
+						}
+					});
+					parameter += '\nThis card effects ' + playerName;
 					break;
 				case 'number':
 					parameter += '\nSelected value is ' + this.props.card.parameters[key];
