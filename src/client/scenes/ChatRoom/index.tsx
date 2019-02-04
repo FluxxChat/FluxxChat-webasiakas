@@ -1,5 +1,5 @@
 import React from 'react';
-import {Message, Card, RuleParameters} from 'fluxxchat-protokolla';
+import {Message, Card, RuleParameters, User} from 'fluxxchat-protokolla';
 import {animateScroll} from 'react-scroll';
 import {FormattedMessage} from 'react-intl';
 import {ActiveCard, OwnCard} from '../../components/Card';
@@ -93,6 +93,7 @@ class ChatRoom extends React.Component<Props, State> {
 								<ActiveCard
 									key={index}
 									card={card}
+									users={this.props.users}
 								/>
 							);
 						})}
