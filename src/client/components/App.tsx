@@ -1,19 +1,22 @@
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters} from 'fluxxchat-protokolla';
 import {get} from 'lodash';
 import Menu from './Menu';
 import ChatRoom from '../scenes/ChatRoom';
 import NavigationBar from './NavBar';
-import '../styles.css';
+import './App.scss';
 
 interface State {
 	connection: WebSocket | null;
 	nickname: string | null;
 	users: User[];
+	userMap: { [key: string]: User };
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
+	turnUserId: string | null;
+	theme: string;
 }
 
 class App extends React.Component<RouteComponentProps, State> {
@@ -21,9 +24,12 @@ class App extends React.Component<RouteComponentProps, State> {
 		connection: null,
 		nickname: null,
 		users: [],
+		userMap: {},
 		messages: [],
 		ownCards: [],
-		activeCards: []
+		activeCards: [],
+		turnUserId: null,
+		theme: 'theme-light'
 	};
 
 	public componentDidMount() {
@@ -52,7 +58,12 @@ class App extends React.Component<RouteComponentProps, State> {
 					this.setState({ownCards: [...this.state.ownCards, msg.card]});
 					break;
 				case 'ROOM_STATE':
-					this.setState({users: msg.users, activeCards: msg.enabledRules});
+					this.setState({
+						users: msg.users,
+						userMap: msg.users.reduce((m, u) => ({...m, [u.id]: u}), {}),
+						activeCards: msg.enabledRules,
+						turnUserId: msg.turnUserId
+					});
 				default:
 					break;
 			}
@@ -77,12 +88,13 @@ class App extends React.Component<RouteComponentProps, State> {
 		}
 	}
 
-	public handleSendNewRule = (card: Card) => {
+	public handleSendNewRule = (card: Card, ruleParameters: RuleParameters) => {
 		const {connection} = this.state;
 		if (connection) {
 			const protocolMessage: NewRuleMessage = {
 				type: 'NEW_RULE',
-				card
+				ruleName: card.ruleName,
+				ruleParameters
 			};
 			connection.send(JSON.stringify(protocolMessage));
 		}
@@ -122,27 +134,32 @@ class App extends React.Component<RouteComponentProps, State> {
 		const roomId = get(match, 'params.id');
 
 		return (
-			<div>
-				<NavigationBar/>
-				{(!nickname || !roomId) && (
-					<Menu
-						type={roomId ? 'join' : 'create'}
-						onJoinRoom={this.requestJoinRoom}
-						onCreateRoom={this.requestCreateRoom}
-					/>
-				)}
-				{nickname && roomId && (
-					<ChatRoom
-						nickname={nickname}
-						roomId={roomId}
-						users={this.state.users}
-						messages={messages}
-						activeCards={activeCards}
-						ownCards={ownCards}
-						onSendMessage={this.handleSendTextMessage}
-						onSendNewRule={this.handleSendNewRule}
-					/>
-				)}
+			<div className={this.state.theme}>
+				<div className="default_body">
+					<div className="body_pad">
+						<NavigationBar/>
+						{(!nickname || !roomId) && (
+							<Menu
+								type={roomId ? 'join' : 'create'}
+								onJoinRoom={this.requestJoinRoom}
+								onCreateRoom={this.requestCreateRoom}
+							/>
+						)}
+						{nickname && roomId && (
+							<ChatRoom
+								nickname={nickname}
+								roomId={roomId}
+								users={this.state.users}
+								turnUser={this.state.userMap[this.state.turnUserId || ''] || { nickname: '' }}
+								messages={messages}
+								activeCards={activeCards}
+								ownCards={ownCards}
+								onSendMessage={this.handleSendTextMessage}
+								onSendNewRule={this.handleSendNewRule}
+							/>
+						)}
+					</div>
+				</div>
 			</div>
 		);
 	}

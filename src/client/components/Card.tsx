@@ -1,45 +1,77 @@
 import React from 'react';
-import '../styles.css';
-import {Card, User} from 'fluxxchat-protokolla';
+import {Card, User, RuleParameters} from 'fluxxchat-protokolla';
 import {FormattedMessage} from 'react-intl';
 import {NumberParameter, PlayerParameter} from './CardParameters';
+import './Card.scss';
 
 interface ActiveCardProps {
 	card: Card;
+	users: User[];
 }
 
 interface OwnCardProps {
 	cardId: string;
 	card: Card;
 	users: User[];
-	action: (card: Card) => void;
+	action: (card: Card, ruleParameters: RuleParameters) => void;
+}
+
+interface OwnCardState {
+	ruleParameters: RuleParameters;
 }
 
 export class ActiveCard extends React.Component<ActiveCardProps> {
-
 	public render() {
-		let parameter;
+		let parameter = '';
+		let parameterAmount = 0;
 		Object.keys(this.props.card.parameterTypes).forEach(key => {
 			switch (this.props.card.parameterTypes[key]) {
 				case 'player':
-					parameter += '\nThis card effects ' + this.props.card.parameters[key];
+					if (parameterAmount === 0) {
+						parameter += '(';
+					} else if (parameterAmount > 0) {
+						parameter += ', ';
+					}
+					parameterAmount++;
+					let playerName = '';
+					this.props.users.forEach(user => {
+						if (this.props.card.parameters[key] === user.id) {
+							playerName = user.nickname;
+						}
+					});
+					parameter += playerName;
 					break;
 				case 'number':
-					parameter += '\nSelected value is ' + this.props.card.parameters[key];
+					if (parameterAmount === 0) {
+						parameter += '(';
+					} else if (parameterAmount > 0) {
+						parameter += ', ';
+					}
+					parameterAmount++;
+					parameter += this.props.card.parameters[key];
 					break;
 				default:
+					if (parameterAmount === 0) {
+						parameter += '(';
+					} else if (parameterAmount > 0) {
+						parameter += ', ';
+					}
+					parameterAmount++;
 					parameter += '';
 					break;
 			}
 		});
+		if (parameterAmount > 0) {
+			parameter += ')';
+		}
 		return (
 			<div className="card_container">
 				<div className="card">
 					<div className="card_name">
-						{this.props.card.name}
+						{this.props.card.name} {parameter}
 					</div>
 					<div className="card_description">
-						{this.props.card.description + parameter}
+						{this.props.card.description}
 					</div>
 				</div>
 			</div>
@@ -47,62 +79,24 @@ export class ActiveCard extends React.Component<ActiveCardProps> {
 	}
 }
 
-export class OwnCard extends React.Component<OwnCardProps> {
+export class OwnCard extends React.Component<OwnCardProps, OwnCardState> {
+	public state: OwnCardState = {ruleParameters: {}};
 
 	public handleClick = () => {
-		let validateNumberInput = true;
-		const numberParameters = document.getElementsByName('number_parameter');
-		if (numberParameters.length > 0) {
-			numberParameters.forEach(element => {
-				if (element.getAttribute('id') === this.props.cardId) {
-					validateNumberInput = false;
-					if ((element.getAttribute('value') + '').length > 0 && parseInt(element.getAttribute('value') + '', 10) > 0) {
-						validateNumberInput = true;
-						this.props.card.parameters = {length: parseInt(element.getAttribute('value') + '', 10)};
-					}
-				}
-			});
-		}
-		let validatePlayerInput = true;
-		const playerParameters = document.getElementsByName('player_parameter');
-		if (playerParameters.length > 0) {
-			playerParameters.forEach(element => {
-				if (element.getAttribute('id') === this.props.cardId) {
-					validatePlayerInput = false;
-					if (element.getAttribute('placeholder') !== '') {
-						validatePlayerInput = true;
-						this.props.card.parameters = {target: element.getAttribute('placeholder')};
-					}
-				}
-			});
-		}
-		if (validateNumberInput === true && validatePlayerInput === true) {
-			this.props.action(this.props.card);
-		}
+		this.props.action(this.props.card, this.state.ruleParameters);
+	}
+
+	public getParameterChangeHandler = (parameter: string) => (evt: React.ChangeEvent<any>) => {
+		const value = evt.target.value;
+		this.setState(state => ({
+			ruleParameters: {
+				...state.ruleParameters,
+				[parameter]: value
+			}
+		}));
 	}
 
 	public render() {
-		const parameters: JSX.Element[] = [];
-		Object.keys(this.props.card.parameterTypes).forEach(key => {
-			switch (this.props.card.parameterTypes[key]) {
-				case 'player':
-					parameters.push(
-						<div key="1" className="add_parameter_div">
-							<FormattedMessage id="card.selectTarget"/>:
-							<PlayerParameter cardId={this.props.cardId} users={this.props.users}/>
-						</div>
-					);
-					break;
-				case 'number':
-					parameters.push(
-						<div key="2" className="add_parameter_div">
-							<FormattedMessage id="card.giveNumber"/>:
-							<NumberParameter cardId={this.props.cardId}/>
-						</div>
-					);
-					break;
-			}
-		});
 		return (
 			<div className="card_container">
 				<div className="card">
@@ -114,8 +108,36 @@ export class OwnCard extends React.Component<OwnCardProps> {
 					</div>
 				</div>
 				<div className="play_buttons_container">
-					{parameters}
-					<button type="button" className="play_button" onClick={this.handleClick}><FormattedMessage id="card.play"/></button>
+					{Object.keys(this.props.card.parameterTypes).map(key => {
+						switch (this.props.card.parameterTypes[key]) {
+							case 'player':
+								return (
+									<div key={key} className="add_parameter_div">
+										<FormattedMessage id="card.selectTarget"/>:
+										<PlayerParameter
+											users={this.props.users}
+											onChange={this.getParameterChangeHandler(key)}
+											value={this.state.ruleParameters[key]}
+										/>
+									</div>
+								);
+							case 'number':
+								return (
+									<div key={key} className="add_parameter_div">
+										<FormattedMessage id="card.giveNumber"/>:
+										<NumberParameter
+											onChange={this.getParameterChangeHandler(key)}
+											value={this.state.ruleParameters[key]}
+										/>
+									</div>
+								);
+							default:
+								return null;
+						}
+					})}
+					<button type="button" className="play_button" onClick={this.handleClick}>
+						<FormattedMessage id="card.play"/>
+					</button>
 				</div>
 			</div>
 		);

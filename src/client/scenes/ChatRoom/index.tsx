@@ -1,20 +1,21 @@
 import React from 'react';
-import {Message, Card, User} from 'fluxxchat-protokolla';
-import '../../styles.css';
+import {Message, Card, RuleParameters, User} from 'fluxxchat-protokolla';
 import {animateScroll} from 'react-scroll';
+import {FormattedMessage} from 'react-intl';
 import {ActiveCard, OwnCard} from '../../components/Card';
 import MessageContainer from '../../components/MessageContainer';
-import { FormattedMessage } from 'react-intl';
+import './ChatRoom.scss';
 
 interface Props {
 	nickname: string;
 	roomId: string;
 	users: User[];
+	turnUser: User;
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
 	onSendMessage: (message: string) => void;
-	onSendNewRule: (card: Card) => void;
+	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
 }
 
 interface State {
@@ -49,10 +50,6 @@ class ChatRoom extends React.Component<Props, State> {
 		}
 	}
 
-	public playCard = (card: Card) => {
-		this.props.onSendNewRule(card);
-	}
-
 	public render() {
 		const {messages} = this.props;
 		const {messageDraft} = this.state;
@@ -75,7 +72,9 @@ class ChatRoom extends React.Component<Props, State> {
 						<form onKeyDown={this.handleKeyDown}>
 						<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
 							<div className="send_div">
-								<button type="button" className="send_button" onClick={this.handleSendMessage}><FormattedMessage id="room.send"/></button>
+								<button type="button" className="send_button" onClick={this.handleSendMessage}>
+									<FormattedMessage id="room.send"/>
+								</button>
 							</div>
 						</form>
 					</div>
@@ -83,7 +82,7 @@ class ChatRoom extends React.Component<Props, State> {
 				<div>
 					<div className="turn_div">
 						<div className="turn_text">
-							It is someone's turn!
+							<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname}}/>
 						</div>
 					</div>
 					<div className="card_div_active">
@@ -95,6 +94,7 @@ class ChatRoom extends React.Component<Props, State> {
 								<ActiveCard
 									key={index}
 									card={card}
+									users={this.props.users}
 								/>
 							);
 						})}
@@ -110,7 +110,7 @@ class ChatRoom extends React.Component<Props, State> {
 									cardId={index.toString()}
 									card={card}
 									users={this.props.users}
-									action={this.playCard}
+									action={this.props.onSendNewRule}
 								/>
 							);
 						})}
