@@ -1,7 +1,8 @@
 import React from 'react';
-import {Message} from 'fluxxchat-protokolla';
+import {Message, TextMessage} from 'fluxxchat-protokolla';
 import './MessageContainer.scss';
 import { FormattedMessage } from 'react-intl';
+import Remarkable from 'remarkable';
 
 interface Props {
 	message: Message;
@@ -19,12 +20,13 @@ class MessageContainer extends React.Component<Props> {
 					</div>
 				);
 			case 'TEXT':
-				const direction = msg.senderNickname === this.props.clientName ? '>' : '<';
-				return (
-					<div className="message">
-						{msg.senderNickname} {direction} {msg.textContent}
-					</div>
-				);
+				const direction = (msg as TextMessage).senderNickname === this.props.clientName ? '>' : '<';
+				if (msg.markdown) {
+					const md = new Remarkable();
+					return <div className="message">{msg.senderNickname} {direction}<span className="message_content" dangerouslySetInnerHTML={{__html: md.render(msg.textContent)}}/></div>;
+				} else {
+					return <div className="message">{msg.senderNickname} {direction} {msg.textContent}</div>;
+				}
 			default:
 				return null;
 		}
