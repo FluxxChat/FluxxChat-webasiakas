@@ -1,8 +1,8 @@
 import React from 'react';
 import {Card, User, RuleParameters} from 'fluxxchat-protokolla';
 import {FormattedMessage} from 'react-intl';
-import {NumberParameter, PlayerParameter} from './CardParameters';
-import './Card.scss';
+import {NumberParameter, PlayerParameter} from '../CardParameters';
+import styles from './Card.scss';
 
 interface ActiveCardProps {
 	card: Card;
@@ -65,12 +65,12 @@ export class ActiveCard extends React.Component<ActiveCardProps> {
 			parameter += ')';
 		}
 		return (
-			<div className="card_container">
-				<div className="card">
-					<div className="card_name">
+			<div className={styles.cardContainer}>
+				<div>
+					<div className={styles.cardName}>
 						{this.props.card.name} {parameter}
 					</div>
-					<div className="card_description">
+					<div className={styles.cardDescription}>
 						{this.props.card.description}
 					</div>
 				</div>
@@ -98,21 +98,21 @@ export class OwnCard extends React.Component<OwnCardProps, OwnCardState> {
 
 	public render() {
 		return (
-			<div className="card_container">
-				<div className="card">
-					<div className="card_name">
+			<div className={styles.cardContainer}>
+				<div>
+					<div className={styles.cardName}>
 						{this.props.card.name}
 					</div>
-					<div className="card_description">
+					<div className={styles.cardDescription}>
 						{this.props.card.description}
 					</div>
 				</div>
-				<div className="play_buttons_container">
+				<div className={styles.playButtonsContainer}>
 					{Object.keys(this.props.card.parameterTypes).map(key => {
 						switch (this.props.card.parameterTypes[key]) {
 							case 'player':
 								return (
-									<div key={key} className="add_parameter_div">
+									<div key={key} className={styles.addParameterDiv}>
 										<FormattedMessage id="card.selectTarget"/>:
 										<PlayerParameter
 											users={this.props.users}
@@ -123,7 +123,7 @@ export class OwnCard extends React.Component<OwnCardProps, OwnCardState> {
 								);
 							case 'number':
 								return (
-									<div key={key} className="add_parameter_div">
+									<div key={key} className={styles.addParameterDiv}>
 										<FormattedMessage id="card.giveNumber"/>:
 										<NumberParameter
 											onChange={this.getParameterChangeHandler(key)}
@@ -135,7 +135,7 @@ export class OwnCard extends React.Component<OwnCardProps, OwnCardState> {
 								return null;
 						}
 					})}
-					<button type="button" className="play_button" onClick={this.handleClick}>
+					<button type="button" className={styles.playButton} onClick={this.handleClick}>
 						<FormattedMessage id="card.play"/>
 					</button>
 				</div>

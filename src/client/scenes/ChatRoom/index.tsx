@@ -4,7 +4,7 @@ import {animateScroll} from 'react-scroll';
 import {FormattedMessage} from 'react-intl';
 import {ActiveCard, OwnCard} from '../../components/Card';
 import MessageContainer from '../../components/MessageContainer';
-import './ChatRoom.scss';
+import styles from './ChatRoom.scss';
 
 interface Props {
 	nickname: string;
@@ -55,9 +55,9 @@ class ChatRoom extends React.Component<Props, State> {
 		const {messageDraft} = this.state;
 
 		return (
-			<div className="chat_app">
-				<div className="chat_area">
-					<div className="message_box" id="message-box">
+			<div className={styles.chatApp}>
+				<div className={styles.chatArea}>
+					<div className={styles.messageBox} id="message-box">
 						{messages.map((msg, index) => {
 							return (
 								<MessageContainer
@@ -70,9 +70,9 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 					<div>
 						<form onKeyDown={this.handleKeyDown}>
-						<input className="message_field" type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
-							<div className="send_div">
-								<button type="button" className="send_button" onClick={this.handleSendMessage}>
+						<input className={styles.messageField} type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+							<div className={styles.sendDiv}>
+								<button type="button" className={styles.sendButton} onClick={this.handleSendMessage}>
 									<FormattedMessage id="room.send"/>
 								</button>
 							</div>
@@ -80,13 +80,13 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 				</div >
 				<div>
-					<div className="turn_div">
-						<div className="turn_text">
+					<div className={styles.turnDiv}>
+						<div className={styles.turnText}>
 							<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname}}/>
 						</div>
 					</div>
-					<div className="card_div_active">
-						<div className="caption">
+					<div className={styles.cardDivActive}>
+						<div className={styles.caption}>
 							<FormattedMessage id="room.activeCards"/>
 						</div>
 						{this.props.activeCards.map((card, index) => {
@@ -99,8 +99,8 @@ class ChatRoom extends React.Component<Props, State> {
 							);
 						})}
 					</div>
-					<div className="card_div_own">
-						<div className="caption">
+					<div className={styles.cardDivOwn}>
+						<div className={styles.caption}>
 							<FormattedMessage id="room.hand"/>
 						</div>
 						{this.props.ownCards.map((card, index) => {
