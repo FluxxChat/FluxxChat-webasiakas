@@ -49,6 +49,14 @@ class ChatRoom extends React.Component<Props, State> {
 		}
 	}
 
+	public componentDidMount() {
+		this.scrollToBottom();
+	}
+
+	public componentDidUpdate() {
+		this.scrollToBottom();
+	}
+
 	public render() {
 		const {messages} = this.props;
 		const {messageDraft} = this.state;
