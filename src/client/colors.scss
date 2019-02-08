@@ -1,11 +1,17 @@
 $themes: (
-    light: (
+	blue: (
+        body_color: #ebebeb,
+        primary_color: darkblue,
+        border_color: #282828,
+		contrast_color: #ebebeb,
+		font_color: black,
+	),
+	light: (
         body_color: white,
         primary_color: #3A3A3A,
         border_color: #3A3A3A,
 		contrast_color: white,
 		font_color: black,
-		change_color: darkred,
 	),
 	red: (
         body_color: #ebebeb,
@@ -13,8 +19,7 @@ $themes: (
         border_color: #282828,
 		contrast_color: #ebebeb,
 		font_color: black,
-		change_color: #3A3A3A,
-	)
+	),
 );
 
 @mixin themify($themes: $themes) {

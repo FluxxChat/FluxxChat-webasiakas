@@ -23,19 +23,22 @@
 	height: 30px;
 	width: 30px;
 	border-radius: 50%;
-	float: right;
 	margin-right: 5px;
-    @include themify($themes) {
-        background: themed('change_color');
-    }
+	background: white;
 }
 
 .theme_button {
 	width: 30px;
 	height: 30px;
-	color: transparent;
 	background-color: transparent;
 	border-color: transparent;
 	cursor: default;
-	outline: 0;
+	font-size: 20px;
+	margin-top: -1px;
+	margin-left: -1px;
 }
+
+.float_right {
+	float: right;
+}
+

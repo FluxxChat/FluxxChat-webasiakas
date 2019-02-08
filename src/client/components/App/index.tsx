@@ -143,7 +143,7 @@ class App extends React.Component<RouteComponentProps, State> {
 					<div className={styles.bodyPad}>
 						<NavigationBar
 							currentTheme={this.state.theme}
-							action={this.changeTheme}
+							onChangeTheme={this.changeTheme}
 						/>
 						{(!nickname || !roomId) && (
 							<Menu

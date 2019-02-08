@@ -6,3 +6,5 @@ export const theme_button_div: string;
 export const themeButtonDiv: string;
 export const theme_button: string;
 export const themeButton: string;
+export const float_right: string;
+export const floatRight: string;
