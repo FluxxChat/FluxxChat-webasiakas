@@ -47,7 +47,7 @@ class App extends React.Component<RouteComponentProps, State> {
 			const msg: Message = JSON.parse(evt.data);
 			switch (msg.type) {
 				case 'TEXT':
-				case 'NEW_RULE':
+				case 'SYSTEM':
 					this.setState({messages: [...this.state.messages, msg]});
 					break;
 				case 'ROOM_CREATED':
