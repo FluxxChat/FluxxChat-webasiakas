@@ -127,7 +127,7 @@ class App extends React.Component<RouteComponentProps, State> {
 		});
 	}
 
-	public scrollToBottom() {
+	public scrollToBottom = () => {
 		animateScroll.scrollToBottom({
 			containerId: 'message-box'
 		});
