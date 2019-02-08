@@ -20,7 +20,7 @@ class NavigationBar extends React.Component<Props, State> {
 		return (
 			<nav className={styles.navbarBack}>
 				<a className={styles.navbarFront}>FluxxChat</a>
-				{this.state.themes.filter(t => ('theme-'+t) !== this.props.currentTheme).map((theme, index) => {
+				{this.state.themes.filter(t => ('theme-' + t) !== this.props.currentTheme).map((theme, index) => {
 					return (
 						<ThemeButton
 							key={index}
@@ -43,14 +43,16 @@ interface ThemeButtonProps {
 export class ThemeButton extends React.Component<ThemeButtonProps> {
 
 	public changeTheme = () => {
-		this.props.action('theme-'+this.props.themeName);
+		this.props.action('theme-' + this.props.themeName);
 	}
 
 	public render() {
 		return (
 			<div className={styles.floatRight}>
-				<div className={styles.themeButtonDiv}>
-					<button className={styles.themeButton} onClick={this.changeTheme}>{this.props.themeName.charAt(0).toUpperCase()}</button>
+				<div className={'theme-' + this.props.themeName}>
+					<div className={styles.themeButtonDiv}>
+						<button className={styles.themeButton} onClick={this.changeTheme}>{this.props.themeName.charAt(0).toUpperCase()}</button>
+					</div>
 				</div>
 			</div>
 		);

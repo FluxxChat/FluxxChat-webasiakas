@@ -64,6 +64,10 @@ class App extends React.Component<RouteComponentProps, State> {
 						activeCards: msg.enabledRules,
 						turnUserId: msg.turnUserId
 					});
+					break;
+				case 'ERROR':
+					alert(msg.message);
+					break;
 				default:
 					break;
 			}

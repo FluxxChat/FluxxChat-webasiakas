@@ -1,5 +1,16 @@
 @import "../../colors.scss";
 
+.theme_button_div {
+	display:block;
+	height: 30px;
+	width: 30px;
+	border-radius: 50%;
+	margin-right: 5px;
+    @include themify($themes) {
+        background: themed('primary_color');
+    }
+}
+
 .navbar_back {
     height: 31px;
     padding: 7px;
@@ -16,15 +27,6 @@
     @include themify($themes) {
         color: themed('contrast_color');
     }
-}
-
-.theme_button_div {
-	display:block;
-	height: 30px;
-	width: 30px;
-	border-radius: 50%;
-	margin-right: 5px;
-	background: white;
 }
 
 .theme_button {
