@@ -13,7 +13,7 @@ interface State {
 class NavigationBar extends React.Component<Props, State> {
 
 	public state: State = {
-		themes: ['theme-red', 'theme-light'],
+		themes: ['theme-red', 'theme-light']
 	};
 
 	public changeTheme = (theme: string) => {
@@ -25,17 +25,17 @@ class NavigationBar extends React.Component<Props, State> {
 			<nav className={styles.navbarBack}>
 				<a className={styles.navbarFront}>FluxxChat</a>
 				{this.state.themes.map((theme, index) => {
-					if(theme !== this.props.currentTheme) {
+					if (theme !== this.props.currentTheme) {
 						return (
 							<ThemeButton
 								key={index}
 								action={this.changeTheme}
 								themeName={theme}
 							/>
-						)
-					};
+						);
+					}
 				})}
-				
+
 			</nav>
 		);
 	}
