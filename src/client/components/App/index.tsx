@@ -70,6 +70,10 @@ class App extends React.Component<RouteComponentProps, State> {
 		});
 	}
 
+	public changeTheme = (newtheme: string) => {
+		this.setState({theme: newtheme});
+	}
+
 	public componentWillUnmount() {
 		const connection = this.state.connection;
 		if (connection) {
@@ -137,7 +141,10 @@ class App extends React.Component<RouteComponentProps, State> {
 			<div className={this.state.theme}>
 				<div className={styles.defaultBody}>
 					<div className={styles.bodyPad}>
-						<NavigationBar/>
+						<NavigationBar
+							currentTheme={this.state.theme}
+							action={this.changeTheme}
+						/>
 						{(!nickname || !roomId) && (
 							<Menu
 								type={roomId ? 'join' : 'create'}

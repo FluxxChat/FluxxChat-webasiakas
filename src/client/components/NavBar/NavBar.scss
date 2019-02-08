@@ -17,3 +17,25 @@
         color: themed('contrast_color');
     }
 }
+
+.theme_button_div {
+	display:block;
+	height: 30px;
+	width: 30px;
+	border-radius: 50%;
+	float: right;
+	margin-right: 5px;
+    @include themify($themes) {
+        background: themed('change_color');
+    }
+}
+
+.theme_button {
+	width: 30px;
+	height: 30px;
+	color: transparent;
+	background-color: transparent;
+	border-color: transparent;
+	cursor: default;
+	outline: 0;
+}

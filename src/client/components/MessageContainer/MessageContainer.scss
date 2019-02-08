@@ -1,4 +1,9 @@
+@import '../../colors.scss';
+
 .message {
     margin-left: 5px;
     margin-top: 2px;
+    @include themify($themes) {
+        color: themed('font_color');
+    }
 }
