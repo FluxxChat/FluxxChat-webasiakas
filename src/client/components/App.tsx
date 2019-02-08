@@ -3,6 +3,7 @@ import {withRouter, RouteComponentProps} from 'react-router-dom';
 import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters} from 'fluxxchat-protokolla';
 import {get} from 'lodash';
 import Menu from './Menu';
+import {animateScroll} from 'react-scroll';
 import ChatRoom from '../scenes/ChatRoom';
 import NavigationBar from './NavBar';
 import './App.scss';
@@ -49,6 +50,7 @@ class App extends React.Component<RouteComponentProps, State> {
 				case 'TEXT':
 				case 'NEW_RULE':
 					this.setState({messages: [...this.state.messages, msg]});
+					this.scrollToBottom();
 					break;
 				case 'ROOM_CREATED':
 					this.props.history.push(`/room/${msg.roomId}`);
@@ -122,6 +124,12 @@ class App extends React.Component<RouteComponentProps, State> {
 				const protocolMessage: CreateRoomMessage = {type: 'CREATE_ROOM'};
 				this.state.connection.send(JSON.stringify(protocolMessage));
 			}
+		});
+	}
+
+	public scrollToBottom() {
+		animateScroll.scrollToBottom({
+			containerId: 'message-box'
 		});
 	}
 
