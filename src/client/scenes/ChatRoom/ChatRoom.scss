@@ -1,5 +1,49 @@
 @import "../../colors.scss";
 
+.body_default {
+    background: gray;
+    color: gray;
+}
+
+.navbar_back {
+	background: black;
+    height: 31px;
+    padding: 7px;
+	margin-left: -0.55em;
+    margin-top: -0.55em;
+    margin-bottom: 3px;
+}
+
+.navbar_front {
+    color: white;
+    font-size: 25px;
+}
+
+.padded_right {
+    margin-right: 5px;
+}
+
+.padded_left {
+    margin-left: 15px;
+}
+
+.padded_top {
+    margin-top: 5px;
+}
+
+.message {
+    margin-left: 5px;
+}
+
+.message_content {
+    display: inline-block;
+}
+
+.message_content * {
+    margin-top: 0px;
+    margin-bottom: 0px
+}
+
 .message_field {
 	width: calc(100% - 110px);
 	max-height: 34px;

@@ -1,4 +1,4 @@
-@import "../colors.scss";
+@import "../../colors.scss";
 
 .navbar_back {
     height: 31px;
@@ -10,7 +10,7 @@
         background: themed('primary_color');
     }
 }
-    
+
 .navbar_front {
     font-size: 25px;
     @include themify($themes) {

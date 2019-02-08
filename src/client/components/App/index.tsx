@@ -2,10 +2,10 @@ import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
 import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters} from 'fluxxchat-protokolla';
 import {get} from 'lodash';
-import Menu from './Menu';
-import ChatRoom from '../scenes/ChatRoom';
-import NavigationBar from './NavBar';
-import './App.scss';
+import Menu from '../Menu';
+import ChatRoom from '../../scenes/ChatRoom';
+import NavigationBar from '../NavBar';
+import styles from './App.scss';
 
 interface State {
 	connection: WebSocket | null;
@@ -142,8 +142,8 @@ class App extends React.Component<RouteComponentProps, State> {
 
 		return (
 			<div className={this.state.theme}>
-				<div className="default_body">
-					<div className="body_pad">
+				<div className={styles.defaultBody}>
+					<div className={styles.bodyPad}>
 						<NavigationBar/>
 						{(!nickname || !roomId) && (
 							<Menu
