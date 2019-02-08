@@ -1,7 +1,6 @@
 import React from 'react';
 import { Message, TextMessage } from 'fluxxchat-protokolla';
 import styles from './MessageContainer.scss';
-import { FormattedMessage } from 'react-intl';
 import Remarkable from 'remarkable';
 
 interface Props {
@@ -13,10 +12,10 @@ class MessageContainer extends React.Component<Props> {
 	public render() {
 		const msg = this.props.message;
 		switch (msg.type) {
-			case 'NEW_RULE':
+			case 'SYSTEM':
 				return (
 					<div className={styles.message}>
-						<FormattedMessage id="message.newRule"/>!
+						<span className={styles.systemMessage}>{msg.message}</span>
 					</div>
 				);
 			case 'TEXT':
