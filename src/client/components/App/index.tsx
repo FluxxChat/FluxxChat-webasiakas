@@ -62,7 +62,8 @@ class App extends React.Component<RouteComponentProps, State> {
 						users: msg.users,
 						userMap: msg.users.reduce((m, u) => ({...m, [u.id]: u}), {}),
 						activeCards: msg.enabledRules,
-						turnUserId: msg.turnUserId
+						turnUserId: msg.turnUserId,
+						nickname: msg.nickname
 					});
 				default:
 					break;

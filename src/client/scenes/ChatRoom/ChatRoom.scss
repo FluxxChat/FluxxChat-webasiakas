@@ -44,8 +44,18 @@
     margin-bottom: 0px
 }
 
+.input_area {
+    display: flex;
+}
+
+.message_field_nickname {
+    flex-grow: 0;
+    align-self: center;
+}
+
 .message_field {
-	width: calc(100% - 110px);
+	flex-grow: 1;
+    align-self: center;
 	max-height: 34px;
     margin-top: 5px;
 	height: 34px;
@@ -54,6 +64,8 @@
 }
 
 .send_button {
+    flex-grow: 0;
+    align-self: center;
     width: 100px;
     height: 34px;
     box-sizing: border-box;
