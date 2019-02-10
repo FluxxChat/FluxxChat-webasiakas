@@ -2,11 +2,84 @@ import React from 'react';
 import {Message, Card, RuleParameters, User} from 'fluxxchat-protokolla';
 import {animateScroll} from 'react-scroll';
 import {FormattedMessage} from 'react-intl';
-import {ActiveCard, OwnCard} from '../../components/Card';
-import MessageContainer from '../../components/MessageContainer';
-import styles from './ChatRoom.scss';
+import {ActiveCard, OwnCard} from '../components/Card';
+import MessageContainer from '../components/MessageContainer';
+import {createStyles, Theme, WithStyles, withStyles} from '@material-ui/core';
 
-interface Props {
+const styles = (theme: Theme) => createStyles({
+	sendButton: {
+		width: '100px',
+		height: '34px',
+		boxSizing: 'border-box'
+	},
+	sendDiv: {
+		margin: '5px 8px 0 0',
+		float: 'right'
+	},
+	chatApp: {
+		width: '100%',
+		height: '100%',
+		minWidth: '600px'
+	},
+	chatArea: {
+		width: 'calc(60% - 5px)',
+		float: 'left'
+	},
+	turnDiv: {
+		width: 'calc(40% - 11px)',
+		height: '32px',
+		marginTop: '5px',
+		float: 'right',
+		marginRight: '14px',
+		border: `1px solid ${theme.fluxx.palette.border}`
+	},
+	turnText: {
+		margin: '6px 0 0 6px',
+		fontSize: '18px',
+		fontWeight: 'bold'
+	},
+	cardDivActive: {
+		width: 'calc(40% - 11px)',
+		height: 'calc(50vh - 55px)',
+		margin: '5px 14px 10px 0',
+		minHeight: '232px',
+		float: 'right',
+		overflowX: 'hidden',
+		border: `1px solid ${theme.fluxx.palette.border}`
+	},
+	cardDivOwn: {
+		width: 'calc(40% - 11px)',
+		height: 'calc(50vh - 55px)',
+		minHeight: '232px',
+		float: 'right',
+		overflowX: 'hidden',
+		marginRight: '14px',
+		border: `1px solid ${theme.fluxx.palette.border}`
+	},
+	messageBox: {
+		marginTop: '5px',
+		height: 'calc(100vh - 98px)',
+		width: 'calc(100% - 10px)',
+		minHeight: '450px',
+		overflowX: 'hidden',
+		border: `1px solid ${theme.fluxx.palette.border}`
+	},
+	messageField: {
+		width: 'calc(100% - 110px)',
+		maxHeight: '34px',
+		marginTop: '5px',
+		height: '34px',
+		lineHeight: '34px',
+		boxSizing: 'border-box'
+	},
+	caption: {
+		fontSize: '17px',
+		fontWeight: 'bold',
+		margin: '2px 0 2px 5px'
+	}
+});
+
+interface Props extends WithStyles<typeof styles> {
 	nickname: string;
 	roomId: string;
 	users: User[];
@@ -59,13 +132,13 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {messages} = this.props;
+		const {messages, classes} = this.props;
 		const {messageDraft} = this.state;
 
 		return (
-			<div className={styles.chatApp}>
-				<div className={styles.chatArea}>
-					<div className={styles.messageBox} id="message-box">
+			<div className={classes.chatApp}>
+				<div className={classes.chatArea}>
+					<div className={classes.messageBox} id="message-box">
 						{messages.map((msg, index) => {
 							return (
 								<MessageContainer
@@ -78,9 +151,9 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 					<div>
 						<form onKeyDown={this.handleKeyDown}>
-						<input className={styles.messageField} type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
-							<div className={styles.sendDiv}>
-								<button type="button" className={styles.sendButton} onClick={this.handleSendMessage}>
+						<input className={classes.messageField} type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+							<div className={classes.sendDiv}>
+								<button type="button" className={classes.sendButton} onClick={this.handleSendMessage}>
 									<FormattedMessage id="room.send"/>
 								</button>
 							</div>
@@ -88,13 +161,13 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 				</div >
 				<div>
-					<div className={styles.turnDiv}>
-						<div className={styles.turnText}>
+					<div className={classes.turnDiv}>
+						<div className={classes.turnText}>
 							<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname}}/>
 						</div>
 					</div>
-					<div className={styles.cardDivActive}>
-						<div className={styles.caption}>
+					<div className={classes.cardDivActive}>
+						<div className={classes.caption}>
 							<FormattedMessage id="room.activeCards"/>
 						</div>
 						{this.props.activeCards.map((card, index) => {
@@ -107,8 +180,8 @@ class ChatRoom extends React.Component<Props, State> {
 							);
 						})}
 					</div>
-					<div className={styles.cardDivOwn}>
-						<div className={styles.caption}>
+					<div className={classes.cardDivOwn}>
+						<div className={classes.caption}>
 							<FormattedMessage id="room.hand"/>
 						</div>
 						{this.props.ownCards.map((card, index) => {
@@ -129,4 +202,4 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 }
 
-export default ChatRoom;
+export default withStyles(styles)(ChatRoom);

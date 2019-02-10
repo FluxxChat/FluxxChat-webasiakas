@@ -1,11 +1,26 @@
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
 import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters} from 'fluxxchat-protokolla';
+import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
-import Menu from '../Menu';
-import ChatRoom from '../../scenes/ChatRoom';
-import NavigationBar from '../NavBar';
-import styles from './App.scss';
+import themes from '../themes';
+import ChatRoom from '../scenes/ChatRoom';
+import Menu from './Menu';
+import NavigationBar from './NavBar';
+
+const styles = (theme: Theme) => createStyles({
+	body: {
+		marginLeft: '-0.55em',
+		marginTop: '-0.55em',
+		width: 'calc(100vw + 0.55em)',
+		height: 'calc(100vh + 0.55em)',
+		background: theme.fluxx.palette.body
+	},
+	bodyPad: {
+		marginLeft: '0.55em',
+		marginTop: '0.55em'
+	}
+});
 
 interface State {
 	connection: WebSocket | null;
@@ -16,10 +31,10 @@ interface State {
 	ownCards: Card[];
 	activeCards: Card[];
 	turnUserId: string | null;
-	theme: string;
+	theme: keyof typeof themes;
 }
 
-class App extends React.Component<RouteComponentProps, State> {
+class App extends React.Component<RouteComponentProps & WithStyles<typeof styles>, State> {
 	public state: State = {
 		connection: null,
 		nickname: null,
@@ -29,7 +44,7 @@ class App extends React.Component<RouteComponentProps, State> {
 		ownCards: [],
 		activeCards: [],
 		turnUserId: null,
-		theme: 'theme-light'
+		theme: 'light'
 	};
 
 	public componentDidMount() {
@@ -127,42 +142,58 @@ class App extends React.Component<RouteComponentProps, State> {
 
 	public render() {
 		// Match contains information about the matched react-router path
-		const {match} = this.props;
+		const {match, classes} = this.props;
 		const {nickname, messages, activeCards: activeCards, ownCards: ownCards} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
 
 		return (
-			<div className={this.state.theme}>
-				<div className={styles.defaultBody}>
-					<div className={styles.bodyPad}>
-						<NavigationBar/>
-						{(!nickname || !roomId) && (
-							<Menu
-								type={roomId ? 'join' : 'create'}
-								onJoinRoom={this.requestJoinRoom}
-								onCreateRoom={this.requestCreateRoom}
-							/>
-						)}
-						{nickname && roomId && (
-							<ChatRoom
-								nickname={nickname}
-								roomId={roomId}
-								users={this.state.users}
-								turnUser={this.state.userMap[this.state.turnUserId || ''] || { nickname: '' }}
-								messages={messages}
-								activeCards={activeCards}
-								ownCards={ownCards}
-								onSendMessage={this.handleSendTextMessage}
-								onSendNewRule={this.handleSendNewRule}
-							/>
-						)}
-					</div>
+			<div className={classes.body}>
+				<div className={classes.bodyPad}>
+					<NavigationBar/>
+					{(!nickname || !roomId) && (
+						<Menu
+							type={roomId ? 'join' : 'create'}
+							onJoinRoom={this.requestJoinRoom}
+							onCreateRoom={this.requestCreateRoom}
+						/>
+					)}
+					{nickname && roomId && (
+						<ChatRoom
+							nickname={nickname}
+							roomId={roomId}
+							users={this.state.users}
+							turnUser={this.state.userMap[this.state.turnUserId || ''] || { nickname: '' }}
+							messages={messages}
+							activeCards={activeCards}
+							ownCards={ownCards}
+							onSendMessage={this.handleSendTextMessage}
+							onSendNewRule={this.handleSendNewRule}
+						/>
+					)}
 				</div>
 			</div>
 		);
 	}
 }
 
-export default withRouter(App);
+const AppWithProps = withRouter(withStyles(styles)(App));
+
+interface WrapperState {
+	theme: keyof typeof themes;
+}
+
+class AppWrapper extends React.Component<{}, WrapperState> {
+	public state: WrapperState = {theme: 'light'};
+
+	public render() {
+		return (
+			<MuiThemeProvider theme={themes[this.state.theme]}>
+				<AppWithProps/>
+			</MuiThemeProvider>
+		);
+	}
+}
+
+export default AppWrapper;
