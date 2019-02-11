@@ -46,7 +46,11 @@ const EMPTY_STATE: State = {
 	theme: 'light'
 };
 
-class App extends React.Component<RouteComponentProps & WithStyles<typeof styles>, State> {
+interface Props {
+	onChangeTheme: (theme: keyof typeof themes) => void;
+}
+
+class App extends React.Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
 	public state: State = {...EMPTY_STATE};
 
 	public componentDidMount() {
@@ -158,7 +162,9 @@ class App extends React.Component<RouteComponentProps & WithStyles<typeof styles
 		return (
 			<div className={classes.body}>
 				<div className={classes.bodyPad}>
-					<NavigationBar/>
+					<NavigationBar
+						onChangeTheme={this.props.onChangeTheme}
+					/>
 					{(!nickname || !roomId) && (
 						<Menu
 							type={roomId ? 'join' : 'create'}
@@ -194,10 +200,14 @@ interface WrapperState {
 class AppWrapper extends React.Component<{}, WrapperState> {
 	public state: WrapperState = {theme: 'light'};
 
+	public changeTheme = (theme: keyof typeof themes) => {
+		this.setState({theme});
+	}
+
 	public render() {
 		return (
 			<MuiThemeProvider theme={themes[this.state.theme]}>
-				<AppWithProps/>
+				<AppWithProps onChangeTheme={this.changeTheme}/>
 			</MuiThemeProvider>
 		);
 	}

@@ -9,7 +9,12 @@ interface CustomThemeProps {
 			primary: React.CSSProperties['color'],
 			body: React.CSSProperties['color'],
 			border: React.CSSProperties['color'],
-			contrast: React.CSSProperties['color']
+			contrast: React.CSSProperties['color'],
+			themeButton: React.CSSProperties['color'],
+			themeSelectButton: React.CSSProperties['color'],
+			themeSelectButtonHover: React.CSSProperties['color'],
+			themeButtonHover: React.CSSProperties['color'],
+			font: React.CSSProperties['color']
 		};
 	};
 }
@@ -43,10 +48,33 @@ export default {
 			// Custom themes
 			palette: {
 				body: 'white',
-				primary: 'black',
-				border: 'black',
-				contrast: 'white'
+				primary: '#3A3A3A',
+				border: '#3A3A3A',
+				contrast: 'white',
+				themeButton: '#303030',
+				themeSelectButton: 'white',
+				themeSelectButtonHover: '#cdcdcd',
+				themeButtonHover: '#262626',
+				font: 'black'
+			}
+		}
+	}),
+	red: createTheme({
+		fluxx: {
+			// Custom themes
+			palette: {
+				body: '#ebebeb',
+				primary: 'darkred',
+				border: '#282828',
+				contrast: '#ebebeb',
+				themeButton: '#770000',
+				themeSelectButton: '#ebebeb',
+				themeSelectButtonHover: '#d7d7d7',
+				themeButtonHover: '#590000',
+				font: 'black'
 			}
 		}
 	})
 };
+
+export const themeNames = ['Light', 'Red'];
