@@ -51,7 +51,11 @@ class App extends React.Component<RouteComponentProps, State> {
 					this.joinRoom(msg.roomId);
 					break;
 				case 'CARD':
-					this.setState({ownCards: [...this.state.ownCards, msg.card]});
+					if (msg.card.name === 'emptyHand') {
+						this.setState({ownCards: []});
+					} else {
+						this.setState({ownCards: [...this.state.ownCards, msg.card]});
+					}
 					break;
 				case 'ROOM_STATE':
 					this.setState({users: msg.users, activeCards: msg.enabledRules});
