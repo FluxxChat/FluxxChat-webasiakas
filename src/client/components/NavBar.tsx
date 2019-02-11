@@ -53,7 +53,7 @@ const styles = (theme: Theme) => createStyles({
 			backgroundColor: theme.fluxx.palette.themeSelectButtonHover
 		}
 	},
-	
+
 	floatRight: {
 		float: 'right'
 	}
@@ -72,7 +72,7 @@ class NavigationBar extends React.Component<Props & WithStyles<typeof styles>> {
 			<nav className={classes.navbarBack}>
 				<a className={classes.navbarFront}>FluxxChat</a>
 				<div className={classes.floatRight}>
-					<div className={classes.dropDown}> 
+					<div className={classes.dropDown}>
 						<button className={classes.dropBtn}>Theme</button>
 						<div className={classes.dropdownContent}>
 							{themeNames.map((theme, index) => {
@@ -89,13 +89,13 @@ class NavigationBar extends React.Component<Props & WithStyles<typeof styles>> {
 					</div>
 				</div>
 			</nav>
-		)
+		);
 	}
 }
 const NavBarWithProps = withStyles(styles)(NavigationBar);
 
 interface ThemeButtonProps {
-	classes
+	classes;
 	onChangeTheme: (theme: string) => void;
 	theme: string;
 }
@@ -110,7 +110,7 @@ class ThemeButton extends React.Component<ThemeButtonProps> {
 		const {classes} = this.props;
 		return(
 			<button className={classes.themeButton} onClick={this.changeTheme}>{this.props.theme}</button>
-		)
+		);
 	}
 
 }
