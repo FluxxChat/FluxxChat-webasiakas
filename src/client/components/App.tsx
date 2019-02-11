@@ -34,20 +34,33 @@ interface State {
 	theme: keyof typeof themes;
 }
 
+const EMPTY_STATE: State = {
+	connection: null,
+	nickname: null,
+	users: [],
+	userMap: {},
+	messages: [],
+	ownCards: [],
+	activeCards: [],
+	turnUserId: null,
+	theme: 'light'
+};
+
 class App extends React.Component<RouteComponentProps & WithStyles<typeof styles>, State> {
-	public state: State = {
-		connection: null,
-		nickname: null,
-		users: [],
-		userMap: {},
-		messages: [],
-		ownCards: [],
-		activeCards: [],
-		turnUserId: null,
-		theme: 'light'
-	};
+	public state: State = {...EMPTY_STATE};
 
 	public componentDidMount() {
+		this.connect();
+	}
+
+	public componentWillUnmount() {
+		const connection = this.state.connection;
+		if (connection) {
+			connection.close();
+		}
+	}
+
+	public connect() {
 		const connection = new WebSocket(window.env.WS_API_URL || 'ws://localhost:3000');
 
 		connection.addEventListener('open', () => {
@@ -55,7 +68,8 @@ class App extends React.Component<RouteComponentProps & WithStyles<typeof styles
 		});
 
 		connection.addEventListener('close', () => {
-			this.setState({connection: null});
+			this.setState(EMPTY_STATE);
+			this.connect();
 		});
 
 		connection.addEventListener('message', evt => {
@@ -83,13 +97,6 @@ class App extends React.Component<RouteComponentProps & WithStyles<typeof styles
 					break;
 			}
 		});
-	}
-
-	public componentWillUnmount() {
-		const connection = this.state.connection;
-		if (connection) {
-			connection.close();
-		}
 	}
 
 	public handleSendTextMessage = (message: string) => {
