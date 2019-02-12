@@ -90,6 +90,9 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 				case 'CARD':
 					this.setState({ownCards: [...this.state.ownCards, msg.card]});
 					break;
+				case 'EMPTY_HAND':
+					this.setState({ownCards: []});
+					break;
 				case 'ROOM_STATE':
 					this.setState({
 						users: msg.users,
