@@ -126,10 +126,10 @@ const ActiveCard = ({card, users, classes}: ActiveCardProps) => {
 		<div className={classes.cardContainer}>
 			<div>
 				<div className={classes.cardName}>
-					{this.props.card.name} {parameter}
+					{card.name} {parameter}
 				</div>
 				<div className={classes.cardDescription}>
-					{this.props.card.description}
+					{card.description}
 				</div>
 			</div>
 		</div>
