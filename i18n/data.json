@@ -10,7 +10,7 @@
         "room.activeCards": "Rules in effect",
         "room.hand": "Hand",
         "room.send": "Send",
-        "room.turnUser": "It's {turnUser}'s turn!"
+        "room.turnUser": "It's {turnUser}'s turn! {turnTime}"
     },
     "fi": {
         "login.username": "Nimimerkki",
@@ -23,6 +23,6 @@
         "room.activeCards": "Voimassa olevat säännöt",
         "room.hand": "Käsi",
         "room.send": "Lähetä",
-        "room.turnUser": "{turnUser} pelaa seuraavaksi!"
+        "room.turnUser": "On pelaajan {turnUser} vuoro! {turnTime}"
     }
 }
