@@ -93,6 +93,7 @@ interface Props extends WithStyles<typeof styles> {
 	roomId: string;
 	users: User[];
 	turnUser: User;
+	turnTime: string;
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
@@ -175,7 +176,7 @@ class ChatRoom extends React.Component<Props, State> {
 				<div>
 					<div className={classes.turnDiv}>
 						<div className={classes.turnText}>
-							<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname}}/>
+							<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname, turnTime: this.props.turnTime}}/>
 						</div>
 					</div>
 					<div className={classes.cardDivActive}>

@@ -31,6 +31,8 @@ interface State {
 	ownCards: Card[];
 	activeCards: Card[];
 	turnUserId: string | null;
+	turnTime: string | null;
+	timer: number | null;
 	theme: keyof typeof themes;
 }
 
@@ -43,6 +45,8 @@ const EMPTY_STATE: State = {
 	ownCards: [],
 	activeCards: [],
 	turnUserId: null,
+	turnTime: null,
+	timer: null,
 	theme: 'light'
 };
 
@@ -101,6 +105,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						turnUserId: msg.turnUserId,
 						nickname: msg.nickname
 					});
+					this.startTurnTimer(msg.turnEndTime);
 				default:
 					break;
 			}
@@ -155,6 +160,26 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		});
 	}
 
+	public startTurnTimer = turnEndTime => {
+		if (this.state.timer) {
+			clearInterval(this.state.timer);
+		}
+		let timer = Math.max(turnEndTime - Date.now(), 0);
+		const interval = setInterval(() => {
+				let seconds = Math.floor(timer / 1000);
+				const minutes = Math.floor(seconds / 60);
+				seconds -= minutes * 60;
+				this.setState({turnTime: minutes + ' min ' + seconds + ' s'});
+				if (timer > 0) {
+					timer -= 1000;
+				} else {
+					clearInterval(interval);
+					this.setState({timer: null});
+				}
+			}, 1000);
+		this.setState({timer: interval});
+	}
+
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match, classes} = this.props;
@@ -182,6 +207,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 							roomId={roomId}
 							users={this.state.users}
 							turnUser={this.state.userMap[this.state.turnUserId || ''] || { nickname: '' }}
+							turnTime={this.state.turnTime || ''}
 							messages={messages}
 							activeCards={activeCards}
 							ownCards={ownCards}
