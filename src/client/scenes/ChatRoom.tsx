@@ -63,13 +63,15 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex'
 	},
 	messageFieldNickname: {
-		flexGrow: '1',
+		flexGrow: 0,
 		alignSelf: 'center'
 	},
 	messageField: {
-		flexGrow: '1',
+		flexGrow: 1,
 		maxHeight: '34px',
 		marginTop: '5px',
+		marginLeft: '5px',
+		marginRight: '5px',
 		height: '34px',
 		lineHeight: '34px',
 		boxSizing: 'border-box'
