@@ -7,11 +7,6 @@ import MessageContainer from '../components/MessageContainer';
 import {createStyles, Theme, WithStyles, withStyles} from '@material-ui/core';
 
 const styles = (theme: Theme) => createStyles({
-	sendButton: {
-		width: '100px',
-		height: '34px',
-		boxSizing: 'border-box'
-	},
 	sendDiv: {
 		margin: '5px 8px 0 0',
 		float: 'right'
@@ -64,12 +59,26 @@ const styles = (theme: Theme) => createStyles({
 		overflowX: 'hidden',
 		border: `1px solid ${theme.fluxx.palette.border}`
 	},
+	inputArea: {
+		display: 'flex'
+	},
+	messageFieldNickname: {
+		flexGrow: 0,
+		alignSelf: 'center'
+	},
 	messageField: {
-		width: 'calc(100% - 110px)',
+		flexGrow: 1,
 		maxHeight: '34px',
 		marginTop: '5px',
+		marginLeft: '5px',
+		marginRight: '5px',
 		height: '34px',
 		lineHeight: '34px',
+		boxSizing: 'border-box'
+	},
+	sendButton: {
+		width: '100px',
+		height: '34px',
 		boxSizing: 'border-box'
 	},
 	caption: {
@@ -151,11 +160,14 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 					<div>
 						<form onKeyDown={this.handleKeyDown}>
-						<input className={classes.messageField} type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
-							<div className={classes.sendDiv}>
-								<button type="button" className={classes.sendButton} onClick={this.handleSendMessage}>
-									<FormattedMessage id="room.send"/>
-								</button>
+							<div className={classes.inputArea}>
+								<span className={classes.messageFieldNickname}>&lt;{this.props.nickname}&gt;</span>
+								<input className={classes.messageField} type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+								<div className={classes.sendDiv}>
+									<button type="button" className={classes.sendButton} onClick={this.handleSendMessage}>
+										<FormattedMessage id="room.send"/>
+									</button>
+								</div>
 							</div>
 						</form>
 					</div>

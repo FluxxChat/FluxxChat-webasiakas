@@ -1,12 +1,26 @@
 import React from 'react';
-import {Message, TextMessage} from 'fluxxchat-protokolla';
+import {Message} from 'fluxxchat-protokolla';
 import Remarkable from 'remarkable';
 import {withStyles, createStyles, WithStyles} from '@material-ui/core';
 
 const styles = createStyles({
 	message: {
 		marginLeft: '5px',
-		marginTop: '2px'
+		marginTop: '2px',
+		display: 'flex'
+	},
+	messageSender: {
+		flex: 0
+	},
+	messageContent: {
+		flex: 1,
+		marginLeft: '0.5em',
+		'& > :first-child': {
+			marginTop: '0px'
+		},
+		'& > :last-child': {
+			marginBottom: '0px'
+		}
 	},
 	systemMessage: {
 		fontWeight: 'bold'
@@ -30,21 +44,16 @@ class MessageContainer extends React.Component<Props> {
 					</div>
 				);
 			case 'TEXT':
-				const direction = (message as TextMessage).senderNickname === this.props.clientName ? '>' : '<';
 				if (message.markdown) {
 					const md = new Remarkable();
 					return (
 						<div className={classes.message}>
-							{message.senderNickname} {direction}
-							<span dangerouslySetInnerHTML={{__html: md.render(message.textContent)}}/>
+							<div className={classes.messageSender}>&lt;{message.senderNickname}&gt;</div>
+							<div className={classes.messageContent} dangerouslySetInnerHTML={{__html: md.render(message.textContent)}}/>
 						</div>
 					);
 				} else {
-					return (
-						<div className={classes.message}>
-							{message.senderNickname} {direction} {message.textContent}
-						</div>
-					);
+					return <div className={classes.message}>&lt;{message.senderNickname}&gt; {message.textContent}</div>;
 				}
 			default:
 				return null;
