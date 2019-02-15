@@ -9,11 +9,13 @@ const styles = (theme: Theme) => createStyles({
 		marginLeft: '-0.55em',
 		marginTop: '-0.55em',
 		marginBottom: '3px',
-		background: theme.fluxx.palette.primary
+		background: theme.fluxx.palette.primary,
+		zIndex: 11
 	},
 	navbarFront: {
 		fontSize: '25px',
-		color: theme.fluxx.palette.contrast
+		color: theme.fluxx.palette.contrast,
+		zIndex: 11
 	},
 	dropdownContent: {
 		display: 'none',
@@ -21,7 +23,7 @@ const styles = (theme: Theme) => createStyles({
 		backgroundColor: '#f1f1f1',
 		width: '70px',
 		boxShadow: '0px 8px 16px 0px rgba(0,0,0,0.2)',
-		zindex: '1'
+		zIndex: 11
 	},
 	dropDown: {
 		marginRight: '5px',
@@ -32,7 +34,8 @@ const styles = (theme: Theme) => createStyles({
 		},
 		'&:hover $dropBtn': {
 			backgroundColor: theme.fluxx.palette.themeButtonHover
-		}
+		},
+		zIndex: 11
 	},
 	dropBtn: {
 		height: '31px',
@@ -40,7 +43,8 @@ const styles = (theme: Theme) => createStyles({
 		color: 'white',
 		border: 'none',
 		width: '70px',
-		fontWeight: 'bold'
+		fontWeight: 'bold',
+		zIndex: 11
 	},
 	themeButton: {
 		backgroundColor: 'transparent',
@@ -51,11 +55,13 @@ const styles = (theme: Theme) => createStyles({
 		width: '70px',
 		'&:hover': {
 			backgroundColor: theme.fluxx.palette.themeSelectButtonHover
-		}
+		},
+		zIndex: 11
 	},
 
 	floatRight: {
-		float: 'right'
+		float: 'right',
+		zIndex: 11
 	}
 });
 
@@ -92,6 +98,7 @@ class NavigationBar extends React.Component<Props & WithStyles<typeof styles>> {
 		);
 	}
 }
+
 const NavBarWithProps = withStyles(styles)(NavigationBar);
 
 interface ThemeButtonProps {

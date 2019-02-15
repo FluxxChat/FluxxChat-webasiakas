@@ -1,12 +1,13 @@
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters, ValidateTextMessage} from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
 import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
 import NavigationBar from './NavBar';
+import ErrorPopUp from './ErrorPopUp';
 
 const styles = (theme: Theme) => createStyles({
 	body: {
@@ -19,28 +20,6 @@ const styles = (theme: Theme) => createStyles({
 	bodyPad: {
 		marginLeft: '0.55em',
 		marginTop: '0.55em'
-	},
-	alert: {
-		padding: '20px',
-		backgroundColor: '#f44336',
-		color: 'white',
-		width: 'calc(100vw - 1.10em - 31px)',
-		position: 'absolute',
-		left: '3px',
-		top: '48px'
-	},
-	closebtn: {
-		marginLeft: '15px',
-		color: 'white',
-		fontWeight: 'bold',
-		float: 'right',
-		fontSize: '22px',
-		lineHeight: '20px',
-		cursor: 'pointer',
-		transition: '0.3s',
-		'&:hover': {
-			color: 'black'
-		}
 	}
 });
 
@@ -55,8 +34,9 @@ interface State {
 	turnUserId: string | null;
 	turnTime: string | null;
 	timer: number | null;
+	messageValid: boolean;
 	theme: keyof typeof themes;
-	alert: string;
+	alert: string[];
 }
 
 const EMPTY_STATE: State = {
@@ -70,7 +50,8 @@ const EMPTY_STATE: State = {
 	turnUserId: null,
 	turnTime: null,
 	timer: null,
-	alert: '',
+	alert: [],
+	messageValid: true,
 	theme: 'light'
 };
 
@@ -132,7 +113,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					this.startTurnTimer(msg.turnEndTime);
 					break;
 				case 'ERROR':
-					this.setState({alert: msg.message});
+					this.setState({alert: [...this.state.alert, msg.message]});
+					break;
+				case 'VALIDATE_TEXT_RESPONSE':
+					this.setState({messageValid: msg.valid});
 					break;
 				default:
 					break;
@@ -208,9 +192,19 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({timer: interval});
 	}
 
-	public hideError = () => {
-		this.setState({alert: ''});
+	public closeAlert = () => {
+		this.setState({alert: []});
 	}
+
+	public handleValidateMessage = (message: string) => {
+		if (this.state.connection) {
+			const protocolMessage: ValidateTextMessage = {
+				type: 'VALIDATE_TEXT',
+				textContent: message
+			};
+			this.state.connection.send(JSON.stringify(protocolMessage));
+		}
+	};
 
 	public render() {
 		// Match contains information about the matched react-router path
@@ -227,10 +221,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						onChangeTheme={this.props.onChangeTheme}
 					/>
 					{this.state.alert.length > 0 && (
-					<div className={classes.alert}>
-						<span className={classes.closebtn} onClick={this.hideError}>&times;</span>
-						{this.state.alert}
-					</div>
+						<ErrorPopUp
+							onCloseAlert={this.closeAlert}
+							alerts={this.state.alert}
+						/>
 					)}
 					{(!nickname || !roomId) && (
 						<Menu
@@ -251,6 +245,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 							ownCards={ownCards}
 							onSendMessage={this.handleSendTextMessage}
 							onSendNewRule={this.handleSendNewRule}
+							onValidateMessage={this.handleValidateMessage}
+							messageValid={this.state.messageValid}
 						/>
 					)}
 				</div>
