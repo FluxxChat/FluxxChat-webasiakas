@@ -66,15 +66,38 @@ const styles = (theme: Theme) => createStyles({
 		flexGrow: 0,
 		alignSelf: 'center'
 	},
+	valid: {},
+	messageFieldDiv: {
+		flex: 1,
+		display: 'flex',
+		position: 'relative',
+		margin: '5px'
+	},
 	messageField: {
-		flexGrow: 1,
+		flex: 1,
 		maxHeight: '34px',
-		marginTop: '5px',
-		marginLeft: '5px',
-		marginRight: '5px',
 		height: '34px',
 		lineHeight: '34px',
-		boxSizing: 'border-box'
+		boxSizing: 'border-box',
+		':not($valid) > &': {
+			backgroundColor: '#ffee00aa'
+		}
+	},
+	messageFieldWarning: {
+		flex: '0 0 auto',
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		padding: '4px 8px',
+		position: 'absolute',
+		top: 0,
+		right: 0,
+		boxSizing: 'border-box',
+		height: '100%',
+		backgroundColor: '#ff000022',
+		'$valid > &': {
+			display: 'none'
+		}
 	},
 	sendButton: {
 		width: '100px',
@@ -97,8 +120,10 @@ interface Props extends WithStyles<typeof styles> {
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
+	messageValid: boolean;
 	onSendMessage: (message: string) => void;
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
+	onValidateMessage: (message: string) => void;
 }
 
 interface State {
@@ -117,14 +142,18 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public handleSendMessage = () => {
-		const {messageDraft} = this.state;
-		this.setState({messageDraft: ''}, () => {
-			this.props.onSendMessage(messageDraft);
-		});
+		if (this.props.messageValid) {
+			const {messageDraft} = this.state;
+			this.setState({messageDraft: ''}, () => {
+				this.props.onSendMessage(messageDraft);
+			});
+		}
 	}
 
 	public handleChangeMessageDraft = (evt: React.ChangeEvent<HTMLInputElement>) => {
-		this.setState({messageDraft: evt.target.value});
+		this.setState({messageDraft: evt.target.value}, () => {
+			this.props.onValidateMessage(this.state.messageDraft);
+		});
 	}
 
 	public handleKeyDown = (e: React.KeyboardEvent) => {
@@ -142,7 +171,7 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {messages, classes} = this.props;
+		const {messages, classes, messageValid} = this.props;
 		const {messageDraft} = this.state;
 
 		return (
@@ -163,9 +192,17 @@ class ChatRoom extends React.Component<Props, State> {
 						<form onKeyDown={this.handleKeyDown}>
 							<div className={classes.inputArea}>
 								<span className={classes.messageFieldNickname}>&lt;{this.props.nickname}&gt;</span>
-								<input className={classes.messageField} type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+								<div className={`${classes.messageFieldDiv} ${messageValid ? classes.valid : ''}`}>
+									<input className={classes.messageField} type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
+									<span className={classes.messageFieldWarning}>Invalid message</span>
+								</div>
 								<div className={classes.sendDiv}>
-									<button type="button" className={classes.sendButton} onClick={this.handleSendMessage}>
+									<button
+										type="button"
+										className={classes.sendButton}
+										onClick={this.handleSendMessage}
+										disabled={!messageValid}
+									>
 										<FormattedMessage id="room.send"/>
 									</button>
 								</div>
