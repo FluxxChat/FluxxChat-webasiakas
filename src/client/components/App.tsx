@@ -32,15 +32,15 @@ import ErrorPopUp from './ErrorPopUp';
 
 const styles = (theme: Theme) => createStyles({
 	body: {
-		marginLeft: '-0.55em',
-		marginTop: '-0.55em',
-		width: 'calc(100vw + 0.55em)',
-		height: 'calc(100vh + 0.55em)',
-		background: theme.fluxx.palette.body
+		background: theme.fluxx.palette.body,
+		fontSize: '1.6rem',
+		height: '100%',
+		display: 'flex',
+		flexDirection: 'column'
 	},
 	bodyPad: {
-		marginLeft: '0.55em',
-		marginTop: '0.55em'
+		flex: 1,
+		padding: '1rem'
 	}
 });
 
@@ -245,16 +245,6 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 			<IntlProvider locale={locale} key={locale} messages={translatedMessages}>
 				<div className={classes.body}>
 					<div className={classes.bodyPad}>
-						<NavigationBar
-							onChangeTheme={this.props.onChangeTheme}
-							onChangeLanguage={this.setLocale}
-						/>
-						{this.state.alert.length > 0 && (
-							<ErrorPopUp
-								onCloseAlert={this.closeAlert}
-								alerts={this.state.alert}
-							/>
-						)}
 						{(!nickname || !roomId) && (
 							<Menu
 								type={roomId ? 'join' : 'create'}

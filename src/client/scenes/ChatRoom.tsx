@@ -24,64 +24,65 @@ import MessageContainer from '../components/MessageContainer';
 import {createStyles, Theme, WithStyles, withStyles} from '@material-ui/core';
 
 const styles = (theme: Theme) => createStyles({
-	sendDiv: {
-		margin: '5px 8px 0 0',
-		float: 'right'
-	},
+	sendDiv: {},
 	chatApp: {
 		width: '100%',
 		height: '100%',
-		minWidth: '600px'
+		display: 'flex'
 	},
 	chatArea: {
-		width: 'calc(60% - 5px)',
-		float: 'left'
+		flex: 1,
+		display: 'flex',
+		flexDirection: 'column',
+		marginRight: '1rem'
+	},
+	controlArea: {
+		flex: 1,
+		display: 'flex',
+		flexDirection: 'column'
 	},
 	turnDiv: {
-		width: 'calc(40% - 11px)',
-		height: '32px',
-		marginTop: '5px',
-		float: 'right',
-		marginRight: '14px',
-		border: `1px solid ${theme.fluxx.palette.border}`
+		marginBottom: '1rem',
+		display: 'flex',
+		alignItems: 'center',
+		padding: '0.8rem 1rem',
+		backgroundColor: theme.fluxx.palette.foreground,
+		borderRadius: theme.fluxx.borderRadius
 	},
 	turnText: {
-		margin: '6px 0 0 6px',
-		fontSize: '18px',
+		fontSize: '1.8rem',
 		fontWeight: 'bold'
 	},
 	cardDivActive: {
-		width: 'calc(40% - 11px)',
-		height: 'calc(50vh - 55px)',
-		margin: '5px 14px 10px 0',
-		minHeight: '232px',
-		float: 'right',
-		overflowX: 'hidden',
-		border: `1px solid ${theme.fluxx.palette.border}`
+		flex: 1,
+		padding: '0.8rem 1rem',
+		backgroundColor: theme.fluxx.palette.foreground,
+		borderRadius: theme.fluxx.borderRadius,
+		marginBottom: '1rem'
 	},
 	cardDivOwn: {
-		width: 'calc(40% - 11px)',
-		height: 'calc(50vh - 55px)',
-		minHeight: '232px',
-		float: 'right',
-		overflowX: 'hidden',
-		marginRight: '14px',
-		border: `1px solid ${theme.fluxx.palette.border}`
+		flex: 1,
+		padding: '0.8rem 1rem',
+		backgroundColor: theme.fluxx.palette.foreground,
+		borderRadius: theme.fluxx.borderRadius
 	},
 	cardList: {
 		display: 'flex',
 		flexWrap: 'wrap'
 	},
 	messageBox: {
-		marginTop: '5px',
-		height: 'calc(100vh - 98px)',
-		width: 'calc(100% - 10px)',
-		minHeight: '450px',
 		overflowX: 'hidden',
-		border: `1px solid ${theme.fluxx.palette.border}`
+		flex: 1,
+		backgroundColor: theme.fluxx.palette.foreground,
+		borderRadius: theme.fluxx.borderRadius,
+		padding: '1rem',
+		fontFamily: 'Roboto Mono, monospace',
+		fontSize: '1.1rem'
 	},
 	inputArea: {
-		display: 'flex'
+		marginTop: '1rem',
+		display: 'flex',
+		alignItems: 'center'
 	},
 	messageFieldNickname: {
 		flexGrow: 0,
@@ -91,12 +92,10 @@ const styles = (theme: Theme) => createStyles({
 	messageFieldDiv: {
 		flex: 1,
 		display: 'flex',
-		position: 'relative',
-		margin: '5px'
+		position: 'relative'
 	},
 	messageField: {
 		flex: 1,
-		maxHeight: '34px',
 		height: '34px',
 		lineHeight: '34px',
 		boxSizing: 'border-box',
@@ -126,9 +125,9 @@ const styles = (theme: Theme) => createStyles({
 		boxSizing: 'border-box'
 	},
 	caption: {
-		fontSize: '17px',
-		fontWeight: 'bold',
-		margin: '2px 0 2px 5px'
+		fontSize: '1.6rem',
+		fontWeight: 600,
+		margin: '0.4rem 0.8rem'
 	}
 });
 
@@ -230,10 +229,10 @@ class ChatRoom extends React.Component<Props, State> {
 							</div>
 						</form>
 					</div>
-				</div >
-				<div>
+				</div>
+				<div className={classes.controlArea}>
 					<div className={classes.turnDiv}>
-						<div className={classes.turnText}>
+						<div className={classes.caption}>
 							<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname, turnTime: this.props.turnTime}}/>
 						</div>
 					</div>

@@ -40,7 +40,7 @@ const styles = createStyles({
 		}
 	},
 	systemMessage: {
-		fontWeight: 'bold'
+		fontWeight: 500
 	}
 });
 

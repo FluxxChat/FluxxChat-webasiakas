@@ -22,8 +22,10 @@ import {merge} from 'lodash';
 interface CustomThemeProps {
 	// Namespace custom themes so that they don't collide with Material UI themes accidentally
 	fluxx: {
+		borderRadius: React.CSSProperties['borderRadius'],
 		palette: {
 			primary: React.CSSProperties['color'],
+			foreground: React.CSSProperties['color'],
 			body: React.CSSProperties['color'],
 			border: React.CSSProperties['color'],
 			contrast: React.CSSProperties['color'],
@@ -47,24 +49,28 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 	}
 }
 
+const commonFluxxStyles = {
+	borderRadius: '0.6rem'
+};
+
 // Utility function to add common theme options
 const createTheme = (opts: ThemeOptions) => {
-	return createMuiTheme(
-		merge(opts, {
-			typography: {
-				// Needed to not get deprecation warnings in developer console
-				useNextVariants: true
-			}
-		})
-	);
+	return createMuiTheme(merge(opts, {
+		typography: {
+			// Needed to not get deprecation warnings in developer console
+			useNextVariants: true
+		}
+	}));
 };
 
 export default {
 	light: createTheme({
 		fluxx: {
+			...commonFluxxStyles,
 			// Custom themes
 			palette: {
-				body: 'white',
+				body: '#efefef',
+				foreground: '#ffffff',
 				primary: '#3A3A3A',
 				border: '#3A3A3A',
 				contrast: 'white',
@@ -78,9 +84,11 @@ export default {
 	}),
 	red: createTheme({
 		fluxx: {
+			...commonFluxxStyles,
 			// Custom themes
 			palette: {
 				body: '#ebebeb',
+				foreground: '#ebebeb',
 				primary: 'darkred',
 				border: '#282828',
 				contrast: '#ebebeb',

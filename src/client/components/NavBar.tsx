@@ -22,13 +22,9 @@ import localeData from '../../../i18n/data.json';
 
 const styles = (theme: Theme) => createStyles({
 	navbarBack: {
-		height: '31px',
-		padding: '7px',
-		marginLeft: '-0.55em',
-		marginTop: '-0.55em',
-		marginBottom: '3px',
-		background: theme.fluxx.palette.primary,
-		zIndex: 11
+		flex: '0 0 3rem',
+		padding: '0.8rem 1rem',
+		background: theme.fluxx.palette.primary
 	},
 	navbarFront: {
 		fontSize: '25px',

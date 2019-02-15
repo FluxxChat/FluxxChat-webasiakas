@@ -23,57 +23,56 @@ import {NumberParameter, ChoiceParameter} from './CardParameters';
 
 const styles = (theme: Theme) => createStyles({
 	cardContainer: {
-		width: 'calc(33% - 20px)',
 		overflowWrap: 'normal',
-		margin: '5px 1px 2px 5px',
-		padding: '5px',
 		position: 'relative',
-		border: `1px solid ${theme.fluxx.palette.border}`,
 		display: 'flex',
-		flexDirection: 'column'
+		flexDirection: 'column',
+		flex: '0 0 calc(33% - 0.8rem)',
+		margin: '0.5rem',
+		borderRadius: theme.fluxx.borderRadius,
+		backgroundColor: theme.fluxx.palette.foreground,
+		boxShadow: '0.1rem 0.1rem 0.6rem 0 #00000022',
+		boxSizing: 'border-box',
+		overflow: 'hidden'
 	},
 	cardName: {
 		width: '100%',
-		height: '30px',
-		padding: '16px 0 0 10px',
-		fontSize: '20px',
-		fontWeight: 'bold'
+		fontSize: '1.6rem',
+		fontWeight: 600,
+		padding: '1rem 1rem 0.4rem 1rem',
+		marginBottom: '0.6rem'
 	},
 	cardDescription: {
 		width: '100%',
-		height: 'calc(100% - 30px)',
-		paddingTop: '16px',
-		paddingLeft: '10px',
 		fontSize: '14px',
-		flex: 1
+		flex: 1,
+		padding: '0.4rem 1rem',
+		marginBottom: '0.6rem'
 	},
 	addParameterDiv: {
 		width: '100%',
-		marginBottom: '5px',
-		bottom: '2px'
+		padding: '0.4rem 1rem',
+		marginBottom: '0.6rem'
 	},
 	selectRuleTarget: {
 		width: '40%',
-		float: 'right',
-		marginRight: '2px'
+		float: 'right'
 	},
 	setParameterNumber: {
-		width: '40%',
-		float: 'right',
-		marginRight: '2px'
+		width: '40%'
 	},
 	playButton: {
-		width: 'calc(100% - 4px)',
-		marginTop: '5px',
-		height: '23px',
-		bottom: '3px',
-		marginLeft: '2px'
+		padding: '0.6rem 1rem',
+		border: 'none',
+		backgroundColor: '#cbe3f9',
+		fontWeight: 600,
+		color: '#000000aa',
+		cursor: 'pointer',
+		'&:hover': {
+			backgroundColor: '#d7e8f7'
+		}
 	},
 	playButtonContainer: {
-		width: 'calc(100% - 4px)',
-		marginTop: '5px',
-		bottom: '2px',
-		left: '2px',
 		display: 'flex',
 		flexDirection: 'column'
 	}
@@ -187,7 +186,7 @@ class OwnCard extends React.Component<OwnCardProps, OwnCardState> {
 				<div className={classes.playButtonContainer}>
 					{Object.keys(this.props.card.parameterTypes).map(key => {
 						if (Array.isArray(this.props.card.parameterTypes[key])) {
-							const choices: string[] = this.props.card.parameterTypes[key] as string[];
+							const choices = this.props.card.parameterTypes[key] as string[];
 							return (
 								<div key={key} className={classes.addParameterDiv}>
 									<FormattedMessage id="card.selectValue"/>:
