@@ -31,32 +31,34 @@ const styles = (theme: Theme) => createStyles({
 		margin: '0.5rem',
 		borderRadius: theme.fluxx.borderRadius,
 		backgroundColor: theme.fluxx.palette.foreground,
-		boxShadow: '0.1rem 0.1rem 0.6rem 0 #00000022',
+		boxShadow: '0.1rem 0.1rem 0.4rem 0 #00000022',
 		boxSizing: 'border-box',
-		overflow: 'hidden'
+		overflow: 'hidden',
+		fontSize: '1.2rem'
 	},
 	cardName: {
 		width: '100%',
-		fontSize: '1.6rem',
-		fontWeight: 600,
+		fontSize: '1.4rem',
+		fontWeight: 500,
 		padding: '1rem 1rem 0.4rem 1rem',
-		marginBottom: '0.6rem'
+		marginBottom: '0.6rem',
+		boxSizing: 'border-box'
 	},
 	cardDescription: {
 		width: '100%',
-		fontSize: '14px',
 		flex: 1,
 		padding: '0.4rem 1rem',
-		marginBottom: '0.6rem'
+		marginBottom: '0.6rem',
+		boxSizing: 'border-box'
 	},
 	addParameterDiv: {
 		width: '100%',
 		padding: '0.4rem 1rem',
-		marginBottom: '0.6rem'
+		marginBottom: '0.6rem',
+		boxSizing: 'border-box'
 	},
 	selectRuleTarget: {
-		width: '40%',
-		float: 'right'
+		width: '40%'
 	},
 	setParameterNumber: {
 		width: '40%'
@@ -64,12 +66,16 @@ const styles = (theme: Theme) => createStyles({
 	playButton: {
 		padding: '0.6rem 1rem',
 		border: 'none',
-		backgroundColor: '#cbe3f9',
-		fontWeight: 600,
+		borderTop: '1px solid #00000011',
+		backgroundColor: 'transparent',
+		fontWeight: 500,
 		color: '#000000aa',
 		cursor: 'pointer',
 		'&:hover': {
-			backgroundColor: '#d7e8f7'
+			backgroundColor: '#00000008'
+		},
+		'&:active, &:focus': {
+			outline: 'none'
 		}
 	},
 	playButtonContainer: {

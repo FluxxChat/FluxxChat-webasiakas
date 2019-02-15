@@ -18,29 +18,49 @@
 import React from 'react';
 import {Message} from 'fluxxchat-protokolla';
 import Remarkable from 'remarkable';
-import {withStyles, createStyles, WithStyles} from '@material-ui/core';
+import {withStyles, createStyles, WithStyles, Theme} from '@material-ui/core';
 
-const styles = createStyles({
+const styles = (theme: Theme) => createStyles({
+	right: {},
+	left: {},
+	messageContainer: {
+		display: 'flex',
+		'&$left': {
+			justifyContent: 'flex-start'
+		},
+		'&$right': {
+			justifyContent: 'flex-end'
+		}
+	},
+	systemMessageContainer: {
+		display: 'flex',
+		justifyContent: 'center',
+		'& > $message': {
+			backgroundColor: '#f9ecb0'
+		}
+	},
 	message: {
-		marginLeft: '5px',
-		marginTop: '2px',
-		display: 'flex'
+		margin: '0.2rem 1rem',
+		padding: '0.6rem 1.2rem',
+		display: 'flex',
+		flexDirection: 'column',
+		backgroundColor: '#ffffff',
+		borderRadius: theme.fluxx.borderRadius
 	},
 	messageSender: {
-		flex: 0
+		flex: '0 0 auto',
+		fontWeight: 500,
+		marginBottom: '0.4rem'
 	},
 	messageContent: {
 		flex: 1,
-		marginLeft: '0.5em',
+		minWidth: '10rem',
 		'& > :first-child': {
-			marginTop: '0px'
+			marginTop: 0
 		},
 		'& > :last-child': {
-			marginBottom: '0px'
+			marginBottom: 0
 		}
-	},
-	systemMessage: {
-		fontWeight: 500
 	}
 });
 
@@ -51,26 +71,42 @@ interface Props extends WithStyles<typeof styles> {
 
 class MessageContainer extends React.Component<Props> {
 	public render() {
-		const {message, classes} = this.props;
+		const {message, classes, clientName} = this.props;
 
 		switch (message.type) {
 			case 'SYSTEM':
-				return (
-					<div className={classes.message}>
-						<span className={classes.systemMessage}>{message.message}</span>
+			return (
+					<div className={classes.systemMessageContainer}>
+						<div className={classes.message}>
+							<div className={classes.messageContent}>{message.message}</div>
+						</div>
 					</div>
 				);
 			case 'TEXT':
+				const ownMessage = clientName === message.senderNickname;
 				if (message.markdown) {
 					const md = new Remarkable();
 					return (
-						<div className={classes.message}>
-							<div className={classes.messageSender}>&lt;{message.senderNickname}&gt;</div>
-							<div className={classes.messageContent} dangerouslySetInnerHTML={{__html: md.render(message.textContent)}}/>
+						<div className={`${classes.messageContainer} ${ownMessage ? classes.right : classes.left}`}>
+							<div className={classes.message}>
+								{!ownMessage && (
+									<div className={classes.messageSender}>{message.senderNickname}</div>
+								)}
+								<div className={classes.messageContent} dangerouslySetInnerHTML={{__html: md.render(message.textContent)}}/>
+							</div>
 						</div>
 					);
 				} else {
-					return <div className={classes.message}>&lt;{message.senderNickname}&gt; {message.textContent}</div>;
+					return (
+						<div className={`${classes.messageContainer} ${ownMessage ? classes.right : classes.left}`}>
+							<div className={classes.message}>
+								{!ownMessage && (
+									<div className={classes.messageSender}>{message.senderNickname}</div>
+								)}
+								<div className={classes.messageContent}>{message.textContent}</div>
+							</div>
+						</div>
+					);
 				}
 			default:
 				return null;

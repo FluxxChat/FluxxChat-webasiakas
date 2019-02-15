@@ -50,7 +50,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 }
 
 const commonFluxxStyles = {
-	borderRadius: '0.6rem'
+	borderRadius: '0.2rem'
 };
 
 // Utility function to add common theme options

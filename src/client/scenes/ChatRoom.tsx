@@ -25,6 +25,17 @@ import {createStyles, Theme, WithStyles, withStyles} from '@material-ui/core';
 
 const styles = (theme: Theme) => createStyles({
 	sendDiv: {},
+	header: {
+		fontSize: '1.4rem',
+		fontWeight: 500,
+		flex: '0 0 5rem',
+		display: 'flex',
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		padding: '0 2rem',
+		backgroundColor: '#ffffff44',
+		borderBottom: '1px solid #00000011'
+	},
 	chatApp: {
 		width: '100%',
 		height: '100%',
@@ -33,38 +44,33 @@ const styles = (theme: Theme) => createStyles({
 	chatArea: {
 		flex: 1,
 		display: 'flex',
-		flexDirection: 'column',
-		marginRight: '1rem'
+		flexDirection: 'column'
 	},
 	controlArea: {
 		flex: 1,
 		display: 'flex',
-		flexDirection: 'column'
-	},
-	turnDiv: {
-		marginBottom: '1rem',
-		display: 'flex',
-		alignItems: 'center',
-		padding: '0.8rem 1rem',
+		flexDirection: 'column',
 		backgroundColor: theme.fluxx.palette.foreground,
-		borderRadius: theme.fluxx.borderRadius
+		'& > $header': {
+			justifyContent: 'flex-end',
+			padding: '0 2rem'
+		}
 	},
-	turnText: {
-		fontSize: '1.8rem',
-		fontWeight: 'bold'
+	themeButton: {
+		border: 'none',
+		background: 'transparent',
+		fontWeight: 600,
+		color: '#444',
+		textTransform: 'uppercase'
 	},
 	cardDivActive: {
 		flex: 1,
-		padding: '0.8rem 1rem',
-		backgroundColor: theme.fluxx.palette.foreground,
-		borderRadius: theme.fluxx.borderRadius,
-		marginBottom: '1rem'
+		margin: '0 1rem',
+		borderBottom: '1px solid #00000011'
 	},
 	cardDivOwn: {
 		flex: 1,
-		padding: '0.8rem 1rem',
-		backgroundColor: theme.fluxx.palette.foreground,
-		borderRadius: theme.fluxx.borderRadius
+		margin: '0 1rem'
 	},
 	cardList: {
 		display: 'flex',
@@ -73,7 +79,6 @@ const styles = (theme: Theme) => createStyles({
 	messageBox: {
 		overflowX: 'hidden',
 		flex: 1,
-		backgroundColor: theme.fluxx.palette.foreground,
 		borderRadius: theme.fluxx.borderRadius,
 		padding: '1rem',
 		fontFamily: 'Roboto Mono, monospace',
@@ -81,6 +86,7 @@ const styles = (theme: Theme) => createStyles({
 	},
 	inputArea: {
 		marginTop: '1rem',
+		padding: '1rem',
 		display: 'flex',
 		alignItems: 'center'
 	},
@@ -127,7 +133,7 @@ const styles = (theme: Theme) => createStyles({
 	caption: {
 		fontSize: '1.6rem',
 		fontWeight: 600,
-		margin: '0.4rem 0.8rem'
+		margin: '2rem 0.4rem'
 	}
 });
 
@@ -197,6 +203,9 @@ class ChatRoom extends React.Component<Props, State> {
 		return (
 			<div className={classes.chatApp}>
 				<div className={classes.chatArea}>
+					<div className={classes.header}>
+						<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname, turnTime: this.props.turnTime}}/>
+					</div>
 					<div className={classes.messageBox} id="message-box">
 						{messages.map((msg, index) => {
 							return (
@@ -231,10 +240,8 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 				</div>
 				<div className={classes.controlArea}>
-					<div className={classes.turnDiv}>
-						<div className={classes.caption}>
-							<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname, turnTime: this.props.turnTime}}/>
-						</div>
+					<div className={classes.header}>
+						<button className={classes.themeButton}>theme</button>
 					</div>
 					<div className={classes.cardDivActive}>
 						<div className={classes.caption}>

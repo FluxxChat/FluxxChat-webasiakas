@@ -138,7 +138,6 @@ interface ThemeButtonProps {
 }
 
 class ThemeButton extends React.Component<ThemeButtonProps> {
-
 	public changeTheme = () => {
 		this.props.onChangeTheme(this.props.theme.toLowerCase());
 	}
