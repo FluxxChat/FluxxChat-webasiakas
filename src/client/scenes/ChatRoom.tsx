@@ -68,6 +68,10 @@ const styles = (theme: Theme) => createStyles({
 		marginRight: '14px',
 		border: `1px solid ${theme.fluxx.palette.border}`
 	},
+	cardList: {
+		display: 'flex',
+		flexWrap: 'wrap'
+	},
 	messageBox: {
 		marginTop: '5px',
 		height: 'calc(100vh - 98px)',
@@ -237,31 +241,35 @@ class ChatRoom extends React.Component<Props, State> {
 						<div className={classes.caption}>
 							<FormattedMessage id="room.activeCards"/>
 						</div>
-						{this.props.activeCards.map((card, index) => {
-							return (
-								<ActiveCard
-									key={index}
-									card={card}
-									users={this.props.users}
-								/>
-							);
-						})}
+						<div className={classes.cardList}>
+							{this.props.activeCards.map((card, index) => {
+								return (
+									<ActiveCard
+										key={index}
+										card={card}
+										users={this.props.users}
+									/>
+								);
+							})}
+						</div>
 					</div>
 					<div className={classes.cardDivOwn}>
 						<div className={classes.caption}>
 							<FormattedMessage id="room.hand"/>
 						</div>
-						{this.props.ownCards.map((card, index) => {
-							return (
-								<OwnCard
-									key={index}
-									cardId={index.toString()}
-									card={card}
-									users={this.props.users}
-									action={this.props.onSendNewRule}
-								/>
-							);
-						})}
+						<div className={classes.cardList}>
+							{this.props.ownCards.map((card, index) => {
+								return (
+									<OwnCard
+										key={index}
+										cardId={index.toString()}
+										card={card}
+										users={this.props.users}
+										action={this.props.onSendNewRule}
+									/>
+								);
+							})}
+						</div>
 					</div>
 				</div>
 			</div>
