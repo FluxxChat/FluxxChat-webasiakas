@@ -230,7 +230,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					<div className={classes.alert}>
 						<span className={classes.closebtn} onClick={this.hideError}>&times;</span>
 						{this.state.alert}
-					</div> 
+					</div>
 					)}
 					{(!nickname || !roomId) && (
 						<Menu
