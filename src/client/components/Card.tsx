@@ -1,18 +1,36 @@
+/* FluxxChat-webasiakas
+ * Copyright (C) 2019 Helsingin yliopisto
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import React from 'react';
 import {Card, User, RuleParameters} from 'fluxxchat-protokolla';
 import {FormattedMessage} from 'react-intl';
 import {createStyles, Theme, WithStyles, withStyles} from '@material-ui/core';
-import {NumberParameter, PlayerParameter} from './CardParameters';
+import {NumberParameter, ChoiceParameter} from './CardParameters';
 
 const styles = (theme: Theme) => createStyles({
 	cardContainer: {
 		width: 'calc(33% - 20px)',
-		height: 'calc(50% - 20px)',
 		overflowWrap: 'normal',
 		margin: '5px 1px 2px 5px',
-		float: 'left',
+		padding: '5px',
 		position: 'relative',
-		border: `1px solid ${theme.fluxx.palette.border}`
+		border: `1px solid ${theme.fluxx.palette.border}`,
+		display: 'flex',
+		flexDirection: 'column'
 	},
 	cardName: {
 		width: '100%',
@@ -26,12 +44,12 @@ const styles = (theme: Theme) => createStyles({
 		height: 'calc(100% - 30px)',
 		paddingTop: '16px',
 		paddingLeft: '10px',
-		fontSize: '14px'
+		fontSize: '14px',
+		flex: 1
 	},
 	addParameterDiv: {
 		width: '100%',
-		marginBottom: '26px',
-		position: 'absolute',
+		marginBottom: '5px',
 		bottom: '2px'
 	},
 	selectRuleTarget: {
@@ -54,9 +72,10 @@ const styles = (theme: Theme) => createStyles({
 	playButtonContainer: {
 		width: 'calc(100% - 4px)',
 		marginTop: '5px',
-		position: 'absolute',
 		bottom: '2px',
-		left: '2px'
+		left: '2px',
+		display: 'flex',
+		flexDirection: 'column'
 	}
 });
 
@@ -113,7 +132,7 @@ const ActiveCard = ({card, users, classes}: ActiveCardProps) => {
 					parameter += ', ';
 				}
 				parameterAmount++;
-				parameter += '';
+				parameter += card.parameters[key];
 				break;
 		}
 	});
@@ -124,13 +143,11 @@ const ActiveCard = ({card, users, classes}: ActiveCardProps) => {
 
 	return (
 		<div className={classes.cardContainer}>
-			<div>
-				<div className={classes.cardName}>
-					{card.name} {parameter}
-				</div>
-				<div className={classes.cardDescription}>
-					{card.description}
-				</div>
+			<div className={classes.cardName}>
+				{card.name} {parameter}
+			</div>
+			<div className={classes.cardDescription}>
+				{card.description}
 			</div>
 		</div>
 	);
@@ -161,23 +178,34 @@ class OwnCard extends React.Component<OwnCardProps, OwnCardState> {
 
 		return (
 			<div className={classes.cardContainer}>
-				<div>
-					<div className={classes.cardName}>
-						{this.props.card.name}
-					</div>
-					<div className={classes.cardDescription}>
-						{this.props.card.description}
-					</div>
+				<div className={classes.cardName}>
+					{this.props.card.name}
+				</div>
+				<div className={classes.cardDescription}>
+					{this.props.card.description}
 				</div>
 				<div className={classes.playButtonContainer}>
 					{Object.keys(this.props.card.parameterTypes).map(key => {
+						if (Array.isArray(this.props.card.parameterTypes[key])) {
+							const choices: string[] = this.props.card.parameterTypes[key] as string[];
+							return (
+								<div key={key} className={classes.addParameterDiv}>
+									<FormattedMessage id="card.selectValue"/>:
+									<ChoiceParameter
+										choices={choices.map(c => ({display: c, id: c}))}
+										onChange={this.getParameterChangeHandler(key)}
+										value={this.state.ruleParameters[key]}
+									/>
+								</div>
+							);
+						}
 						switch (this.props.card.parameterTypes[key]) {
 							case 'player':
 								return (
 									<div key={key} className={classes.addParameterDiv}>
 										<FormattedMessage id="card.selectTarget"/>:
-										<PlayerParameter
-											users={this.props.users}
+										<ChoiceParameter
+											choices={this.props.users.map(u => ({display: u.nickname, id: u.id}))}
 											onChange={this.getParameterChangeHandler(key)}
 											value={this.state.ruleParameters[key]}
 										/>

@@ -1,3 +1,20 @@
+/* FluxxChat-webasiakas
+ * Copyright (C) 2019 Helsingin yliopisto
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import React from 'react';
 import {Message, Card, RuleParameters, User} from 'fluxxchat-protokolla';
 import {animateScroll} from 'react-scroll';
@@ -50,6 +67,10 @@ const styles = (theme: Theme) => createStyles({
 		overflowX: 'hidden',
 		marginRight: '14px',
 		border: `1px solid ${theme.fluxx.palette.border}`
+	},
+	cardList: {
+		display: 'flex',
+		flexWrap: 'wrap'
 	},
 	messageBox: {
 		marginTop: '5px',
@@ -220,31 +241,35 @@ class ChatRoom extends React.Component<Props, State> {
 						<div className={classes.caption}>
 							<FormattedMessage id="room.activeCards"/>
 						</div>
-						{this.props.activeCards.map((card, index) => {
-							return (
-								<ActiveCard
-									key={index}
-									card={card}
-									users={this.props.users}
-								/>
-							);
-						})}
+						<div className={classes.cardList}>
+							{this.props.activeCards.map((card, index) => {
+								return (
+									<ActiveCard
+										key={index}
+										card={card}
+										users={this.props.users}
+									/>
+								);
+							})}
+						</div>
 					</div>
 					<div className={classes.cardDivOwn}>
 						<div className={classes.caption}>
 							<FormattedMessage id="room.hand"/>
 						</div>
-						{this.props.ownCards.map((card, index) => {
-							return (
-								<OwnCard
-									key={index}
-									cardId={index.toString()}
-									card={card}
-									users={this.props.users}
-									action={this.props.onSendNewRule}
-								/>
-							);
-						})}
+						<div className={classes.cardList}>
+							{this.props.ownCards.map((card, index) => {
+								return (
+									<OwnCard
+										key={index}
+										cardId={index.toString()}
+										card={card}
+										users={this.props.users}
+										action={this.props.onSendNewRule}
+									/>
+								);
+							})}
+						</div>
 					</div>
 				</div>
 			</div>

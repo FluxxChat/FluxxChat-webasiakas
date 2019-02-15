@@ -4,7 +4,7 @@
   "main": "index.js",
   "repository": "git@github.com:FluxxChat/FluxxChat-webasiakas",
   "author": "Olavi Mustanoja <tilastokeskus@gmail.com>",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "scripts": {
     "dev": "webpack-dev-server --mode development",
     "build": "webpack --mode production && cp src/index.js dist/index.js",
