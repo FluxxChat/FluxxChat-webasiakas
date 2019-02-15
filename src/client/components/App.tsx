@@ -1,6 +1,6 @@
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters, ValidateTextMessage} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters} from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
 import themes from '../themes';
@@ -33,7 +33,6 @@ interface State {
 	turnUserId: string | null;
 	turnTime: string | null;
 	timer: number | null;
-	messageValid: boolean;
 	theme: keyof typeof themes;
 }
 
@@ -48,7 +47,6 @@ const EMPTY_STATE: State = {
 	turnUserId: null,
 	turnTime: null,
 	timer: null,
-	messageValid: true,
 	theme: 'light'
 };
 
@@ -108,10 +106,6 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						nickname: msg.nickname
 					});
 					this.startTurnTimer(msg.turnEndTime);
-					break;
-				case 'VALIDATE_TEXT_RESPONSE':
-					this.setState({messageValid: msg.valid});
-					break;
 				default:
 					break;
 			}
@@ -186,16 +180,6 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({timer: interval});
 	}
 
-	public handleValidateMessage = (message: string) => {
-		if (this.state.connection) {
-			const protocolMessage: ValidateTextMessage = {
-				type: 'VALIDATE_TEXT',
-				textContent: message
-			};
-			this.state.connection.send(JSON.stringify(protocolMessage));
-		}
-	};
-
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match, classes} = this.props;
@@ -229,8 +213,6 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 							ownCards={ownCards}
 							onSendMessage={this.handleSendTextMessage}
 							onSendNewRule={this.handleSendNewRule}
-							onValidateMessage={this.handleValidateMessage}
-							messageValid={this.state.messageValid}
 						/>
 					)}
 				</div>
