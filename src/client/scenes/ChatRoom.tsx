@@ -142,10 +142,12 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public handleSendMessage = () => {
-		const {messageDraft} = this.state;
-		this.setState({messageDraft: ''}, () => {
-			this.props.onSendMessage(messageDraft);
-		});
+		if (this.props.messageValid) {
+			const {messageDraft} = this.state;
+			this.setState({messageDraft: ''}, () => {
+				this.props.onSendMessage(messageDraft);
+			});
+		}
 	}
 
 	public handleChangeMessageDraft = (evt: React.ChangeEvent<HTMLInputElement>) => {
