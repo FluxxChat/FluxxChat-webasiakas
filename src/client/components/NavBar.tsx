@@ -18,6 +18,7 @@
 import React from 'react';
 import {createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import themes, {themeNames} from '../themes';
+import localeData from '../../../i18n/data.json';
 
 const styles = (theme: Theme) => createStyles({
 	navbarBack: {
@@ -78,13 +79,15 @@ const styles = (theme: Theme) => createStyles({
 
 interface Props {
 	onChangeTheme: (theme: keyof typeof themes) => void;
+	onChangeLanguage: (locale: string) => void;
 }
 
 class NavigationBar extends React.Component<Props & WithStyles<typeof styles>> {
 
+	
 	public render() {
 		const {classes} = this.props;
-
+		
 		return(
 			<nav className={classes.navbarBack}>
 				<a className={classes.navbarFront}>FluxxChat</a>
@@ -98,6 +101,21 @@ class NavigationBar extends React.Component<Props & WithStyles<typeof styles>> {
 										key={index}
 										onChangeTheme={this.props.onChangeTheme}
 										theme={theme}
+										classes={classes}
+									/>
+								);
+							})}
+						</div>
+					</div>
+					<div className={classes.dropDown}>
+						<button className={classes.dropBtn}>Language</button>
+						<div className={classes.dropdownContent}>
+							{Object.getOwnPropertyNames(localeData).map((locale, index) => {
+								return (
+									<LanguageButton
+										key={index}
+										onChangeLanguage={this.props.onChangeLanguage}
+										locale={locale}
 										classes={classes}
 									/>
 								);
@@ -130,6 +148,24 @@ class ThemeButton extends React.Component<ThemeButtonProps> {
 		);
 	}
 
+}
+
+interface LanguageButtonProps {
+	classes;
+	onChangeLanguage: (locale: string) => void;
+	locale: string;
+}
+
+class LanguageButton extends React.Component<LanguageButtonProps> {
+	public changeLanguage = () => {
+		this.props.onChangeLanguage(this.props.locale);
+	}
+
+	public render() {
+		return(
+			<button className={this.props.classes.themeButton} onClick={this.changeLanguage}>{this.props.locale}</button>
+		);
+	}
 }
 
 export default NavBarWithProps;

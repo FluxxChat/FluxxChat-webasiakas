@@ -219,6 +219,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	};
 
+	public setLocale = (newLocale: string) => {
+		this.setState({locale: newLocale});
+	}
+
 	public render() {
 		// Match contains information about the matched react-router path
 		const { match, classes } = this.props;
@@ -230,14 +234,15 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		// Sets up translations
 		addLocaleData(fi);
 		addLocaleData(en);
-		const translatedMessages = (locale == "fi") ? localeData.fi : localeData.en;
-		
+		const translatedMessages = (locale === 'fi') ? localeData.fi : localeData.en;
+
 		return (
 			<IntlProvider locale={locale} key={locale} messages={translatedMessages}>
 				<div className={classes.body}>
 					<div className={classes.bodyPad}>
 						<NavigationBar
 							onChangeTheme={this.props.onChangeTheme}
+							onChangeLanguage={this.setLocale}
 						/>
 						{(!nickname || !roomId) && (
 							<Menu
