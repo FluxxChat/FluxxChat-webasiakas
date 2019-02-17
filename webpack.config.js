@@ -1,10 +1,18 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const BROWSER_ENV_PREFIX = 'BROWSER_';
 
-module.exports = {
-	entry: './src/client/index.tsx',
+module.exports = env => ({
+	entry: {
+		vendor: [
+			// Required to support async/await
+			'@babel/polyfill'
+		],
+		main: ['react-hot-loader/patch', './src/client/index.tsx']
+	},
 	module: {
 		rules: [
 			{
@@ -25,8 +33,26 @@ module.exports = {
 			},
 			{
 				test: /\.tsx?$/,
-				use: 'ts-loader',
-				exclude: /node_modules/
+				exclude: /node_modules/,
+				use: {
+					loader: 'babel-loader',
+					options: {
+						cacheDirectory: true,
+						babelrc: false,
+						presets: [
+							[
+								'@babel/preset-env',
+								{targets: {browsers: 'last 2 versions'}}
+							],
+							'@babel/preset-typescript',
+							'@babel/preset-react'
+						],
+						plugins: [
+							['@babel/plugin-proposal-class-properties', {loose: true}],
+							'react-hot-loader/babel'
+						]
+					}
+				}
 			}
 		]
 	},
@@ -34,7 +60,7 @@ module.exports = {
 		extensions: ['.tsx', '.ts', '.js', '.css']
 	},
 	output: {
-		filename: 'bundle.js',
+		filename: '[name].js',
 		path: path.resolve(__dirname, 'dist/client'),
 		publicPath: '/'
 	},
@@ -59,9 +85,11 @@ module.exports = {
 		}
 	},
 	plugins: [
+		new ForkTsCheckerWebpackPlugin(),
+		new webpack.NamedModulesPlugin(),
 		new HtmlWebpackPlugin({
 			template: './public/index.html',
 			filename: 'index.html'
 		})
 	]
-}
+});

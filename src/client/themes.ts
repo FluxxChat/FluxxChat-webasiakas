@@ -58,7 +58,16 @@ const createTheme = (opts: ThemeOptions) => {
 	return createMuiTheme(merge(opts, {
 		typography: {
 			// Needed to not get deprecation warnings in developer console
-			useNextVariants: true
+			useNextVariants: true,
+			htmlFontSize: 10,
+			fontFamily: 'Montserrat, Helvetica, Arial'
+		},
+		overrides: {
+			MuiTooltip: {
+				tooltip: {
+					fontWeight: 500
+				}
+			}
 		}
 	}));
 };

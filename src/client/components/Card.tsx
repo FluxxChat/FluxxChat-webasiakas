@@ -17,30 +17,33 @@
 
 import React from 'react';
 import {Card, User, RuleParameters} from 'fluxxchat-protokolla';
-import {FormattedMessage} from 'react-intl';
 import {createStyles, Theme, WithStyles, withStyles} from '@material-ui/core';
-import {NumberParameter, ChoiceParameter} from './CardParameters';
+// import {NumberParameter, ChoiceParameter} from './CardParameters';
 
 const styles = (theme: Theme) => createStyles({
 	cardContainer: {
 		overflowWrap: 'normal',
-		position: 'relative',
 		display: 'flex',
-		flexDirection: 'column',
-		flex: '0 0 calc(33% - 0.8rem)',
-		margin: '0.5rem',
+		flex: '0 0 13rem',
+		height: '16rem',
 		borderRadius: theme.fluxx.borderRadius,
 		backgroundColor: theme.fluxx.palette.foreground,
 		boxShadow: '0.1rem 0.1rem 0.4rem 0 #00000022',
 		boxSizing: 'border-box',
 		overflow: 'hidden',
-		fontSize: '1.2rem'
+		fontWeight: 500,
+		fontSize: '1rem',
+		justifyContent: 'center',
+		alignItems: 'center',
+		textAlign: 'center',
+		'&:not(:first-child)': {
+			marginLeft: '1rem'
+		}
 	},
 	cardName: {
 		width: '100%',
-		fontSize: '1.4rem',
-		fontWeight: 500,
-		padding: '1rem 1rem 0.4rem 1rem',
+		color: '#444',
+		padding: '1rem 1.4rem 0.4rem 1.4rem',
 		marginBottom: '0.6rem',
 		boxSizing: 'border-box'
 	},
@@ -84,88 +87,23 @@ const styles = (theme: Theme) => createStyles({
 	}
 });
 
-interface ActiveCardProps extends WithStyles<typeof styles> {
-	card: Card;
-	users: User[];
-}
-
 interface OwnCardProps extends WithStyles<typeof styles> {
 	cardId: string;
 	card: Card;
 	users: User[];
 	action: (card: Card, ruleParameters: RuleParameters) => void;
+	onClick: (card: Card) => void;
 }
 
 interface OwnCardState {
 	ruleParameters: RuleParameters;
 }
 
-const ActiveCard = ({card, users, classes}: ActiveCardProps) => {
-	let parameter = '';
-	let parameterAmount = 0;
-
-	Object.keys(card.parameterTypes).forEach(key => {
-		switch (card.parameterTypes[key]) {
-			case 'player':
-				if (parameterAmount === 0) {
-					parameter += '(';
-				} else if (parameterAmount > 0) {
-					parameter += ', ';
-				}
-				parameterAmount++;
-				let playerName = '';
-				users.forEach(user => {
-					if (card.parameters[key] === user.id) {
-						playerName = user.nickname;
-					}
-				});
-				parameter += playerName;
-				break;
-			case 'number':
-				if (parameterAmount === 0) {
-					parameter += '(';
-				} else if (parameterAmount > 0) {
-					parameter += ', ';
-				}
-				parameterAmount++;
-				parameter += card.parameters[key];
-				break;
-			default:
-				if (parameterAmount === 0) {
-					parameter += '(';
-				} else if (parameterAmount > 0) {
-					parameter += ', ';
-				}
-				parameterAmount++;
-				parameter += card.parameters[key];
-				break;
-		}
-	});
-
-	if (parameterAmount > 0) {
-		parameter += ')';
-	}
-
-	return (
-		<div className={classes.cardContainer}>
-			<div className={classes.cardName}>
-				{card.name} {parameter}
-			</div>
-			<div className={classes.cardDescription}>
-				{card.description}
-			</div>
-		</div>
-	);
-};
-
-const StyledActiveCard = withStyles(styles)(ActiveCard);
-export {StyledActiveCard as ActiveCard};
-
 class OwnCard extends React.Component<OwnCardProps, OwnCardState> {
 	public state: OwnCardState = {ruleParameters: {}};
 
 	public handleClick = () => {
-		this.props.action(this.props.card, this.state.ruleParameters);
+		this.props.onClick(this.props.card);
 	}
 
 	public getParameterChangeHandler = (parameter: string) => (evt: React.ChangeEvent<any>) => {
@@ -182,15 +120,12 @@ class OwnCard extends React.Component<OwnCardProps, OwnCardState> {
 		const {classes} = this.props;
 
 		return (
-			<div className={classes.cardContainer}>
+			<div className={classes.cardContainer} onClick={this.handleClick}>
 				<div className={classes.cardName}>
 					{this.props.card.name}
 				</div>
-				<div className={classes.cardDescription}>
-					{this.props.card.description}
-				</div>
 				<div className={classes.playButtonContainer}>
-					{Object.keys(this.props.card.parameterTypes).map(key => {
+					{/*Object.keys(this.props.card.parameterTypes).map(key => {
 						if (Array.isArray(this.props.card.parameterTypes[key])) {
 							const choices = this.props.card.parameterTypes[key] as string[];
 							return (
@@ -229,10 +164,10 @@ class OwnCard extends React.Component<OwnCardProps, OwnCardState> {
 							default:
 								return null;
 						}
-					})}
-					<button type="button" className={classes.playButton} onClick={this.handleClick}>
+					})*/}
+					{/*<button type="button" className={classes.playButton} onClick={this.handleClick}>
 						<FormattedMessage id="card.play"/>
-					</button>
+				</button>*/}
 				</div>
 			</div>
 		);

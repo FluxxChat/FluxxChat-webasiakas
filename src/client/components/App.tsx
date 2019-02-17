@@ -16,22 +16,20 @@
  */
 
 import React from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters, ValidateTextMessage } from 'fluxxchat-protokolla';
-import { MuiThemeProvider, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core';
-import { get } from 'lodash';
+import {withRouter, RouteComponentProps} from 'react-router-dom';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters, ValidateTextMessage} from 'fluxxchat-protokolla';
+import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
+import {get} from 'lodash';
+import {hot} from 'react-hot-loader/root';
 import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
-<<<<<<< 3ac24d101d403e662002c1cb44adfd857482705c
 import NavigationBar from './NavBar';
 import { IntlProvider, addLocaleData } from 'react-intl';
 import fi = require('react-intl/locale-data/fi');
 import en = require('react-intl/locale-data/en');
 import localeData from '../../../i18n/data.json';
 import ErrorPopUp from './ErrorPopUp';
-=======
->>>>>>> refactor: ui improvements
 
 const styles = (theme: Theme) => createStyles({
 	body: {
@@ -42,20 +40,21 @@ const styles = (theme: Theme) => createStyles({
 		flexDirection: 'column'
 	},
 	bodyPad: {
-		flex: 1
+		flex: 1,
+		height: '100%'
 	}
 });
 
 interface State {
 	connection: WebSocket | null;
-	nickname: string | null;
+	user: User | null;
 	users: User[];
 	userMap: { [key: string]: User };
 	messages: Message[];
 	ownCards: Card[];
 	activeCards: Card[];
 	turnUserId: string | null;
-	turnTime: string | null;
+	turnTime: number;
 	timer: number | null;
 	messageValid: boolean;
 	locale: string;
@@ -65,14 +64,14 @@ interface State {
 
 const EMPTY_STATE: State = {
 	connection: null,
-	nickname: null,
+	user: null,
 	users: [],
 	userMap: {},
 	messages: [],
 	ownCards: [],
 	activeCards: [],
 	turnUserId: null,
-	turnTime: null,
+	turnTime: 0,
 	timer: null,
 	alert: [],
 	messageValid: true,
@@ -129,6 +128,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						turnUserId: msg.turnUserId,
 						nickname: msg.nickname,
 						ownCards: msg.hand
+						user: msg.users.find(u => u.nickname === msg.nickname) || null
 					});
 					this.startTurnTimer(msg.turnEndTime);
 					break;
@@ -172,7 +172,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 			const protocolMessage: JoinRoomMessage = {
 				type: 'JOIN_ROOM',
 				roomId,
-				nickname: nickname || ''
+				nickname: this.state.user!.nickname
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
@@ -184,7 +184,13 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 	}
 
 	public requestCreateRoom = (nickname: string) => {
-		this.setState({ nickname }, () => {
+		this.setState({user: {nickname, id: ''}}, () => {
+			this.joinRoom(roomId);
+		});
+	}
+
+	public requestCreateRoom = (nickname: string) => {
+		this.setState({user: {nickname, id: ''}}, () => {
 			if (this.state.connection) {
 				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM' };
 				this.state.connection.send(JSON.stringify(protocolMessage));
@@ -194,22 +200,20 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public startTurnTimer = turnEndTime => {
 		if (this.state.timer) {
-			clearInterval(this.state.timer);
+			window.clearInterval(this.state.timer);
 		}
-		let timer = Math.max(turnEndTime - Date.now(), 0);
-		const interval = setInterval(() => {
-			let seconds = Math.floor(timer / 1000);
-			const minutes = Math.floor(seconds / 60);
-			seconds -= minutes * 60;
-			this.setState({ turnTime: minutes + ' min ' + seconds + ' s' });
-			if (timer > 0) {
-				timer -= 1000;
-			} else {
-				clearInterval(interval);
-				this.setState({ timer: null });
+
+		const interval = window.setInterval(() => {
+			const ms = Math.max(turnEndTime - Date.now(), 0);
+			const seconds = Math.floor(ms / 1000);
+			this.setState({turnTime: seconds});
+			if (ms === 0) {
+				window.clearInterval(interval);
+				this.setState({timer: null});
 			}
 		}, 1000);
-		this.setState({ timer: interval });
+
+		this.setState({timer: interval});
 	}
 
 	public closeAlert = () => {
@@ -232,8 +236,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public render() {
 		// Match contains information about the matched react-router path
-		const { match, classes } = this.props;
-		const { nickname, messages, activeCards: activeCards, ownCards: ownCards, locale } = this.state;
+		const {match, classes} = this.props;
+		const {user, messages, activeCards: activeCards, ownCards: ownCards, locale} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
@@ -246,21 +250,22 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		return (
 			<IntlProvider locale={locale} key={locale} messages={translatedMessages}>
 				<div className={classes.body}>
+					{/*<NavigationBar onChangeTheme={this.props.onChangeTheme}/>*/}
 					<div className={classes.bodyPad}>
-						{(!nickname || !roomId) && (
+						{(!user || !roomId) && (
 							<Menu
 								type={roomId ? 'join' : 'create'}
 								onJoinRoom={this.requestJoinRoom}
 								onCreateRoom={this.requestCreateRoom}
 							/>
 						)}
-						{nickname && roomId && (
+						{user && roomId && (
 							<ChatRoom
-								nickname={nickname}
+								user={user}
 								roomId={roomId}
 								users={this.state.users}
 								turnUser={this.state.userMap[this.state.turnUserId || ''] || { nickname: '' }}
-								turnTime={this.state.turnTime || ''}
+								turnTime={this.state.turnTime}
 								messages={messages}
 								activeCards={activeCards}
 								ownCards={ownCards}
@@ -299,4 +304,4 @@ class AppWrapper extends React.Component<{}, WrapperState> {
 	}
 }
 
-export default AppWrapper;
+export default hot(AppWrapper);

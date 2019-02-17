@@ -45,7 +45,12 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'column',
 		backgroundColor: '#ffffff',
-		borderRadius: theme.fluxx.borderRadius
+		borderRadius: theme.fluxx.borderRadius,
+		overflow: 'auto',
+		'& img': {
+			maxWidth: '30rem',
+			maxHeight: '30rem'
+		}
 	},
 	messageSender: {
 		flex: '0 0 auto',
@@ -55,6 +60,8 @@ const styles = (theme: Theme) => createStyles({
 	messageContent: {
 		flex: 1,
 		minWidth: '10rem',
+		color: '#444',
+		wordBreak: 'break-word',
 		'& > :first-child': {
 			marginTop: 0
 		},

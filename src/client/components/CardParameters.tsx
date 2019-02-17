@@ -40,7 +40,6 @@ export class NumberParameter extends React.Component<NumberParameterProps> {
 				<input
 					onChange={this.props.onChange}
 					value={this.props.value || 0}
-					className="set_parameter_number"
 					type="number"
 				/>
 			</span>
@@ -51,16 +50,15 @@ export class NumberParameter extends React.Component<NumberParameterProps> {
 export class ChoiceParameter extends React.Component<ChoiceParameterProps> {
 	public render() {
 		return (
-				<select
-					value={this.props.value || '-1'}
-					onChange={this.props.onChange}
-					className="select_rule_target"
-				>
-					<option value="-1"/>>
-					{this.props.choices.map(choice => (
-						<option key={choice.id} value={choice.id}>{choice.display}</option>
-					))}
-				</select>
+			<select
+				value={this.props.value || '-1'}
+				onChange={this.props.onChange}
+			>
+				<option value="-1"/>
+				{this.props.choices.map(choice => (
+					<option key={choice.id} value={choice.id}>{choice.display}</option>
+				))}
+			</select>
 		);
 	}
 }
