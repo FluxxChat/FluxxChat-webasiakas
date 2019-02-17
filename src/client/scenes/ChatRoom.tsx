@@ -52,16 +52,19 @@ const styles = (theme: Theme) => createStyles({
 		flexDirection: 'column'
 	},
 	controlArea: {
-		flex: '0 0 10rem',
+		flex: '0 0 auto',
 		display: 'flex',
 		flexDirection: 'column',
 		backgroundColor: '#fafafa',
+		borderLeft: '1px solid #00000011',
 		'& > $header': {
 			justifyContent: 'flex-end',
 			padding: '0 2rem'
 		}
 	},
 	controls: {
+		flex: '0 0 10rem',
+		width: '10rem',
 		display: 'flex',
 		flexDirection: 'column',
 		padding: '2rem 0',
@@ -69,6 +72,11 @@ const styles = (theme: Theme) => createStyles({
 		'& > button': {
 			width: '4.8rem'
 		}
+	},
+	controlContentWrapper: {
+		flex: 1,
+		display: 'flex',
+		flexDirection: 'row'
 	},
 	themeButton: {
 		border: 'none',
@@ -97,25 +105,33 @@ const styles = (theme: Theme) => createStyles({
 		}
 	},
 	ruleList: {
-		flex: 1,
+		flex: '1 0 30rem',
 		display: 'flex',
 		flexDirection: 'column',
-		borderTop: '1px solid #00000011'
+		overflowX: 'hidden',
+		transition: 'max-width 0.2s',
+		maxWidth: 0,
+		'&$visible': {
+			maxWidth: '25vw',
+			overflowY: 'auto',
+			borderRight: '1px solid #00000011'
+		}
 	},
 	ruleListItem: {
-		flex: '0 0 auto',
+		width: '30vw',
+		boxSizing: 'border-box',
 		display: 'flex',
 		flexDirection: 'column',
 		padding: '1rem 4rem 1rem 2rem',
 		borderBottom: '1px solid #00000011'
 	},
 	ruleTitle: {
-		flex: 1,
+		flex: '0 0 auto',
 		fontSize: '1.2rem',
 		fontWeight: 500
 	},
 	ruleDescription: {
-		flex: 1,
+		flex: '0 0 auto',
 		marginTop: '0.2rem',
 		fontSize: '1.1rem'
 	},
@@ -262,10 +278,10 @@ interface State {
 class ChatRoom extends React.Component<Props, State> {
 	public state: State = {
 		messageDraft: '',
-		showCards: false,
+		showCards: window.innerWidth >= 1280,
 		selectedCard: null,
 		showCard: false,
-		showRules: false,
+		showRules: window.innerWidth >= 1920,
 		ruleParameters: {}
 	};
 
@@ -301,10 +317,37 @@ class ChatRoom extends React.Component<Props, State> {
 		this.scrollToBottom();
 	}
 
-	public componentDidUpdate() {
+	public componentDidUpdate(_prevProps: Props, prevState: State) {
 		const el = document.getElementById('message-box');
 		if (el && el.scrollTop === (el.scrollHeight - el.offsetHeight)) {
 			this.scrollToBottom();
+		}
+
+		if (this.state.selectedCard && !prevState.showCard && this.state.showCard) {
+			const defaultRuleParameters = {};
+
+			for (const key of Object.keys(this.state.selectedCard.parameterTypes)) {
+				const type = this.state.selectedCard!.parameterTypes[key];
+
+				if (Array.isArray(type)) {
+					defaultRuleParameters[key] = type[0];
+				}
+
+				if (type === 'player') {
+					defaultRuleParameters[key] = this.props.users[0]!.id;
+				}
+
+				if (type === 'number') {
+					defaultRuleParameters[key] = 0;
+				}
+			}
+
+			this.setState(state => ({
+				ruleParameters: {
+					...state.ruleParameters,
+					...defaultRuleParameters
+				}
+			}));
 		}
 	}
 
@@ -333,14 +376,10 @@ class ChatRoom extends React.Component<Props, State> {
 				[key]: value
 			}
 		}));
-	}
+	};
 
-	public handleShowRules = () => {
-		this.setState({showRules: true});
-	}
-
-	public handleHideRules = () => {
-		this.setState({showRules: false});
+	public handleToggleShowRules = () => {
+		this.setState(state => ({showRules: !state.showRules}));
 	}
 
 	public render() {
@@ -430,12 +469,38 @@ class ChatRoom extends React.Component<Props, State> {
 					<div className={classes.header}>
 						<button className={classes.themeButton}>theme</button>
 					</div>
-					<div className={classes.controls}>
-						<Tooltip title="Show active rules" placement="left" disableFocusListener>
-							<IconButton onClick={this.handleShowRules}>
-								<RulesIcon/>
-							</IconButton>
-						</Tooltip>
+					<div className={classes.controlContentWrapper}>
+						<div className={`${classes.ruleList} ${showRules ? classes.visible : ''}`}>
+							{activeCards.length === 0 && (
+								<div className={classes.ruleListItem}>
+									<div className={classes.ruleTitle}>Ei sääntöjä voimassa</div>
+								</div>
+							)}
+							{activeCards.map((rule, index) => {
+								const params = Object.keys(rule.parameters).map(key => {
+									const val = rule.parameters[key];
+									if (rule.parameterTypes[key] === 'player') {
+										const player = users.find(u => u.id === val);
+										return player ? player.nickname : '?';
+									}
+									return val;
+								});
+								const paramsStr = params.length > 0 ? ` (${params.join(', ')})` : '';
+								return (
+									<div className={classes.ruleListItem} key={index}>
+										<div className={classes.ruleTitle}>{rule.name}{paramsStr}</div>
+										<div className={classes.ruleDescription}>{rule.description}</div>
+									</div>
+								);
+							})}
+						</div>
+						<div className={classes.controls}>
+							<Tooltip title="Show active rules" placement="left" disableFocusListener>
+								<IconButton onClick={this.handleToggleShowRules}>
+									<RulesIcon/>
+								</IconButton>
+							</Tooltip>
+						</div>
 					</div>
 				</div>
 				<Dialog open={showCard} onClose={this.handleCloseCardDialog}>
@@ -509,32 +574,6 @@ class ChatRoom extends React.Component<Props, State> {
 						</Button>
 					</DialogActions>
 				</Dialog>
-				<Drawer anchor="right" open={showRules} onClose={this.handleHideRules}>
-					<div className={classes.ruleList}>
-						{activeCards.length === 0 && (
-							<div className={classes.ruleListItem}>
-								<div className={classes.ruleTitle}>Ei sääntöjä voimassa</div>
-							</div>
-						)}
-						{activeCards.map((rule, index) => {
-							const params = Object.keys(rule.parameters).map(key => {
-								const val = rule.parameters[key];
-								if (rule.parameterTypes[key] === 'player') {
-									const player = users.find(u => u.id === val);
-									return player ? player.nickname : '?';
-								}
-								return val;
-							});
-							const paramsStr = params.length > 0 ? ` (${params.join(', ')})` : '';
-							return (
-								<div className={classes.ruleListItem} key={index}>
-									<div className={classes.ruleTitle}>{rule.name}{paramsStr}</div>
-									<div className={classes.ruleDescription}>{rule.description}</div>
-								</div>
-							);
-						})}
-					</div>
-				</Drawer>
 			</div>
 		);
 	}
