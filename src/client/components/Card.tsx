@@ -36,8 +36,13 @@ const styles = (theme: Theme) => createStyles({
 		justifyContent: 'center',
 		alignItems: 'center',
 		textAlign: 'center',
+		cursor: 'pointer',
+		transition: 'box-shadow 0.1s',
 		'&:not(:first-child)': {
 			marginLeft: '1rem'
+		},
+		'&:hover': {
+			boxShadow: '0 0 0.4rem 0.1rem #0099ffaa'
 		}
 	},
 	cardName: {
