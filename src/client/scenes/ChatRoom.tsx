@@ -21,7 +21,7 @@ import {animateScroll} from 'react-scroll';
 import {FormattedMessage} from 'react-intl';
 import {OwnCard} from '../components/Card';
 import MessageContainer from '../components/MessageContainer';
-import {createStyles, Theme, WithStyles, withStyles, InputBase, Divider, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, FormControl, InputLabel, Select, TextField, Drawer, Tooltip, CircularProgress} from '@material-ui/core';
+import {createStyles, Theme, WithStyles, withStyles, InputBase, Divider, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, FormControl, InputLabel, Select, TextField, Tooltip, CircularProgress} from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import RulesIcon from '@material-ui/icons/Ballot';
 import CardsIcon from '@material-ui/icons/ViewCarousel';
