@@ -85,10 +85,9 @@ interface Props {
 
 class NavigationBar extends React.Component<Props & WithStyles<typeof styles>> {
 
-	
 	public render() {
 		const {classes} = this.props;
-		
+
 		return(
 			<nav className={classes.navbarBack}>
 				<a className={classes.navbarFront}>FluxxChat</a>
