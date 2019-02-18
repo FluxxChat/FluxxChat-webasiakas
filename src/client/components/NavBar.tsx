@@ -57,7 +57,8 @@ const styles = (theme: Theme) => createStyles({
 		backgroundColor: theme.fluxx.palette.themeButton,
 		color: 'white',
 		border: 'none',
-		width: '70px',
+		width: '76px',
+		padding: '1px',
 		fontWeight: 'bold'
 	},
 	themeButton: {
