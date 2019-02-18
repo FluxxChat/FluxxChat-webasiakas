@@ -110,19 +110,14 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					this.props.history.push(`/room/${msg.roomId}`);
 					this.joinRoom(msg.roomId);
 					break;
-				case 'CARD':
-					this.setState({ownCards: [...this.state.ownCards, msg.card]});
-					break;
-				case 'EMPTY_HAND':
-					this.setState({ownCards: []});
-					break;
 				case 'ROOM_STATE':
 					this.setState({
 						users: msg.users,
 						userMap: msg.users.reduce((m, u) => ({...m, [u.id]: u}), {}),
 						activeCards: msg.enabledRules,
 						turnUserId: msg.turnUserId,
-						nickname: msg.nickname
+						nickname: msg.nickname,
+						ownCards: msg.hand
 					});
 					this.startTurnTimer(msg.turnEndTime);
 					break;
@@ -140,7 +135,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		if (connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
-				textContent: message
+				textContent: message,
+				timestamp: new Date().toISOString()
 			};
 			connection.send(JSON.stringify(protocolMessage));
 		}
