@@ -185,8 +185,8 @@ const styles = (theme: Theme) => createStyles({
 		margin: '2rem 0.4rem'
 	},
 	userListArea: {
-		flex: 0.8,
-		maxWidth: '80rem',
+		flex: 0.6,
+		maxWidth: '60rem',
 		display: 'flex',
 		flexDirection: 'column',
 		background: 'linear-gradient(160deg, #2a4058 0%, #171f28 100%)',
