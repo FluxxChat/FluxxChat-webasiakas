@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {FormattedMessage, injectIntl, InjectedIntlProps} from 'react-intl';
-import {Theme, createStyles, withStyles, WithStyles, InputBase, Button} from '@material-ui/core';
+import {Theme, createStyles, withStyles, WithStyles, InputBase, Button, InputAdornment} from '@material-ui/core';
 import Header from './Header';
 import themes from '../themes';
 
@@ -35,24 +35,27 @@ const styles = (theme: Theme) => createStyles({
 		maxWidth: '50rem',
 		alignSelf: 'center'
 	},
-	inputWrapper: {
+	input: {
 		display: 'flex',
 		flexDirection: 'row',
 		background: theme.fluxx.menu.input.background,
 		padding: '1rem 2rem',
 		borderRadius: '0.8rem',
-		boxShadow: '0 0 1rem 0 #0000000a',
-		'& button': {
-			color: theme.fluxx.menu.button.color
-		}
-	},
-	input: {
+		boxShadow: theme.fluxx.menu.input.shadow,
 		flex: 1,
-		padding: '0 1rem',
 		fontSize: '1.6rem',
 		boxSizing: 'border-box',
-		color: 'inherit'
-	}
+		color: 'inherit',
+		transition: 'box-shadow 0.2s',
+		'& button': {
+			color: theme.fluxx.menu.button.color,
+			whiteSpace: 'nowrap'
+		},
+		'&$focused': {
+			boxShadow: theme.fluxx.menu.input.focus.shadow
+		}
+	},
+	focused: {}
 });
 
 interface OwnProps {
@@ -98,19 +101,24 @@ class Menu extends React.Component<Props, State> {
 			<div className={classes.root}>
 				<Header onChangeTheme={onChangeTheme}/>
 				<div className={classes.menuContent}>
-					<div className={classes.inputWrapper}>
-						<InputBase
-							className={classes.input}
-							placeholder={intl.formatMessage({id: 'input.typeNickname'})}
-							onKeyDown={this.handleKeyDown}
-							value={this.state.nickname}
-							onChange={this.handleChangeNickname}
-							autoFocus
-						/>
-						<Button size="small" onClick={this.handleClickSubmit}>
-							{type === 'join' ? <FormattedMessage id="login.joinRoom"/> : <FormattedMessage id="login.createRoom"/>}
-						</Button>
-					</div>
+					<InputBase
+						className={classes.input}
+						placeholder={intl.formatMessage({id: 'input.typeNickname'})}
+						onKeyDown={this.handleKeyDown}
+						value={this.state.nickname}
+						onChange={this.handleChangeNickname}
+						autoFocus
+						classes={{focused: classes.focused}}
+						endAdornment={
+							<InputAdornment position="end">
+								<Button size="small" onClick={this.handleClickSubmit}>
+									{type === 'join'
+										? <FormattedMessage id="login.joinRoom"/>
+										: <FormattedMessage id="login.createRoom"/>}
+								</Button>
+							</InputAdornment>
+						}
+					/>
 				</div>
 			</div>
 		);

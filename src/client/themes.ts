@@ -27,7 +27,13 @@ interface CustomThemeProps {
 		body: {background: React.CSSProperties['background']},
 		border: {darker: React.CSSProperties['color']},
 		menu: {
-			input: {background: React.CSSProperties['background']},
+			input: {
+				background: React.CSSProperties['background'],
+				shadow: React.CSSProperties['boxShadow'],
+				focus: {
+					shadow: React.CSSProperties['boxShadow']
+				}
+			},
 			button: {color: React.CSSProperties['color']}
 		}
 		controlArea: {background: React.CSSProperties['background']},
@@ -103,7 +109,13 @@ export default {
 			border: {darker: '#0000001a'},
 			body: {background: '#efefef'},
 			menu: {
-				input: {background: '#ffffffcc'},
+				input: {
+					background: '#ffffffcc',
+					shadow: '0 0 1rem 0 #0000000a',
+					focus: {
+						shadow: '0 0 0.1rem 0.2rem #0099ffaa'
+					}
+				},
 				button: {color: '#39a5d2'}
 			},
 			controlArea: {background: '#fafafa'},
@@ -146,7 +158,13 @@ export default {
 			border: {darker: '#00000033'},
 			body: {background: '#465375'},
 			menu: {
-				input: {background: '#00000033'},
+				input: {
+					background: '#00000033',
+					shadow: '0 0 0.4rem 0rem #ffffff1f, 0.1rem 0.1rem 0.2rem 0 #00000040 inset',
+					focus: {
+						shadow: '0 0 0.2rem 0.2rem #5179af, 0.1rem 0.1rem 0.2rem 0 #00000040 inset'
+					}
+				},
 				button: {color: '#90a5c3d6'}
 			},
 			controlArea: {background: '#313d5a'},
