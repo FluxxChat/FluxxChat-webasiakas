@@ -248,6 +248,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								type={roomId ? 'join' : 'create'}
 								onJoinRoom={this.requestJoinRoom}
 								onCreateRoom={this.requestCreateRoom}
+								onChangeTheme={onChangeTheme}
 							/>
 						)}
 						{user && roomId && (

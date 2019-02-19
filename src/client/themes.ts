@@ -26,6 +26,10 @@ interface CustomThemeProps {
 		icon: {primary: React.CSSProperties['color']},
 		body: {background: React.CSSProperties['background']},
 		border: {darker: React.CSSProperties['color']},
+		menu: {
+			input: {background: React.CSSProperties['background']},
+			button: {color: React.CSSProperties['color']}
+		}
 		controlArea: {background: React.CSSProperties['background']},
 		chat: {
 			header: {background: React.CSSProperties['background']},
@@ -57,7 +61,8 @@ interface CustomThemeProps {
 		},
 		users: {
 			background: React.CSSProperties['background'],
-			user: {highlight: {background: React.CSSProperties['background']}}}
+			user: {highlight: {background: React.CSSProperties['background']}}
+		}
 	};
 }
 
@@ -97,6 +102,10 @@ export default {
 			icon: {primary: '#0000008a'},
 			border: {darker: '#0000001a'},
 			body: {background: '#efefef'},
+			menu: {
+				input: {background: '#ffffffcc'},
+				button: {color: '#39a5d2'}
+			},
 			controlArea: {background: '#fafafa'},
 			chat: {
 				header: {background: '#ffffff44'},
@@ -125,8 +134,8 @@ export default {
 				sendButton: {color: '#3f51b5'}
 			},
 			users: {
-				background: 'linear-gradient(160deg, #2a4058 0%, #171f28 100%)',
-				user: {highlight: {background: 'linear-gradient(90deg, #4094d000 0%, #4094d021 100%)'}}
+				background: 'linear-gradient(160deg, #2d3a59 0%, #171c29 100%)',
+				user: {highlight: {background: 'linear-gradient(90deg, #222d4800 0%, #222d48 100%)'}}
 			}
 		})
 	}),
@@ -136,6 +145,10 @@ export default {
 			icon: {primary: '#ffffffcc'},
 			border: {darker: '#00000033'},
 			body: {background: '#465375'},
+			menu: {
+				input: {background: '#00000033'},
+				button: {color: '#90a5c3d6'}
+			},
 			controlArea: {background: '#313d5a'},
 			chat: {
 				header: {background: '#29334c'},

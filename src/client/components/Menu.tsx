@@ -16,13 +16,53 @@
  */
 
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
+import {FormattedMessage, injectIntl, InjectedIntlProps} from 'react-intl';
+import {Theme, createStyles, withStyles, WithStyles, InputBase, Button} from '@material-ui/core';
+import Header from './Header';
+import themes from '../themes';
 
-interface Props {
+const styles = (theme: Theme) => createStyles({
+	root: {
+		display: 'flex',
+		flexDirection: 'column',
+		color: theme.fluxx.text.primary
+	},
+	menuContent: {
+		padding: '5rem',
+		display: 'flex',
+		flexDirection: 'column',
+		width: '80vw',
+		maxWidth: '50rem',
+		alignSelf: 'center'
+	},
+	inputWrapper: {
+		display: 'flex',
+		flexDirection: 'row',
+		background: theme.fluxx.menu.input.background,
+		padding: '1rem 2rem',
+		borderRadius: '0.8rem',
+		boxShadow: '0 0 1rem 0 #0000000a',
+		'& button': {
+			color: theme.fluxx.menu.button.color
+		}
+	},
+	input: {
+		flex: 1,
+		padding: '0 1rem',
+		fontSize: '1.6rem',
+		boxSizing: 'border-box',
+		color: 'inherit'
+	}
+});
+
+interface OwnProps {
 	type: 'join' | 'create';
 	onJoinRoom: (nickname: string) => any;
 	onCreateRoom: (nickname: string) => any;
+	onChangeTheme: (theme: keyof typeof themes) => void;
 }
+
+type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
 
 interface State {
 	nickname: string;
@@ -39,23 +79,42 @@ class Menu extends React.Component<Props, State> {
 		}
 	}
 
+	public handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			e.stopPropagation();
+			this.handleClickSubmit();
+		}
+	}
+
 	public handleChangeNickname = (evt: React.ChangeEvent<HTMLInputElement>) => {
 		this.setState({nickname: evt.target.value});
 	}
 
 	public render() {
-		const {type} = this.props;
+		const {type, onChangeTheme, intl, classes} = this.props;
 
 		return (
-			<div>
-				<span><FormattedMessage id="login.username"/>:</span>
-				<input type="text" value={this.state.nickname} onChange={this.handleChangeNickname}/>
-				<button onClick={this.handleClickSubmit}>
-					{type === 'join' ? <FormattedMessage id="login.joinRoom"/> : <FormattedMessage id="login.createRoom"/>}
-				</button>
+			<div className={classes.root}>
+				<Header onChangeTheme={onChangeTheme}/>
+				<div className={classes.menuContent}>
+					<div className={classes.inputWrapper}>
+						<InputBase
+							className={classes.input}
+							placeholder={intl.formatMessage({id: 'input.typeNickname'})}
+							onKeyDown={this.handleKeyDown}
+							value={this.state.nickname}
+							onChange={this.handleChangeNickname}
+							autoFocus
+						/>
+						<Button size="small" onClick={this.handleClickSubmit}>
+							{type === 'join' ? <FormattedMessage id="login.joinRoom"/> : <FormattedMessage id="login.createRoom"/>}
+						</Button>
+					</div>
+				</div>
 			</div>
 		);
 	}
 }
 
-export default Menu;
+export default withStyles(styles)(injectIntl(Menu));

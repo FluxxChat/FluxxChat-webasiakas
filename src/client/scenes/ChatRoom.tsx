@@ -31,31 +31,19 @@ import {
 	DialogActions,
 	Button,
 	Tooltip,
-	Menu,
-	MenuItem,
 	Theme
 } from '@material-ui/core';
 import RulesIcon from '@material-ui/icons/Ballot';
-import ThemeIcon from '@material-ui/icons/ColorLens';
 import UserList from '../components/UserList';
 import UserInput from '../components/UserInput';
 import RuleList from '../components/RuleList';
 import CardParameterInput from '../components/CardParameterInput';
-import themes from '../themes';
 import {FormattedMessage} from 'react-intl';
+import Header from '../components/Header';
 
 const styles = (theme: Theme) => createStyles({
 	sendDiv: {},
-	header: {
-		fontSize: '1.4rem',
-		fontWeight: 500,
-		flex: '0 0 5rem',
-		display: 'flex',
-		justifyContent: 'flex-start',
-		alignItems: 'center',
-		background: theme.fluxx.chat.header.background,
-		borderBottom: `1px solid ${theme.fluxx.border.darker}`
-	},
+	header: {},
 	chatApp: {
 		width: '100%',
 		height: '100%',
@@ -66,18 +54,7 @@ const styles = (theme: Theme) => createStyles({
 		flex: 1,
 		minWidth: 0,
 		display: 'flex',
-		flexDirection: 'column',
-		'& > $header': {
-			justifyContent: 'flex-end',
-			borderLeft: `1px solid ${theme.fluxx.border.darker}`,
-			padding: '0 1rem',
-			'& button': {
-				width: '4rem',
-				height: '4rem',
-				padding: '0.4rem',
-				color: theme.fluxx.icon.primary
-			}
-		}
+		flexDirection: 'column'
 	},
 	chatContainer: {
 		flex: 1,
@@ -136,10 +113,12 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'column',
 		background: theme.fluxx.users.background,
-		boxShadow: '0 0 1rem 0.2rem #00000054',
+		borderRight: `1px solid ${theme.fluxx.border.darker}`,
 		zIndex: 50,
 		'& > $header': {
-			backgroundColor: '#00000011'
+			backgroundColor: '#00000044',
+			flex: '0 0 5rem',
+			borderBottom: `1px solid ${theme.fluxx.border.darker}`
 		}
 	},
 	userListContainer: {
@@ -180,8 +159,6 @@ interface State {
 	showRules: boolean;
 	selectedCard: Card | null;
 	ruleParameters: RuleParameters;
-	anchorEl: any;
-	showThemeMenu: boolean;
 }
 
 class ChatRoom extends React.Component<Props, State> {
@@ -191,9 +168,7 @@ class ChatRoom extends React.Component<Props, State> {
 		selectedCard: null,
 		showCard: false,
 		showRules: window.innerWidth >= 1920,
-		ruleParameters: {},
-		anchorEl: null,
-		showThemeMenu: false
+		ruleParameters: {}
 	};
 
 	public handleSendMessage = () => {
@@ -271,19 +246,6 @@ class ChatRoom extends React.Component<Props, State> {
 		this.setState(state => ({showRules: !state.showRules}));
 	}
 
-	public handleClickThemeBtn = (evt: React.MouseEvent<HTMLButtonElement>) => {
-		this.setState({showThemeMenu: true, anchorEl: evt.currentTarget});
-	}
-
-	public handleCloseThemeMenu = () => {
-		this.setState({showThemeMenu: false, anchorEl: null});
-	}
-
-	public getThemeSelectHandler = (theme: keyof typeof themes) => () => {
-		this.props.onChangeTheme(theme);
-		this.handleCloseThemeMenu();
-	}
-
 	public render() {
 		const {
 			messages,
@@ -293,7 +255,8 @@ class ChatRoom extends React.Component<Props, State> {
 			user,
 			activeCards,
 			turnTime,
-			turnUser
+			turnUser,
+			onChangeTheme
 		} = this.props;
 		const {
 			messageDraft,
@@ -301,9 +264,7 @@ class ChatRoom extends React.Component<Props, State> {
 			showCards,
 			showCard,
 			ruleParameters,
-			showRules,
-			showThemeMenu,
-			anchorEl
+			showRules
 		} = this.state;
 
 		return (
@@ -320,13 +281,7 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 				</div>
 				<div className={classes.chatArea}>
-					<div className={classes.header}>
-						<Tooltip title={<FormattedMessage id="tooltip.changeTheme"/>} placement="left" disableFocusListener>
-							<IconButton onClick={this.handleClickThemeBtn}>
-								<ThemeIcon/>
-							</IconButton>
-						</Tooltip>
-					</div>
+					<Header onChangeTheme={onChangeTheme}/>
 					<div className={classes.chatContainer}>
 						<div className={classes.messageArea}>
 							<MessageList clientUser={user} messages={messages}/>
@@ -369,18 +324,6 @@ class ChatRoom extends React.Component<Props, State> {
 						</div>
 					</div>
 				</div>
-				<Menu
-					anchorEl={anchorEl}
-					open={showThemeMenu}
-					onClose={this.handleCloseThemeMenu}
-				>
-					<MenuItem onClick={this.getThemeSelectHandler('light')}>
-						<FormattedMessage id="theme.light"/>
-						</MenuItem>
-					<MenuItem onClick={this.getThemeSelectHandler('dark')}>
-						<FormattedMessage id="theme.dark"/>
-					</MenuItem>
-				</Menu>
 				<Dialog open={showCard} onClose={this.handleCloseCardDialog}>
 					<DialogTitle>
 						{selectedCard ? selectedCard.name : ''}
