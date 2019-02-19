@@ -116,12 +116,12 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'column',
 		background: theme.fluxx.users.background,
-		borderRight: `1px solid ${theme.fluxx.border.darker}`,
 		zIndex: 50,
 		'& > $header': {
 			backgroundColor: '#00000044',
 			flex: '0 0 5rem',
-			borderBottom: `1px solid ${theme.fluxx.border.darker}`
+			borderBottom: `1px solid ${theme.fluxx.border.darker}`,
+			borderRight: `1px solid ${theme.fluxx.border.darker}`
 		}
 	},
 	userListContainer: {
@@ -129,7 +129,8 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
-		padding: '1rem 0'
+		padding: '1rem 0',
+		borderRight: `1px solid ${theme.fluxx.border.darker}`
 	},
 	visible: {},
 	ruleParameters: {
