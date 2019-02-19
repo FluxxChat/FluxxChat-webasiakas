@@ -61,8 +61,7 @@ const UserList = ({clientUser, turnUser, users, classes, turnTimePercent}: Props
 		{users.map(u => (
 			<div
 				key={u.id}
-				className={`${classes.listItem}
-				${u.id === clientUser.id ? classes.highlight : ''}`}
+				className={`${classes.listItem} ${u.id === clientUser.id ? classes.highlight : ''}`}
 			>
 				<div className={classes.profileIcon}>
 					<ProfileIcon/>
