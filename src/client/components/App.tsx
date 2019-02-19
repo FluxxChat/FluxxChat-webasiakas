@@ -17,14 +17,13 @@
 
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters, ValidateTextMessage} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters, ValidateTextMessage, SystemMessage} from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
 import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
-import NavigationBar from './NavBar';
 import { IntlProvider, addLocaleData } from 'react-intl';
 import fi = require('react-intl/locale-data/fi');
 import en = require('react-intl/locale-data/en');
@@ -33,7 +32,7 @@ import ErrorPopUp from './ErrorPopUp';
 
 const styles = (theme: Theme) => createStyles({
 	body: {
-		background: theme.fluxx.palette.body,
+		background: theme.fluxx.body.background,
 		fontSize: '1.6rem',
 		height: '100%',
 		display: 'flex',
@@ -41,7 +40,7 @@ const styles = (theme: Theme) => createStyles({
 	},
 	bodyPad: {
 		flex: 1,
-		height: '100%'
+		maxHeight: '100%'
 	}
 });
 
@@ -50,7 +49,7 @@ interface State {
 	user: User | null;
 	users: User[];
 	userMap: { [key: string]: User };
-	messages: Message[];
+	messages: Array<TextMessage | SystemMessage>;
 	ownCards: Card[];
 	activeCards: Card[];
 	turnUserId: string | null;
@@ -118,7 +117,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					break;
 				case 'ROOM_CREATED':
 					this.props.history.push(`/room/${msg.roomId}`);
-					this.joinRoom(msg.roomId, this.state.nickname);
+					this.joinRoom(msg.roomId);
 					break;
 				case 'ROOM_STATE':
 					this.setState({
@@ -126,9 +125,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						userMap: msg.users.reduce((m, u) => ({ ...m, [u.id]: u }), {}),
 						activeCards: msg.enabledRules,
 						turnUserId: msg.turnUserId,
-						nickname: msg.nickname,
+						user: msg.users.find(u => u.nickname === msg.nickname) || null,
 						ownCards: msg.hand
-						user: msg.users.find(u => u.nickname === msg.nickname) || null
 					});
 					this.startTurnTimer(msg.turnEndTime);
 					break;
@@ -167,7 +165,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	}
 
-	public joinRoom = (roomId: string, nickname: string | null) => {
+	public joinRoom = (roomId: string) => {
 		if (this.state.connection) {
 			const protocolMessage: JoinRoomMessage = {
 				type: 'JOIN_ROOM',
@@ -180,13 +178,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public requestJoinRoom = (nickname: string) => {
 		const roomId = get(this.props.match, 'params.id');
-		this.setState(() => this.joinRoom(roomId, nickname));
-	}
-
-	public requestCreateRoom = (nickname: string) => {
-		this.setState({user: {nickname, id: ''}}, () => {
-			this.joinRoom(roomId);
-		});
+		this.setState({user: {nickname, id: ''}}, () => this.joinRoom(roomId));
 	}
 
 	public requestCreateRoom = (nickname: string) => {
@@ -236,7 +228,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public render() {
 		// Match contains information about the matched react-router path
-		const {match, classes} = this.props;
+		const {match, classes, onChangeTheme} = this.props;
 		const {user, messages, activeCards: activeCards, ownCards: ownCards, locale} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
@@ -250,7 +242,6 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		return (
 			<IntlProvider locale={locale} key={locale} messages={translatedMessages}>
 				<div className={classes.body}>
-					{/*<NavigationBar onChangeTheme={this.props.onChangeTheme}/>*/}
 					<div className={classes.bodyPad}>
 						{(!user || !roomId) && (
 							<Menu
@@ -273,6 +264,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								onSendNewRule={this.handleSendNewRule}
 								onValidateMessage={this.handleValidateMessage}
 								messageValid={this.state.messageValid}
+								onChangeTheme={onChangeTheme}
 							/>
 						)}
 					</div>

@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import {FormattedMessage} from 'react-intl';
 
 interface Props {
 	type: 'join' | 'create';

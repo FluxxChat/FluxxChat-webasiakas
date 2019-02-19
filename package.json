@@ -55,6 +55,7 @@
     "fluxxchat-protokolla": "git://github.com/FluxxChat/FluxxChat-protokolla.git",
     "fork-ts-checker-webpack-plugin": "^0.5.2",
     "lodash": "^4.17.11",
+    "moment": "^2.24.0",
     "npm": "^6.7.0",
     "prop-types": "15.5.4",
     "react": "^16.7.0",
