@@ -138,7 +138,7 @@ export default {
 			body: {background: '#465375'},
 			controlArea: {background: '#313d5a'},
 			chat: {
-				header: {background: '#1f283e'},
+				header: {background: '#29334c'},
 				messages: {
 					message: {
 						background: '#0000002e',
