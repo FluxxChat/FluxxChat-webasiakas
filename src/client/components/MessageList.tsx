@@ -17,18 +17,18 @@
 
 import React from 'react';
 import {User, TextMessage, SystemMessage} from 'fluxxchat-protokolla';
-import {animateScroll} from 'react-scroll';
 import {withStyles, createStyles, WithStyles} from '@material-ui/core';
+import ScrollArea from 'react-scrollbar';
 import PlayerTextMessage from './PlayerTextMessage';
 import SystemTextMessage from './SystemTextMessage';
 
 const styles = createStyles({
 	root: {
-		overflowX: 'hidden',
-		overflowY: 'auto',
 		flex: 1,
-		padding: '1rem',
 		fontSize: '1.2rem'
+	},
+	scrollContent: {
+		padding: '1rem'
 	}
 });
 
@@ -37,22 +37,35 @@ interface Props extends WithStyles<typeof styles> {
 	clientUser: User;
 }
 
-class MessageList extends React.Component<Props> {
+interface State {
+	scrolledToBottom: boolean;
+}
+
+class MessageList extends React.Component<Props, State> {
+	public state: State = {scrolledToBottom: true};
+
+	public scrollAreaRef = React.createRef<any>();
+
 	public scrollToBottom() {
-		animateScroll.scrollToBottom({
-			containerId: 'message-box',
-			duration: 100
-		});
+		window.setTimeout(() => this.scrollAreaRef.current.scrollBottom(), 0);
 	}
 
 	public componentDidMount() {
 		this.scrollToBottom();
 	}
 
-	public componentDidUpdate() {
-		const el = document.getElementById('message-box');
-		if (el && el.scrollTop === (el.scrollHeight - el.offsetHeight)) {
+	public componentDidUpdate(prevProps: Props) {
+		if (prevProps.messages.length !== this.props.messages.length && this.state.scrolledToBottom) {
 			this.scrollToBottom();
+		}
+	}
+
+	public handleScroll = (obj: any) => {
+		if (obj.realHeight && obj.containerHeight && obj.topPosition) {
+			const scrolledToBottom = obj.topPosition === obj.realHeight - obj.containerHeight;
+			if (this.state.scrolledToBottom !== scrolledToBottom) {
+				this.setState({scrolledToBottom});
+			}
 		}
 	}
 
@@ -60,7 +73,13 @@ class MessageList extends React.Component<Props> {
 		const {messages, classes, clientUser} = this.props;
 
 		return (
-			<div className={classes.root} id="message-box">
+			<ScrollArea
+				ref={this.scrollAreaRef}
+				className={classes.root}
+				contentClassName={classes.scrollContent}
+				onScroll={this.handleScroll}
+				horizontal={false}
+			>
 				{messages.map((message, index) => {
 					switch (message.type) {
 						case 'SYSTEM':
@@ -78,7 +97,7 @@ class MessageList extends React.Component<Props> {
 							return null;
 					}
 				})}
-			</div>
+			</ScrollArea>
 		);
 	}
 }

@@ -17,8 +17,7 @@
 
 import React from 'react';
 import {Card, RuleParameters, User, SystemMessage, TextMessage} from 'fluxxchat-protokolla';
-import CardComponent from '../components/CardComponent';
-import MessageList from '../components/MessageList';
+import {FormattedMessage} from 'react-intl';
 import {
 	createStyles,
 	WithStyles,
@@ -34,12 +33,14 @@ import {
 	Theme
 } from '@material-ui/core';
 import RulesIcon from '@material-ui/icons/Ballot';
+import ScrollArea from 'react-scrollbar';
 import UserList from '../components/UserList';
 import UserInput from '../components/UserInput';
 import RuleList from '../components/RuleList';
 import CardParameterInput from '../components/CardParameterInput';
-import {FormattedMessage} from 'react-intl';
 import Header from '../components/Header';
+import CardComponent from '../components/CardComponent';
+import MessageList from '../components/MessageList';
 
 const styles = (theme: Theme) => createStyles({
 	sendDiv: {},
@@ -91,21 +92,23 @@ const styles = (theme: Theme) => createStyles({
 	cardArea: {
 		flex: '0 0 auto',
 		display: 'flex',
-		padding: '0 1rem',
 		maxHeight: 0,
 		minWidth: 0,
 		justifyContent: 'flex-start',
 		flexDirection: 'row',
 		background: theme.fluxx.cards.background,
 		overflowY: 'hidden',
-		overflowX: 'hidden',
 		transition: 'all 0.2s',
 		'&$visible': {
 			maxHeight: '20rem',
-			padding: '1rem',
-			overflowX: 'auto',
 			borderTop: `1px solid ${theme.fluxx.border.darker}`
 		}
+	},
+	cardAreaScrollContent: {
+		display: 'flex',
+		padding: '1rem',
+		flex: '0 0 auto',
+		width: 'min-content'
 	},
 	userListArea: {
 		flex: 0.6,
@@ -170,6 +173,8 @@ class ChatRoom extends React.Component<Props, State> {
 		showRules: window.innerWidth >= 1920,
 		ruleParameters: {}
 	};
+
+	public cardScrollRef = React.createRef<any>();
 
 	public handleSendMessage = () => {
 		const {messageDraft} = this.state;
@@ -243,7 +248,11 @@ class ChatRoom extends React.Component<Props, State> {
 	};
 
 	public handleToggleShowRules = () => {
-		this.setState(state => ({showRules: !state.showRules}));
+		this.setState(state => ({showRules: !state.showRules}), () => {
+			setTimeout(() => {
+				this.cardScrollRef.current.handleWindowResize();
+			}, 210);
+		});
 	}
 
 	public render() {
@@ -285,7 +294,14 @@ class ChatRoom extends React.Component<Props, State> {
 					<div className={classes.chatContainer}>
 						<div className={classes.messageArea}>
 							<MessageList clientUser={user} messages={messages}/>
-							<div className={`${classes.cardArea} ${showCards ? classes.visible : ''}`}>
+							<ScrollArea
+								ref={this.cardScrollRef}
+								className={`${classes.cardArea} ${showCards ? classes.visible : ''}`}
+								contentClassName={classes.cardAreaScrollContent}
+								horizontalContainerStyle={{height: '0.4rem'}}
+								smoothScrolling
+								swapWheelAxes
+							>
 								{this.props.ownCards.map((card, index) => {
 									return (
 										<CardComponent
@@ -299,7 +315,7 @@ class ChatRoom extends React.Component<Props, State> {
 									);
 								})}
 								<div style={{flex: '0 0 1rem'}}/>
-							</div>
+							</ScrollArea>
 							<UserInput
 								value={messageDraft}
 								onChange={this.handleChangeMessageDraft}

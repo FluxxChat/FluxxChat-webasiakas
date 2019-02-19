@@ -25,6 +25,7 @@ const styles = (theme: Theme) => createStyles({
 		overflowWrap: 'normal',
 		display: 'flex',
 		flex: '0 0 13rem',
+		minWidth: '13rem',
 		height: '16rem',
 		borderRadius: theme.fluxx.cards.card.borderRadius,
 		background: theme.fluxx.cards.card.background,
