@@ -28,6 +28,7 @@ import { IntlProvider, addLocaleData } from 'react-intl';
 import fi = require('react-intl/locale-data/fi');
 import en = require('react-intl/locale-data/en');
 import localeData from '../../../i18n/data.json';
+import ErrorPopUp from './ErrorPopUp';
 
 const styles = (theme: Theme) => createStyles({
 	body: {
@@ -57,6 +58,7 @@ interface State {
 	messageValid: boolean;
 	locale: string;
 	theme: keyof typeof themes;
+	alert: string[];
 }
 
 const EMPTY_STATE: State = {
@@ -70,6 +72,7 @@ const EMPTY_STATE: State = {
 	turnUserId: null,
 	turnTime: null,
 	timer: null,
+	alert: [],
 	messageValid: true,
 	locale: 'fi',
 	theme: 'light'
@@ -114,13 +117,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					break;
 				case 'ROOM_CREATED':
 					this.props.history.push(`/room/${msg.roomId}`);
-					this.joinRoom(msg.roomId);
-					break;
-				case 'CARD':
-					this.setState({ ownCards: [...this.state.ownCards, msg.card] });
-					break;
-				case 'EMPTY_HAND':
-					this.setState({ ownCards: [] });
+					this.joinRoom(msg.roomId, this.state.nickname);
 					break;
 				case 'ROOM_STATE':
 					this.setState({
@@ -128,9 +125,13 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						userMap: msg.users.reduce((m, u) => ({ ...m, [u.id]: u }), {}),
 						activeCards: msg.enabledRules,
 						turnUserId: msg.turnUserId,
-						nickname: msg.nickname
+						nickname: msg.nickname,
+						ownCards: msg.hand
 					});
 					this.startTurnTimer(msg.turnEndTime);
+					break;
+				case 'ERROR':
+					this.setState({ alert: [...this.state.alert, msg.message] });
 					break;
 				case 'VALIDATE_TEXT_RESPONSE':
 					this.setState({ messageValid: msg.valid });
@@ -164,12 +165,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	}
 
-	public joinRoom = (roomId: string) => {
+	public joinRoom = (roomId: string, nickname: string | null) => {
 		if (this.state.connection) {
 			const protocolMessage: JoinRoomMessage = {
 				type: 'JOIN_ROOM',
 				roomId,
-				nickname: this.state.nickname || ''
+				nickname: nickname || ''
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
@@ -177,7 +178,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public requestJoinRoom = (nickname: string) => {
 		const roomId = get(this.props.match, 'params.id');
-		this.setState({ nickname }, () => this.joinRoom(roomId));
+		this.setState(() => this.joinRoom(roomId, nickname));
 	}
 
 	public requestCreateRoom = (nickname: string) => {
@@ -209,6 +210,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({ timer: interval });
 	}
 
+	public closeAlert = () => {
+		this.setState({ alert: [] });
+	}
+
 	public handleValidateMessage = (message: string) => {
 		if (this.state.connection) {
 			const protocolMessage: ValidateTextMessage = {
@@ -220,7 +225,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 	};
 
 	public setLocale = (newLocale: string) => {
-		this.setState({locale: newLocale});
+		this.setState({ locale: newLocale });
 	}
 
 	public render() {
@@ -244,6 +249,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 							onChangeTheme={this.props.onChangeTheme}
 							onChangeLanguage={this.setLocale}
 						/>
+						{this.state.alert.length > 0 && (
+							<ErrorPopUp
+								onCloseAlert={this.closeAlert}
+								alerts={this.state.alert}
+							/>
+						)}
 						{(!nickname || !roomId) && (
 							<Menu
 								type={roomId ? 'join' : 'create'}

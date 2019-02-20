@@ -51,5 +51,3 @@ You can also use the following command for commits:
 $ yarn commit
 ```
 The above command will guide you through the parts of the commit message interactively.
-
-[Contributing CSS](https://github.com/FluxxChat/FluxxChat-dokumentaatio/blob/master/CSS.md)
