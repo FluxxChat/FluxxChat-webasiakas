@@ -24,6 +24,7 @@ import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
 import NavigationBar from './NavBar';
+import ErrorPopUp from './ErrorPopUp';
 
 const styles = (theme: Theme) => createStyles({
 	body: {
@@ -52,6 +53,7 @@ interface State {
 	timer: number | null;
 	messageValid: boolean;
 	theme: keyof typeof themes;
+	alert: string[];
 }
 
 const EMPTY_STATE: State = {
@@ -65,6 +67,7 @@ const EMPTY_STATE: State = {
 	turnUserId: null,
 	turnTime: null,
 	timer: null,
+	alert: [],
 	messageValid: true,
 	theme: 'light'
 };
@@ -108,7 +111,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					break;
 				case 'ROOM_CREATED':
 					this.props.history.push(`/room/${msg.roomId}`);
-					this.joinRoom(msg.roomId);
+					this.joinRoom(msg.roomId, this.state.nickname);
 					break;
 				case 'ROOM_STATE':
 					this.setState({
@@ -120,6 +123,9 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						ownCards: msg.hand
 					});
 					this.startTurnTimer(msg.turnEndTime);
+					break;
+				case 'ERROR':
+					this.setState({alert: [...this.state.alert, msg.message]});
 					break;
 				case 'VALIDATE_TEXT_RESPONSE':
 					this.setState({messageValid: msg.valid});
@@ -153,12 +159,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	}
 
-	public joinRoom = (roomId: string) => {
+	public joinRoom = (roomId: string, nickname: string | null) => {
 		if (this.state.connection) {
 			const protocolMessage: JoinRoomMessage = {
 				type: 'JOIN_ROOM',
 				roomId,
-				nickname: this.state.nickname || ''
+				nickname: nickname || ''
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
@@ -166,7 +172,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public requestJoinRoom = (nickname: string) => {
 		const roomId = get(this.props.match, 'params.id');
-		this.setState({nickname}, () => this.joinRoom(roomId));
+		this.setState(() => this.joinRoom(roomId, nickname));
 	}
 
 	public requestCreateRoom = (nickname: string) => {
@@ -198,6 +204,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({timer: interval});
 	}
 
+	public closeAlert = () => {
+		this.setState({alert: []});
+	}
+
 	public handleValidateMessage = (message: string) => {
 		if (this.state.connection) {
 			const protocolMessage: ValidateTextMessage = {
@@ -222,6 +232,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					<NavigationBar
 						onChangeTheme={this.props.onChangeTheme}
 					/>
+					{this.state.alert.length > 0 && (
+						<ErrorPopUp
+							onCloseAlert={this.closeAlert}
+							alerts={this.state.alert}
+						/>
+					)}
 					{(!nickname || !roomId) && (
 						<Menu
 							type={roomId ? 'join' : 'create'}
