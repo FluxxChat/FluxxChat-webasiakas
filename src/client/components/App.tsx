@@ -125,7 +125,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						userMap: msg.users.reduce((m, u) => ({ ...m, [u.id]: u }), {}),
 						activeCards: msg.enabledRules,
 						turnUserId: msg.turnUserId,
-						user: msg.users.find(u => u.nickname === msg.nickname) || null,
+						user: msg.users.find(u => u.id === msg.userId) || null,
 						ownCards: msg.hand
 					});
 					this.startTurnTimer(msg.turnEndTime);
