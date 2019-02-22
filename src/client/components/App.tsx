@@ -21,14 +21,13 @@ import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleM
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
+import {IntlProvider, addLocaleData} from 'react-intl';
+import fi from 'react-intl/locale-data/fi';
+import en from 'react-intl/locale-data/en';
+import localeData from '../../../i18n/data.json';
 import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
-import { IntlProvider, addLocaleData } from 'react-intl';
-import fi = require('react-intl/locale-data/fi');
-import en = require('react-intl/locale-data/en');
-import localeData from '../../../i18n/data.json';
-import ErrorPopUp from './ErrorPopUp';
 
 const styles = (theme: Theme) => createStyles({
 	body: {
