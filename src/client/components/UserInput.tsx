@@ -77,6 +77,7 @@ class UserInput extends React.Component<Props> {
 					onKeyDown={this.handleKeyDown}
 					value={value}
 					onChange={onChange}
+					inputProps={{name: 'messageInput'}}
 				/>
 				<Divider />
 				<IconButton
@@ -84,6 +85,7 @@ class UserInput extends React.Component<Props> {
 					className={classes.sendButton}
 					onClick={onSend}
 					disabled={!valid}
+					name="messageSend"
 				>
 					<SendIcon/>
 				</IconButton>

@@ -76,7 +76,7 @@ class MessageList extends React.Component<Props, State> {
 			<ScrollArea
 				ref={this.scrollAreaRef}
 				className={classes.root}
-				contentClassName={classes.scrollContent}
+				contentClassName={`${classes.scrollContent} messages`}
 				onScroll={this.handleScroll}
 				horizontal={false}
 			>

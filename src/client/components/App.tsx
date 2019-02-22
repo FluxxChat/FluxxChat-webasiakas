@@ -193,7 +193,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 	public requestCreateRoom = (nickname: string) => {
 		this.setState({user: {nickname, id: '', profileImg: 'default'}}, () => {
 			if (this.state.connection) {
-				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM' };
+				const protocolMessage: CreateRoomMessage = {type: 'CREATE_ROOM'};
 				this.state.connection.send(JSON.stringify(protocolMessage));
 			}
 		});
