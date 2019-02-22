@@ -11,7 +11,14 @@
         "room.activeCards": "Rules in effect",
         "room.hand": "Hand",
         "room.send": "Send",
-        "room.turnUser": "It's {turnUser}'s turn! {turnTime}"
+        "room.turnUser": "It's {turnUser}'s turn! {turnTime}",
+        "rules.noRules": "No rules in effect",
+        "input.typeMessage": "Type a message...",
+        "input.typeNickname": "Type a nickname...",
+        "tooltip.changeTheme": "Change theme...",
+        "tooltip.toggleRules": "Show or hide active rules",
+        "theme.light": "Light",
+        "theme.dark": "Dark"
     },
     "fi": {
         "login.username": "Nimimerkki",
@@ -25,6 +32,13 @@
         "room.activeCards": "Voimassa olevat säännöt",
         "room.hand": "Käsi",
         "room.send": "Lähetä",
-        "room.turnUser": "On pelaajan {turnUser} vuoro! {turnTime}"
+        "room.turnUser": "On pelaajan {turnUser} vuoro! {turnTime}",
+        "rules.noRules": "Ei voimassa olevia sääntöjä",
+        "input.typeMessage": "Kirjoita viesti...",
+        "input.typeNickname": "Kirjoita nimimerkki...",
+        "tooltip.changeTheme": "Vaihda teemaa...",
+        "tooltip.toggleRules": "Näytä tai piilota aktiiviset säännöt",
+        "theme.light": "Vaalea",
+        "theme.dark": "Tumma"
     }
 }

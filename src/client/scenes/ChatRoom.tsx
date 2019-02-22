@@ -16,155 +16,170 @@
  */
 
 import React from 'react';
-import {Message, Card, RuleParameters, User} from 'fluxxchat-protokolla';
-import {animateScroll} from 'react-scroll';
+import {Card, RuleParameters, User, SystemMessage, TextMessage} from 'fluxxchat-protokolla';
 import {FormattedMessage} from 'react-intl';
-import {ActiveCard, OwnCard} from '../components/Card';
-import MessageContainer from '../components/MessageContainer';
-import {createStyles, Theme, WithStyles, withStyles} from '@material-ui/core';
+import {
+	createStyles,
+	WithStyles,
+	withStyles,
+	IconButton,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogContentText,
+	DialogActions,
+	Button,
+	Tooltip,
+	Theme
+} from '@material-ui/core';
+import RulesIcon from '@material-ui/icons/Ballot';
+import ScrollArea from 'react-scrollbar';
+import UserList from '../components/UserList';
+import UserInput from '../components/UserInput';
+import RuleList from '../components/RuleList';
+import CardParameterInput from '../components/CardParameterInput';
+import Header from '../components/Header';
+import CardComponent from '../components/CardComponent';
+import MessageList from '../components/MessageList';
 
 const styles = (theme: Theme) => createStyles({
-	sendDiv: {
-		margin: '5px 8px 0 0',
-		float: 'right'
-	},
+	sendDiv: {},
+	header: {},
 	chatApp: {
 		width: '100%',
 		height: '100%',
-		minWidth: '600px'
+		display: 'flex',
+		color: theme.fluxx.text.primary
 	},
 	chatArea: {
-		width: 'calc(60% - 5px)',
-		float: 'left'
-	},
-	turnDiv: {
-		width: 'calc(40% - 11px)',
-		height: '32px',
-		marginTop: '5px',
-		float: 'right',
-		marginRight: '14px',
-		border: `1px solid ${theme.fluxx.palette.border}`
-	},
-	turnText: {
-		margin: '6px 0 0 6px',
-		fontSize: '18px',
-		fontWeight: 'bold'
-	},
-	cardDivActive: {
-		width: 'calc(40% - 11px)',
-		height: 'calc(50vh - 55px)',
-		margin: '5px 14px 10px 0',
-		minHeight: '232px',
-		float: 'right',
-		overflowX: 'hidden',
-		border: `1px solid ${theme.fluxx.palette.border}`
-	},
-	cardDivOwn: {
-		width: 'calc(40% - 11px)',
-		height: 'calc(50vh - 55px)',
-		minHeight: '232px',
-		float: 'right',
-		overflowX: 'hidden',
-		marginRight: '14px',
-		border: `1px solid ${theme.fluxx.palette.border}`
-	},
-	cardList: {
+		flex: 1,
+		minWidth: 0,
 		display: 'flex',
-		flexWrap: 'wrap'
+		flexDirection: 'column'
 	},
-	messageBox: {
-		marginTop: '5px',
-		height: 'calc(100vh - 98px)',
-		width: 'calc(100% - 10px)',
-		minHeight: '450px',
-		overflowX: 'hidden',
-		border: `1px solid ${theme.fluxx.palette.border}`
-	},
-	inputArea: {
-		display: 'flex'
-	},
-	messageFieldNickname: {
-		flexGrow: 0,
-		alignSelf: 'center'
-	},
-	valid: {},
-	messageFieldDiv: {
+	chatContainer: {
 		flex: 1,
 		display: 'flex',
-		position: 'relative',
-		margin: '5px'
+		flexDirection: 'row',
+		overflow: 'hidden'
 	},
-	messageField: {
+	messageArea: {
 		flex: 1,
-		maxHeight: '34px',
-		height: '34px',
-		lineHeight: '34px',
-		boxSizing: 'border-box',
-		':not($valid) > &': {
-			backgroundColor: '#ffee00aa'
-		}
+		display: 'flex',
+		flexDirection: 'column',
+		minWidth: 0
 	},
-	messageFieldWarning: {
+	controlArea: {
 		flex: '0 0 auto',
 		display: 'flex',
-		justifyContent: 'center',
+		flexDirection: 'row',
+		background: theme.fluxx.controlArea.background,
+		justifyContent: 'flex-end',
+		zIndex: 50
+	},
+	controls: {
+		width: '6rem',
+		display: 'flex',
+		flexDirection: 'column',
+		padding: '1rem 0',
 		alignItems: 'center',
-		padding: '4px 8px',
-		position: 'absolute',
-		top: 0,
-		right: 0,
-		boxSizing: 'border-box',
-		height: '100%',
-		backgroundColor: '#ff000022',
-		'$valid > &': {
-			display: 'none'
+		borderLeft: `1px solid ${theme.fluxx.border.darker}`,
+		'& > button': {
+			width: '4.8rem',
+			color: theme.fluxx.icon.primary
 		}
 	},
-	sendButton: {
-		width: '100px',
-		height: '34px',
-		boxSizing: 'border-box'
+	cardArea: {
+		flex: '0 0 auto',
+		display: 'flex',
+		maxHeight: 0,
+		minWidth: 0,
+		justifyContent: 'flex-start',
+		flexDirection: 'row',
+		background: theme.fluxx.cards.background,
+		overflowY: 'hidden',
+		transition: 'all 0.2s',
+		'&$visible': {
+			maxHeight: '20rem',
+			borderTop: `1px solid ${theme.fluxx.border.darker}`
+		}
 	},
-	caption: {
-		fontSize: '17px',
-		fontWeight: 'bold',
-		margin: '2px 0 2px 5px'
+	cardAreaScrollContent: {
+		display: 'flex',
+		padding: '1rem',
+		flex: '0 0 auto',
+		width: 'min-content'
+	},
+	userListArea: {
+		flex: 0.6,
+		maxWidth: '60rem',
+		display: 'flex',
+		flexDirection: 'column',
+		background: theme.fluxx.users.background,
+		zIndex: 50,
+		'& > $header': {
+			backgroundColor: '#00000044',
+			flex: '0 0 5rem',
+			borderBottom: `1px solid ${theme.fluxx.border.darker}`,
+			borderRight: `1px solid ${theme.fluxx.border.darker}`
+		}
+	},
+	userListContainer: {
+		flex: 1,
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'flex-end',
+		padding: '1rem 0',
+		borderRight: `1px solid ${theme.fluxx.border.darker}`
+	},
+	visible: {},
+	ruleParameters: {
+		display: 'flex',
+		flexDirection: 'column',
+		paddingTop: '2rem'
 	}
 });
 
 interface Props extends WithStyles<typeof styles> {
-	nickname: string;
+	user: User;
 	roomId: string;
 	users: User[];
 	turnUser: User;
-	turnTime: string;
-	messages: Message[];
+	turnTime: number;
+	messages: Array<TextMessage | SystemMessage>;
 	ownCards: Card[];
 	activeCards: Card[];
 	messageValid: boolean;
 	onSendMessage: (message: string) => void;
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
 	onValidateMessage: (message: string) => void;
+	onChangeTheme: (theme: string) => void;
 }
 
 interface State {
 	messageDraft: string;
+	showCards: boolean;
+	showCard: boolean;
+	showRules: boolean;
+	selectedCard: Card | null;
+	ruleParameters: RuleParameters;
 }
 
 class ChatRoom extends React.Component<Props, State> {
 	public state: State = {
-		messageDraft: ''
+		messageDraft: '',
+		showCards: window.innerWidth >= 1280,
+		selectedCard: null,
+		showCard: false,
+		showRules: window.innerWidth >= 1920,
+		ruleParameters: {}
 	};
 
-	public scrollToBottom() {
-		animateScroll.scrollToBottom({
-			containerId: 'message-box'
-		});
-	}
+	public cardScrollRef = React.createRef<any>();
 
 	public handleSendMessage = () => {
-		if (this.props.messageValid) {
-			const {messageDraft} = this.state;
+		const {messageDraft} = this.state;
+		if (messageDraft && this.props.messageValid) {
 			this.setState({messageDraft: ''}, () => {
 				this.props.onSendMessage(messageDraft);
 			});
@@ -177,101 +192,184 @@ class ChatRoom extends React.Component<Props, State> {
 		});
 	}
 
-	public handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter') {
-			e.preventDefault(); e.stopPropagation(); this.handleSendMessage();
+	public componentDidUpdate(_prevProps: Props, prevState: State) {
+		if (this.state.selectedCard && !prevState.showCard && this.state.showCard) {
+			const defaultRuleParameters = {};
+
+			for (const key of Object.keys(this.state.selectedCard.parameterTypes)) {
+				const type = this.state.selectedCard!.parameterTypes[key];
+
+				if (Array.isArray(type)) {
+					defaultRuleParameters[key] = type[0];
+				}
+
+				if (type === 'player') {
+					defaultRuleParameters[key] = this.props.users[0]!.id;
+				}
+
+				if (type === 'number') {
+					defaultRuleParameters[key] = 0;
+				}
+			}
+
+			this.setState(state => ({
+				ruleParameters: {
+					...state.ruleParameters,
+					...defaultRuleParameters
+				}
+			}));
 		}
 	}
 
-	public componentDidMount() {
-		this.scrollToBottom();
+	public toggleShowCards = () => {
+		this.setState(state => ({showCards: !state.showCards}));
 	}
 
-	public componentDidUpdate() {
-		this.scrollToBottom();
+	public handleClickCard = (card: Card) => {
+		this.setState({showCard: true, selectedCard: card});
+	};
+
+	public handleCloseCardDialog = () => {
+		this.setState({showCard: false, ruleParameters: {}});
+	}
+
+	public handlePlayCard = () => {
+		this.props.onSendNewRule(this.state.selectedCard!, this.state.ruleParameters);
+		this.handleCloseCardDialog();
+	}
+
+	public getParameterChangeHandler = (key: string) => (evt: React.ChangeEvent<any>) => {
+		const value = evt.target.value;
+		this.setState(state => ({
+			ruleParameters: {
+				...state.ruleParameters,
+				[key]: value
+			}
+		}));
+	};
+
+	public handleToggleShowRules = () => {
+		this.setState(state => ({showRules: !state.showRules}), () => {
+			setTimeout(() => {
+				this.cardScrollRef.current.handleWindowResize();
+			}, 210);
+		});
 	}
 
 	public render() {
-		const {messages, classes, messageValid} = this.props;
-		const {messageDraft} = this.state;
+		const {
+			messages,
+			classes,
+			messageValid,
+			users,
+			user,
+			activeCards,
+			turnTime,
+			turnUser,
+			onChangeTheme
+		} = this.props;
+		const {
+			messageDraft,
+			selectedCard,
+			showCards,
+			showCard,
+			ruleParameters,
+			showRules
+		} = this.state;
 
 		return (
 			<div className={classes.chatApp}>
+				<div className={classes.userListArea}>
+					<div className={classes.header}/>
+					<div className={classes.userListContainer}>
+						<UserList
+							users={users}
+							clientUser={user}
+							turnUser={turnUser}
+							turnTimePercent={Math.floor((turnTime / 120) * 100)}
+						/>
+					</div>
+				</div>
 				<div className={classes.chatArea}>
-					<div className={classes.messageBox} id="message-box">
-						{messages.map((msg, index) => {
-							return (
-								<MessageContainer
-									key={index}
-									clientName={this.props.nickname}
-									message={msg}
-								/>
-							);
-						})}
-					</div>
-					<div>
-						<form onKeyDown={this.handleKeyDown}>
-							<div className={classes.inputArea}>
-								<span className={classes.messageFieldNickname}>&lt;{this.props.nickname}&gt;</span>
-								<div className={`${classes.messageFieldDiv} ${messageValid ? classes.valid : ''}`}>
-									<input className={classes.messageField} type="text" value={messageDraft} onChange={this.handleChangeMessageDraft}/>
-									<span className={classes.messageFieldWarning}>Invalid message</span>
-								</div>
-								<div className={classes.sendDiv}>
-									<button
-										type="button"
-										className={classes.sendButton}
-										onClick={this.handleSendMessage}
-										disabled={!messageValid}
-									>
-										<FormattedMessage id="room.send"/>
-									</button>
-								</div>
+					<Header onChangeTheme={onChangeTheme}/>
+					<div className={classes.chatContainer}>
+						<div className={classes.messageArea}>
+							<MessageList clientUser={user} messages={messages}/>
+							<ScrollArea
+								ref={this.cardScrollRef}
+								className={`${classes.cardArea} ${showCards ? classes.visible : ''}`}
+								contentClassName={classes.cardAreaScrollContent}
+								horizontalContainerStyle={{height: '0.4rem'}}
+								smoothScrolling
+								swapWheelAxes
+							>
+								{this.props.ownCards.map((card, index) => {
+									return (
+										<CardComponent
+											key={index}
+											cardId={index.toString()}
+											card={card}
+											users={this.props.users}
+											action={this.props.onSendNewRule}
+											onClick={this.handleClickCard}
+										/>
+									);
+								})}
+								<div style={{flex: '0 0 1rem'}}/>
+							</ScrollArea>
+							<UserInput
+								value={messageDraft}
+								onChange={this.handleChangeMessageDraft}
+								valid={messageValid}
+								onToggleCards={this.toggleShowCards}
+								onSend={this.handleSendMessage}
+							/>
+						</div>
+						<div className={classes.controlArea}>
+							<RuleList
+								rules={activeCards}
+								users={users}
+								visible={showRules}
+							/>
+							<div className={classes.controls}>
+								<Tooltip title={<FormattedMessage id="tooltip.toggleRules"/>} placement="left" disableFocusListener>
+									<IconButton onClick={this.handleToggleShowRules}>
+										<RulesIcon/>
+									</IconButton>
+								</Tooltip>
 							</div>
-						</form>
-					</div>
-				</div >
-				<div>
-					<div className={classes.turnDiv}>
-						<div className={classes.turnText}>
-							<FormattedMessage id="room.turnUser" values={{turnUser: this.props.turnUser.nickname, turnTime: this.props.turnTime}}/>
-						</div>
-					</div>
-					<div className={classes.cardDivActive}>
-						<div className={classes.caption}>
-							<FormattedMessage id="room.activeCards"/>
-						</div>
-						<div className={classes.cardList}>
-							{this.props.activeCards.map((card, index) => {
-								return (
-									<ActiveCard
-										key={index}
-										card={card}
-										users={this.props.users}
-									/>
-								);
-							})}
-						</div>
-					</div>
-					<div className={classes.cardDivOwn}>
-						<div className={classes.caption}>
-							<FormattedMessage id="room.hand"/>
-						</div>
-						<div className={classes.cardList}>
-							{this.props.ownCards.map((card, index) => {
-								return (
-									<OwnCard
-										key={index}
-										cardId={index.toString()}
-										card={card}
-										users={this.props.users}
-										action={this.props.onSendNewRule}
-									/>
-								);
-							})}
 						</div>
 					</div>
 				</div>
+				<Dialog open={showCard} onClose={this.handleCloseCardDialog}>
+					<DialogTitle>
+						{selectedCard ? selectedCard.name : ''}
+					</DialogTitle>
+					<DialogContent>
+						<DialogContentText>
+							{selectedCard && selectedCard.description}
+						</DialogContentText>
+						<div className={classes.ruleParameters}>
+							{selectedCard && Object.keys(selectedCard.parameterTypes).map(key => (
+								<CardParameterInput
+									key={key}
+									type={selectedCard.parameterTypes[key]}
+									value={ruleParameters[key]}
+									users={users}
+									onChange={this.getParameterChangeHandler(key)}
+								/>
+							))}
+						</div>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={this.handleCloseCardDialog} color="primary">
+							Cancel
+						</Button>
+						<Button onClick={this.handlePlayCard} color="primary" autoFocus>
+							Play
+						</Button>
+					</DialogActions>
+				</Dialog>
 			</div>
 		);
 	}

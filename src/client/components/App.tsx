@@ -16,44 +16,43 @@
  */
 
 import React from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters, ValidateTextMessage } from 'fluxxchat-protokolla';
-import { MuiThemeProvider, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core';
-import { get } from 'lodash';
+import {withRouter, RouteComponentProps} from 'react-router-dom';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters, ValidateTextMessage, SystemMessage} from 'fluxxchat-protokolla';
+import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
+import {get} from 'lodash';
+import {hot} from 'react-hot-loader/root';
+import {IntlProvider, addLocaleData} from 'react-intl';
+import fi from 'react-intl/locale-data/fi';
+import en from 'react-intl/locale-data/en';
+import localeData from '../../../i18n/data.json';
 import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
-import NavigationBar from './NavBar';
-import { IntlProvider, addLocaleData } from 'react-intl';
-import fi = require('react-intl/locale-data/fi');
-import en = require('react-intl/locale-data/en');
-import localeData from '../../../i18n/data.json';
-import ErrorPopUp from './ErrorPopUp';
 
 const styles = (theme: Theme) => createStyles({
 	body: {
-		marginLeft: '-0.55em',
-		marginTop: '-0.55em',
-		width: 'calc(100vw + 0.55em)',
-		height: 'calc(100vh + 0.55em)',
-		background: theme.fluxx.palette.body
+		background: theme.fluxx.body.background,
+		fontSize: '1.6rem',
+		height: '100%',
+		display: 'flex',
+		flexDirection: 'column'
 	},
 	bodyPad: {
-		marginLeft: '0.55em',
-		marginTop: '0.55em'
+		flex: 1,
+		maxHeight: '100%'
 	}
 });
 
 interface State {
 	connection: WebSocket | null;
-	nickname: string | null;
+	user: User | null;
 	users: User[];
 	userMap: { [key: string]: User };
-	messages: Message[];
+	messages: Array<TextMessage | SystemMessage>;
 	ownCards: Card[];
 	activeCards: Card[];
 	turnUserId: string | null;
-	turnTime: string | null;
+	turnTime: number;
 	timer: number | null;
 	messageValid: boolean;
 	locale: string;
@@ -63,14 +62,14 @@ interface State {
 
 const EMPTY_STATE: State = {
 	connection: null,
-	nickname: null,
+	user: null,
 	users: [],
 	userMap: {},
 	messages: [],
 	ownCards: [],
 	activeCards: [],
 	turnUserId: null,
-	turnTime: null,
+	turnTime: 0,
 	timer: null,
 	alert: [],
 	messageValid: true,
@@ -117,7 +116,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					break;
 				case 'ROOM_CREATED':
 					this.props.history.push(`/room/${msg.roomId}`);
-					this.joinRoom(msg.roomId, this.state.nickname);
+					this.joinRoom(msg.roomId);
 					break;
 				case 'ROOM_STATE':
 					this.setState({
@@ -125,7 +124,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						userMap: msg.users.reduce((m, u) => ({ ...m, [u.id]: u }), {}),
 						activeCards: msg.enabledRules,
 						turnUserId: msg.turnUserId,
-						nickname: msg.nickname,
+						user: msg.users.find(u => u.id === msg.userId) || null,
 						ownCards: msg.hand
 					});
 					this.startTurnTimer(msg.turnEndTime);
@@ -165,12 +164,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	}
 
-	public joinRoom = (roomId: string, nickname: string | null) => {
+	public joinRoom = (roomId: string) => {
 		if (this.state.connection) {
 			const protocolMessage: JoinRoomMessage = {
 				type: 'JOIN_ROOM',
 				roomId,
-				nickname: nickname || ''
+				nickname: this.state.user!.nickname
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
@@ -178,11 +177,11 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public requestJoinRoom = (nickname: string) => {
 		const roomId = get(this.props.match, 'params.id');
-		this.setState(() => this.joinRoom(roomId, nickname));
+		this.setState({user: {nickname, id: ''}}, () => this.joinRoom(roomId));
 	}
 
 	public requestCreateRoom = (nickname: string) => {
-		this.setState({ nickname }, () => {
+		this.setState({user: {nickname, id: ''}}, () => {
 			if (this.state.connection) {
 				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM' };
 				this.state.connection.send(JSON.stringify(protocolMessage));
@@ -192,22 +191,20 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public startTurnTimer = turnEndTime => {
 		if (this.state.timer) {
-			clearInterval(this.state.timer);
+			window.clearInterval(this.state.timer);
 		}
-		let timer = Math.max(turnEndTime - Date.now(), 0);
-		const interval = setInterval(() => {
-			let seconds = Math.floor(timer / 1000);
-			const minutes = Math.floor(seconds / 60);
-			seconds -= minutes * 60;
-			this.setState({ turnTime: minutes + ' min ' + seconds + ' s' });
-			if (timer > 0) {
-				timer -= 1000;
-			} else {
-				clearInterval(interval);
-				this.setState({ timer: null });
+
+		const interval = window.setInterval(() => {
+			const ms = Math.max(turnEndTime - Date.now(), 0);
+			const seconds = Math.floor(ms / 1000);
+			this.setState({turnTime: seconds});
+			if (ms === 0) {
+				window.clearInterval(interval);
+				this.setState({timer: null});
 			}
 		}, 1000);
-		this.setState({ timer: interval });
+
+		this.setState({timer: interval});
 	}
 
 	public closeAlert = () => {
@@ -230,8 +227,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public render() {
 		// Match contains information about the matched react-router path
-		const { match, classes } = this.props;
-		const { nickname, messages, activeCards: activeCards, ownCards: ownCards, locale } = this.state;
+		const {match, classes, onChangeTheme} = this.props;
+		const {user, messages, activeCards: activeCards, ownCards: ownCards, locale} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
@@ -245,30 +242,21 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 			<IntlProvider locale={locale} key={locale} messages={translatedMessages}>
 				<div className={classes.body}>
 					<div className={classes.bodyPad}>
-						<NavigationBar
-							onChangeTheme={this.props.onChangeTheme}
-							onChangeLanguage={this.setLocale}
-						/>
-						{this.state.alert.length > 0 && (
-							<ErrorPopUp
-								onCloseAlert={this.closeAlert}
-								alerts={this.state.alert}
-							/>
-						)}
-						{(!nickname || !roomId) && (
+						{(!user || !roomId) && (
 							<Menu
 								type={roomId ? 'join' : 'create'}
 								onJoinRoom={this.requestJoinRoom}
 								onCreateRoom={this.requestCreateRoom}
+								onChangeTheme={onChangeTheme}
 							/>
 						)}
-						{nickname && roomId && (
+						{user && roomId && (
 							<ChatRoom
-								nickname={nickname}
+								user={user}
 								roomId={roomId}
 								users={this.state.users}
 								turnUser={this.state.userMap[this.state.turnUserId || ''] || { nickname: '' }}
-								turnTime={this.state.turnTime || ''}
+								turnTime={this.state.turnTime}
 								messages={messages}
 								activeCards={activeCards}
 								ownCards={ownCards}
@@ -276,6 +264,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								onSendNewRule={this.handleSendNewRule}
 								onValidateMessage={this.handleValidateMessage}
 								messageValid={this.state.messageValid}
+								onChangeTheme={onChangeTheme}
 							/>
 						)}
 					</div>
@@ -307,4 +296,4 @@ class AppWrapper extends React.Component<{}, WrapperState> {
 	}
 }
 
-export default AppWrapper;
+export default hot(AppWrapper);

@@ -22,17 +22,53 @@ import {merge} from 'lodash';
 interface CustomThemeProps {
 	// Namespace custom themes so that they don't collide with Material UI themes accidentally
 	fluxx: {
-		palette: {
-			primary: React.CSSProperties['color'],
-			body: React.CSSProperties['color'],
-			border: React.CSSProperties['color'],
-			contrast: React.CSSProperties['color'],
-			themeButton: React.CSSProperties['color'],
-			themeSelectButton: React.CSSProperties['color'],
-			themeSelectButtonHover: React.CSSProperties['color'],
-			themeButtonHover: React.CSSProperties['color'],
-			font: React.CSSProperties['color']
-		};
+		text: {primary: React.CSSProperties['color']},
+		icon: {primary: React.CSSProperties['color']},
+		body: {background: React.CSSProperties['background']},
+		border: {darker: React.CSSProperties['color']},
+		menu: {
+			input: {
+				background: React.CSSProperties['background'],
+				shadow: React.CSSProperties['boxShadow'],
+				focus: {
+					shadow: React.CSSProperties['boxShadow']
+				}
+			},
+			button: {color: React.CSSProperties['color']}
+		}
+		controlArea: {background: React.CSSProperties['background']},
+		chat: {
+			header: {background: React.CSSProperties['background']},
+			messages: {
+				message: {
+					borderRadius: React.CSSProperties['borderRadius'],
+					background: React.CSSProperties['background'],
+					shadow: React.CSSProperties['boxShadow']
+				},
+				ownMessage: {background: React.CSSProperties['background']},
+				systemMessage: {
+					background: React.CSSProperties['background'],
+					fontWeight: React.CSSProperties['fontWeight']
+				}
+			}
+		},
+		cards: {
+			background: React.CSSProperties['background'],
+			card: {
+				borderRadius: React.CSSProperties['borderRadius'],
+				background: React.CSSProperties['background'],
+				shadow: React.CSSProperties['boxShadow'],
+				hover: {shadow: React.CSSProperties['boxShadow']}
+			}
+		},
+		input: {
+			background: React.CSSProperties['background'],
+			sendButton: {color: React.CSSProperties['color']}
+		},
+		users: {
+			background: React.CSSProperties['background'],
+			user: {highlight: {background: React.CSSProperties['background']}}
+		}
 	};
 }
 
@@ -47,51 +83,121 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 	}
 }
 
+const commonFluxxStyles = {
+	chat: {messages: {message: {borderRadius: '0.6rem'}}},
+	cards: {card: {borderRadius: '0.6rem'}}
+};
+
 // Utility function to add common theme options
 const createTheme = (opts: ThemeOptions) => {
-	return createMuiTheme(
-		merge(opts, {
-			typography: {
-				// Needed to not get deprecation warnings in developer console
-				useNextVariants: true
-			}
-		})
-	);
+	return createMuiTheme(merge(opts, {
+		typography: {
+			// Needed to not get deprecation warnings in developer console
+			useNextVariants: true,
+			htmlFontSize: 10,
+			fontFamily: 'Montserrat, Helvetica, Arial'
+		},
+		overrides: {MuiTooltip: {tooltip: {fontWeight: 500}}}
+	}));
 };
 
 export default {
 	light: createTheme({
-		fluxx: {
-			// Custom themes
-			palette: {
-				body: 'white',
-				primary: '#3A3A3A',
-				border: '#3A3A3A',
-				contrast: 'white',
-				themeButton: '#303030',
-				themeSelectButton: 'white',
-				themeSelectButtonHover: '#cdcdcd',
-				themeButtonHover: '#262626',
-				font: 'black'
+		fluxx: merge(commonFluxxStyles, {
+			text: {primary: '#000000de'},
+			icon: {primary: '#0000008a'},
+			border: {darker: '#0000001a'},
+			body: {background: '#efefef'},
+			menu: {
+				input: {
+					background: '#ffffffcc',
+					shadow: '0 0 1rem 0 #0000000a',
+					focus: {
+						shadow: '0 0 0.1rem 0.2rem #0099ffaa'
+					}
+				},
+				button: {color: '#39a5d2'}
+			},
+			controlArea: {background: '#fafafa'},
+			chat: {
+				header: {background: '#ffffff44'},
+				messages: {
+					message: {
+						background: '#ffffff',
+						shadow: '0 1px 1px #0000002e'
+					},
+					ownMessage: {background: '#d8e3ea'},
+					systemMessage: {
+						background: '#f9ecb0',
+						fontWeight: 400
+					}
+				}
+			},
+			cards: {
+				background: '#f4f4f4',
+				card: {
+					background: '#ffffff',
+					shadow: '0.1rem 0.1rem 0.4rem 0 #00000022',
+					hover: {shadow: '0 0 0.4rem 0.1rem #0099ffaa'}
+				}
+			},
+			input: {
+				background: '#f4f4f4',
+				sendButton: {color: '#3f51b5'}
+			},
+			users: {
+				background: 'linear-gradient(160deg, #2d3a59 0%, #171c29 100%)',
+				user: {highlight: {background: 'linear-gradient(90deg, #222d4800 0%, #222d48 100%)'}}
 			}
-		}
+		})
 	}),
-	red: createTheme({
-		fluxx: {
-			// Custom themes
-			palette: {
-				body: '#ebebeb',
-				primary: 'darkred',
-				border: '#282828',
-				contrast: '#ebebeb',
-				themeButton: '#770000',
-				themeSelectButton: '#ebebeb',
-				themeSelectButtonHover: '#d7d7d7',
-				themeButtonHover: '#590000',
-				font: 'black'
+	dark: createTheme({
+		fluxx: merge(commonFluxxStyles, {
+			text: {primary: '#ffffffcc'},
+			icon: {primary: '#ffffffcc'},
+			border: {darker: '#00000033'},
+			body: {background: '#465375'},
+			menu: {
+				input: {
+					background: '#00000033',
+					shadow: '0 0 0.4rem 0rem #ffffff1f, 0.1rem 0.1rem 0.2rem 0 #00000040 inset',
+					focus: {
+						shadow: '0 0 0.2rem 0.2rem #5179af, 0.1rem 0.1rem 0.2rem 0 #00000040 inset'
+					}
+				},
+				button: {color: '#90a5c3d6'}
+			},
+			controlArea: {background: '#313d5a'},
+			chat: {
+				header: {background: '#29334c'},
+				messages: {
+					message: {
+						background: '#0000002e',
+						shadow: '0 1px 1px #0000007a'
+					},
+					ownMessage: {background: '#465d8a'},
+					systemMessage: {
+						background: '#3c50b6',
+						fontWeight: 500
+					}
+				}
+			},
+			cards: {
+				background: '#00000022',
+				card: {
+					background: '#ffffff22',
+					shadow: '0.1rem 0.1rem 0.2rem 0 #00000078',
+					hover: {shadow: '0 0 0.4rem 0.1rem #adddfdaa'}
+				}
+			},
+			input: {
+				background: '#00000033',
+				sendButton: {color: '#8cb6cc'}
+			},
+			users: {
+				background: 'linear-gradient(160deg, #2d3a59 0%, #171c29 100%)',
+				user: {highlight: {background: 'linear-gradient(90deg, #222d4800 0%, #222d48 100%)'}}
 			}
-		}
+		})
 	})
 };
-
-export const themeNames = ['Light', 'Red'];
