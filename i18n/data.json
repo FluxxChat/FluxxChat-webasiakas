@@ -16,6 +16,7 @@
         "input.typeMessage": "Type a message...",
         "input.typeNickname": "Type a nickname...",
         "tooltip.changeTheme": "Change theme...",
+        "tooltip.changeLocale": "Change locale...",
         "tooltip.toggleRules": "Show or hide active rules",
         "theme.light": "Light",
         "theme.dark": "Dark"
@@ -37,6 +38,7 @@
         "input.typeMessage": "Kirjoita viesti...",
         "input.typeNickname": "Kirjoita nimimerkki...",
         "tooltip.changeTheme": "Vaihda teemaa...",
+        "tooltip.changeLocale": "Vaihda kieltä...",
         "tooltip.toggleRules": "Näytä tai piilota aktiiviset säännöt",
         "theme.light": "Vaalea",
         "theme.dark": "Tumma"

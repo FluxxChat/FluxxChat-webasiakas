@@ -19,6 +19,8 @@ import React from 'react';
 import {withStyles, createStyles, WithStyles, Theme, Tooltip, IconButton, Menu, MenuItem} from '@material-ui/core';
 import {FormattedMessage} from 'react-intl';
 import ThemeIcon from '@material-ui/icons/ColorLens';
+import LocaleIcon from '@material-ui/icons/Language';
+import localeData from '../../../i18n/data.json';
 import themes from '../themes';
 
 const styles = (theme: Theme) => createStyles({
@@ -43,17 +45,20 @@ const styles = (theme: Theme) => createStyles({
 
 interface Props extends WithStyles<typeof styles> {
 	onChangeTheme: (theme: keyof typeof themes) => void;
+	onChangeLocale: (locale: keyof typeof localeData) => void;
 }
 
 interface State {
 	anchorEl: any;
 	showThemeMenu: boolean;
+	showLocaleMenu: boolean;
 }
 
 class Header extends React.Component<Props, State> {
 	public state: State = {
 		anchorEl: null,
-		showThemeMenu: false
+		showThemeMenu: false,
+		showLocaleMenu: false
 	};
 
 	public handleClickThemeBtn = (evt: React.MouseEvent<HTMLButtonElement>) => {
@@ -69,12 +74,30 @@ class Header extends React.Component<Props, State> {
 		this.handleCloseThemeMenu();
 	}
 
+	public handleClickLocaleBtn = (evt: React.MouseEvent<HTMLButtonElement>) => {
+		this.setState({showLocaleMenu: true, anchorEl: evt.currentTarget});
+	}
+
+	public handleCloseLocaleMenu = () => {
+		this.setState({showLocaleMenu: false, anchorEl: null});
+	}
+
+	public getLocaleSelectHandler = (locale: keyof typeof localeData) => () => {
+		this.props.onChangeLocale(locale);
+		this.handleCloseLocaleMenu();
+	}
+
 	public render() {
 		const {classes} = this.props;
-		const {anchorEl, showThemeMenu} = this.state;
+		const {anchorEl, showThemeMenu, showLocaleMenu} = this.state;
 
 		return (
 			<div className={classes.root}>
+				<Tooltip title={<FormattedMessage id="tooltip.changeLocale"/>} placement="left" disableFocusListener>
+					<IconButton onClick={this.handleClickLocaleBtn}>
+						<LocaleIcon/>
+					</IconButton>
+				</Tooltip>
 				<Tooltip title={<FormattedMessage id="tooltip.changeTheme"/>} placement="left" disableFocusListener>
 					<IconButton onClick={this.handleClickThemeBtn}>
 						<ThemeIcon/>
@@ -90,6 +113,18 @@ class Header extends React.Component<Props, State> {
 					</MenuItem>
 					<MenuItem onClick={this.getThemeSelectHandler('dark')}>
 						<FormattedMessage id="theme.dark"/>
+					</MenuItem>
+				</Menu>
+				<Menu
+					anchorEl={anchorEl}
+					open={showLocaleMenu}
+					onClose={this.handleCloseLocaleMenu}
+				>
+					<MenuItem onClick={this.getLocaleSelectHandler('fi')}>
+						FI
+					</MenuItem>
+					<MenuItem onClick={this.getLocaleSelectHandler('en')}>
+						EN
 					</MenuItem>
 				</Menu>
 			</div>

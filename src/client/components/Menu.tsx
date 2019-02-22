@@ -18,6 +18,7 @@
 import React from 'react';
 import {FormattedMessage, injectIntl, InjectedIntlProps} from 'react-intl';
 import {Theme, createStyles, withStyles, WithStyles, InputBase, Button, InputAdornment} from '@material-ui/core';
+import localeData from '../../../i18n/data.json';
 import Header from './Header';
 import themes from '../themes';
 
@@ -63,6 +64,7 @@ interface OwnProps {
 	onJoinRoom: (nickname: string) => any;
 	onCreateRoom: (nickname: string) => any;
 	onChangeTheme: (theme: keyof typeof themes) => void;
+	onChangeLocale: (locale: keyof typeof localeData) => void;
 }
 
 type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
@@ -95,11 +97,11 @@ class Menu extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {type, onChangeTheme, intl, classes} = this.props;
+		const {type, onChangeTheme, intl, classes, onChangeLocale} = this.props;
 
 		return (
 			<div className={classes.root}>
-				<Header onChangeTheme={onChangeTheme}/>
+				<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale}/>
 				<div className={classes.menuContent}>
 					<InputBase
 						className={classes.input}

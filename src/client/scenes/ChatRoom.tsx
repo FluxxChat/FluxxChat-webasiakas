@@ -34,6 +34,7 @@ import {
 } from '@material-ui/core';
 import RulesIcon from '@material-ui/icons/Ballot';
 import ScrollArea from 'react-scrollbar';
+import localeData from '../../../i18n/data.json';
 import UserList from '../components/UserList';
 import UserInput from '../components/UserInput';
 import RuleList from '../components/RuleList';
@@ -154,6 +155,7 @@ interface Props extends WithStyles<typeof styles> {
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
 	onValidateMessage: (message: string) => void;
 	onChangeTheme: (theme: string) => void;
+	onChangeLocale: (locale: keyof typeof localeData) => void;
 }
 
 interface State {
@@ -266,7 +268,8 @@ class ChatRoom extends React.Component<Props, State> {
 			activeCards,
 			turnTime,
 			turnUser,
-			onChangeTheme
+			onChangeTheme,
+			onChangeLocale
 		} = this.props;
 		const {
 			messageDraft,
@@ -291,7 +294,7 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 				</div>
 				<div className={classes.chatArea}>
-					<Header onChangeTheme={onChangeTheme}/>
+					<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale}/>
 					<div className={classes.chatContainer}>
 						<div className={classes.messageArea}>
 							<MessageList clientUser={user} messages={messages}/>

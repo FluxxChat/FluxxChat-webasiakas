@@ -60,6 +60,10 @@ interface State {
 	alert: string[];
 }
 
+interface Props {
+	onChangeTheme: (theme: keyof typeof themes) => void;
+}
+
 const EMPTY_STATE: State = {
 	connection: null,
 	user: null,
@@ -77,12 +81,8 @@ const EMPTY_STATE: State = {
 	theme: 'light'
 };
 
-interface Props {
-	onChangeTheme: (theme: keyof typeof themes) => void;
-}
-
 class App extends React.Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
-	public state: State = { ...EMPTY_STATE };
+	public state = {...EMPTY_STATE};
 
 	public componentDidMount() {
 		this.connect();
@@ -112,7 +112,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 			switch (msg.type) {
 				case 'TEXT':
 				case 'SYSTEM':
-					this.setState({ messages: [...this.state.messages, msg] });
+					this.setState({messages: [...this.state.messages, msg]});
 					break;
 				case 'ROOM_CREATED':
 					this.props.history.push(`/room/${msg.roomId}`);
@@ -153,7 +153,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 	}
 
 	public handleSendNewRule = (card: Card, ruleParameters: RuleParameters) => {
-		const { connection } = this.state;
+		const {connection} = this.state;
 		if (connection) {
 			const protocolMessage: NewRuleMessage = {
 				type: 'NEW_RULE',
@@ -208,7 +208,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 	}
 
 	public closeAlert = () => {
-		this.setState({ alert: [] });
+		this.setState({alert: []});
 	}
 
 	public handleValidateMessage = (message: string) => {
@@ -221,8 +221,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	};
 
-	public setLocale = (newLocale: string) => {
-		this.setState({ locale: newLocale });
+	public handleChangeLocale = (locale: keyof typeof localeData) => {
+		this.setState({locale});
 	}
 
 	public render() {
@@ -248,6 +248,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								onJoinRoom={this.requestJoinRoom}
 								onCreateRoom={this.requestCreateRoom}
 								onChangeTheme={onChangeTheme}
+								onChangeLocale={this.handleChangeLocale}
 							/>
 						)}
 						{user && roomId && (
@@ -265,6 +266,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								onValidateMessage={this.handleValidateMessage}
 								messageValid={this.state.messageValid}
 								onChangeTheme={onChangeTheme}
+								onChangeLocale={this.handleChangeLocale}
 							/>
 						)}
 					</div>
@@ -281,7 +283,7 @@ interface WrapperState {
 }
 
 class AppWrapper extends React.Component<{}, WrapperState> {
-	public state: WrapperState = { theme: 'light' };
+	public state: WrapperState = {theme: 'light'};
 
 	public changeTheme = (theme: keyof typeof themes) => {
 		this.setState({ theme });
