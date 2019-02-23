@@ -16,12 +16,14 @@
  */
 
 import React from 'react';
-import {withStyles, createStyles, WithStyles, Theme, Tooltip, IconButton, Menu, MenuItem} from '@material-ui/core';
+import {withStyles, createStyles, WithStyles, Theme, Tooltip, IconButton, Menu, MenuItem, Popover} from '@material-ui/core';
 import {FormattedMessage} from 'react-intl';
 import ThemeIcon from '@material-ui/icons/ColorLens';
+import AvatarIcon from '@material-ui/icons/AccountCircle';
 import LocaleIcon from '@material-ui/icons/Language';
 import localeData from '../../../i18n/data.json';
 import themes from '../themes';
+import {DragDropHandler} from './ProfileImgEditor';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -40,25 +42,58 @@ const styles = (theme: Theme) => createStyles({
 			padding: '0.4rem',
 			color: theme.fluxx.icon.primary
 		}
-	}
+	},
+	avatarEditor: {
+		width: '350px',
+		paddingLeft: '8px',
+		paddingRight: '8px',
+		background: theme.fluxx.profileImgEditor.background
+	},
+	avatarEditorBtn: {
+		height: '50px',
+		width: '350px',
+		marginTop: '8px',
+		marginBottom: '8px',
+		lineHeight: '1.75',
+		fontFamily: 'Montserrat, helvetica, arial, sans-serif',
+		fontSize: '1.6rem',
+		fontWeight: 500,
+		textTransform: 'uppercase',
+		background: theme.fluxx.profileImgEditor.button.background,
+		color: theme.fluxx.profileImgEditor.button.color,
+		boxShadow: theme.fluxx.profileImgEditor.button.shadow,
+		borderRadius: '0.8rem',
+		cursor: 'pointer',
+		transition: 'box-shadow 0.2s',
+		'& button': {
+			whiteSpace: 'nowrap'
+		},
+		'&$focused': {
+			boxShadow: theme.fluxx.profileImgEditor.button.focus.shadow
+		}
+	},
+	focused: {}
 });
 
 interface Props extends WithStyles<typeof styles> {
 	onChangeTheme: (theme: keyof typeof themes) => void;
 	onChangeLocale: (locale: keyof typeof localeData) => void;
+	onChangeAvatar: (image: string) => void;
 }
 
 interface State {
 	anchorEl: any;
 	showThemeMenu: boolean;
 	showLocaleMenu: boolean;
+	showAvatarEditor: boolean;
 }
 
 class Header extends React.Component<Props, State> {
 	public state: State = {
 		anchorEl: null,
 		showThemeMenu: false,
-		showLocaleMenu: false
+		showLocaleMenu: false,
+		showAvatarEditor: false
 	};
 
 	public handleClickThemeBtn = (evt: React.MouseEvent<HTMLButtonElement>) => {
@@ -87,12 +122,30 @@ class Header extends React.Component<Props, State> {
 		this.handleCloseLocaleMenu();
 	}
 
+	public handleClickAvatarBtn = (evt: React.MouseEvent<HTMLButtonElement>) => {
+		this.setState({showAvatarEditor: true, anchorEl: evt.currentTarget});
+	}
+
+	public handleCloseAvatarMenu = () => {
+		this.setState({showAvatarEditor: false, anchorEl: null});
+	}
+
+	public handleAvatarChange = (image: string) => {
+		this.props.onChangeAvatar(image);
+		this.setState({showAvatarEditor: false, anchorEl: null});
+	}
+
 	public render() {
 		const {classes} = this.props;
-		const {anchorEl, showThemeMenu, showLocaleMenu} = this.state;
+		const {anchorEl, showThemeMenu, showLocaleMenu, showAvatarEditor} = this.state;
 
 		return (
 			<div className={classes.root}>
+				<Tooltip title={<FormattedMessage id="tooltip.changeAvatar"/>} placement="left" disableFocusListener>
+					<IconButton onClick={this.handleClickAvatarBtn}>
+						<AvatarIcon/>
+					</IconButton>
+				</Tooltip>
 				<Tooltip title={<FormattedMessage id="tooltip.changeLocale"/>} placement="left" disableFocusListener>
 					<IconButton onClick={this.handleClickLocaleBtn}>
 						<LocaleIcon/>
@@ -127,6 +180,18 @@ class Header extends React.Component<Props, State> {
 						EN
 					</MenuItem>
 				</Menu>
+				<Popover
+					anchorEl={anchorEl}
+					open={showAvatarEditor}
+					onClose={this.handleCloseAvatarMenu}
+				>
+					<div className={classes.avatarEditor}>
+						<DragDropHandler
+							classes={classes}
+							onChangeAvatar={this.handleAvatarChange}
+						/>
+					</div>
+				</Popover>
 			</div>
 		);
 	}

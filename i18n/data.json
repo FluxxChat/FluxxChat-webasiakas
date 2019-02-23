@@ -17,7 +17,10 @@
         "input.typeNickname": "Type a nickname...",
         "tooltip.changeTheme": "Change theme...",
         "tooltip.changeLocale": "Change locale...",
-        "tooltip.toggleRules": "Show or hide active rules",
+		"tooltip.changeAvatar": "Change profile picture...",
+		"tooltip.toggleRules": "Show or hide active rules",
+		"avatar.upload": "Add image",
+		"avatar.confirm": "Set picture",
         "theme.light": "Light",
         "theme.dark": "Dark"
     },
@@ -39,7 +42,10 @@
         "input.typeNickname": "Kirjoita nimimerkki...",
         "tooltip.changeTheme": "Vaihda teemaa...",
         "tooltip.changeLocale": "Vaihda kieltä...",
-        "tooltip.toggleRules": "Näytä tai piilota aktiiviset säännöt",
+		"tooltip.changeAvatar": "Vaihda profiilikuvaa...",
+		"tooltip.toggleRules": "Näytä tai piilota aktiiviset säännöt",
+		"avatar.upload": "Lisää kuva",
+		"avatar.confirm": "Aseta kuva",
         "theme.light": "Vaalea",
         "theme.dark": "Tumma"
     }
