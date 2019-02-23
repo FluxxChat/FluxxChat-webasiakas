@@ -156,6 +156,7 @@ interface Props extends WithStyles<typeof styles> {
 	onValidateMessage: (message: string) => void;
 	onChangeTheme: (theme: string) => void;
 	onChangeLocale: (locale: keyof typeof localeData) => void;
+	onChangeAvatar: (image: string) => void;
 }
 
 interface State {
@@ -269,7 +270,8 @@ class ChatRoom extends React.Component<Props, State> {
 			turnTime,
 			turnUser,
 			onChangeTheme,
-			onChangeLocale
+			onChangeLocale,
+			onChangeAvatar
 		} = this.props;
 		const {
 			messageDraft,
@@ -294,7 +296,7 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 				</div>
 				<div className={classes.chatArea}>
-					<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale}/>
+					<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale} onChangeAvatar={onChangeAvatar}/>
 					<div className={classes.chatContainer}>
 						<div className={classes.messageArea}>
 							<MessageList clientUser={user} messages={messages}/>

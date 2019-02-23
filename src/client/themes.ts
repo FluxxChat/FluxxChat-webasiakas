@@ -68,6 +68,17 @@ interface CustomThemeProps {
 		users: {
 			background: React.CSSProperties['background'],
 			user: {highlight: {background: React.CSSProperties['background']}}
+		},
+		profileImgEditor: {
+			background: React.CSSProperties['background'],
+			button: {
+				background: React.CSSProperties['background'],
+				color: React.CSSProperties['color'],
+				shadow: React.CSSProperties['boxShadow'],
+				focus: {
+					shadow: React.CSSProperties['boxShadow']
+				}
+			}
 		}
 	};
 }
@@ -148,6 +159,17 @@ export default {
 			users: {
 				background: 'linear-gradient(160deg, #2d3a59 0%, #171c29 100%)',
 				user: {highlight: {background: 'linear-gradient(90deg, #222d4800 0%, #222d48 100%)'}}
+			},
+			profileImgEditor: {
+				background: '#fdfdfd',
+				button: {
+					background: '#efefef',
+					color: '#39a5d2',
+					shadow: '0 0 1rem 0 #0000000a',
+					focus: {
+						shadow: '0 0 0.1rem 0.2rem #0099ffaa'
+					}
+				}
 			}
 		})
 	}),
@@ -197,6 +219,17 @@ export default {
 			users: {
 				background: 'linear-gradient(160deg, #2d3a59 0%, #171c29 100%)',
 				user: {highlight: {background: 'linear-gradient(90deg, #222d4800 0%, #222d48 100%)'}}
+			},
+			profileImgEditor: {
+				background: '#586b99',
+				button: {
+					background: '#323d59',
+					color: '#ffffffcc',
+					shadow: '0 0 0.4rem 0rem #ffffff1f, 0.1rem 0.1rem 0.2rem 0 #00000078 inset',
+					focus: {
+						shadow: '0 0 0.2rem 0.2rem #465375, 0.1rem 0.1rem 0.2rem 0 #465375 inset'
+					}
+				}
 			}
 		})
 	})

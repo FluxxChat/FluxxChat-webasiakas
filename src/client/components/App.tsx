@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, RuleParameters, ValidateTextMessage, SystemMessage} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, ProfileImgChangeMessage, RuleParameters, ValidateTextMessage, SystemMessage} from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
@@ -164,6 +164,16 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	}
 
+	public handleChangeAvatar = (image: string) => {
+		if (this.state.connection) {
+			const protocolMessage: ProfileImgChangeMessage = {
+				type: 'PROFILE_IMG_CHANGE',
+				profileImg: image
+			};
+			this.state.connection.send(JSON.stringify(protocolMessage));
+		}
+	}
+
 	public joinRoom = (roomId: string) => {
 		if (this.state.connection) {
 			const protocolMessage: JoinRoomMessage = {
@@ -177,11 +187,11 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public requestJoinRoom = (nickname: string) => {
 		const roomId = get(this.props.match, 'params.id');
-		this.setState({user: {nickname, id: ''}}, () => this.joinRoom(roomId));
+		this.setState({user: {nickname, id: '', profileImg: 'default'}}, () => this.joinRoom(roomId));
 	}
 
 	public requestCreateRoom = (nickname: string) => {
-		this.setState({user: {nickname, id: ''}}, () => {
+		this.setState({user: {nickname, id: '', profileImg: 'default'}}, () => {
 			if (this.state.connection) {
 				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM' };
 				this.state.connection.send(JSON.stringify(protocolMessage));
@@ -249,6 +259,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								onCreateRoom={this.requestCreateRoom}
 								onChangeTheme={onChangeTheme}
 								onChangeLocale={this.handleChangeLocale}
+								onChangeAvatar={this.handleChangeAvatar}
 							/>
 						)}
 						{user && roomId && (
@@ -267,6 +278,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								messageValid={this.state.messageValid}
 								onChangeTheme={onChangeTheme}
 								onChangeLocale={this.handleChangeLocale}
+								onChangeAvatar={this.handleChangeAvatar}
 							/>
 						)}
 					</div>

@@ -31,6 +31,10 @@ const styles = (theme: Theme) => createStyles({
 			fontSize: '4rem'
 		}
 	},
+	profileIconImg: {
+		overflow: 'hidden',
+		borderRadius: '50%'
+	},
 	turnProgress: {
 		position: 'absolute',
 		top: '50%',
@@ -64,7 +68,7 @@ const UserList = ({clientUser, turnUser, users, classes, turnTimePercent}: Props
 				className={`${classes.listItem} ${u.id === clientUser.id ? classes.highlight : ''}`}
 			>
 				<div className={classes.profileIcon}>
-					<ProfileIcon/>
+					<ProfileIcon imageCSS={classes.profileIconImg} image={u.profileImg}/>
 					{u.id === turnUser.id && (
 						<CircularProgress
 							className={classes.turnProgress}

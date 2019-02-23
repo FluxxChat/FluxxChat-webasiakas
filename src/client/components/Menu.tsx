@@ -65,6 +65,7 @@ interface OwnProps {
 	onCreateRoom: (nickname: string) => any;
 	onChangeTheme: (theme: keyof typeof themes) => void;
 	onChangeLocale: (locale: keyof typeof localeData) => void;
+	onChangeAvatar: (image: string) => void;
 }
 
 type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
@@ -97,11 +98,11 @@ class Menu extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {type, onChangeTheme, intl, classes, onChangeLocale} = this.props;
+		const {type, onChangeTheme, intl, classes, onChangeLocale, onChangeAvatar} = this.props;
 
 		return (
 			<div className={classes.root}>
-				<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale}/>
+				<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale} onChangeAvatar={onChangeAvatar}/>
 				<div className={classes.menuContent}>
 					<InputBase
 						className={classes.input}
