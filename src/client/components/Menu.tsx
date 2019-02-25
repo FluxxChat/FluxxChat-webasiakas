@@ -114,7 +114,7 @@ class Menu extends React.Component<Props, State> {
 						classes={{focused: classes.focused}}
 						endAdornment={
 							<InputAdornment position="end">
-								<Button size="small" onClick={this.handleClickSubmit}>
+								<Button size="small" onClick={this.handleClickSubmit} name="submit">
 									{type === 'join'
 										? <FormattedMessage id="login.joinRoom"/>
 										: <FormattedMessage id="login.createRoom"/>}
