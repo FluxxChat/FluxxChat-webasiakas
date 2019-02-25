@@ -20,10 +20,8 @@ export class ImageEditor extends React.Component<ImageEditorProps, ImageEditorSt
 
 	public onClickSave = () => {
 		if (this.editor) {
-			let imageURL: string;
-			fetch(this.editor.getImage().toDataURL()).then(res => res.blob()).then(blob => {
-				imageURL = window.URL.createObjectURL(blob);
-				this.props.onChangeAvatar(imageURL);
+			fetch(this.editor.getImage().toDataURL()).then(dataURL => {
+				this.props.onChangeAvatar(dataURL.url);
 			});
 		}
 	}
