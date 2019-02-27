@@ -55,6 +55,7 @@ interface State {
 	turnTime: number;
 	timer: number | null;
 	messageValid: boolean;
+	messageBlockingRules: string[];
 	locale: string;
 	theme: keyof typeof themes;
 	alert: string[];
@@ -77,6 +78,7 @@ const EMPTY_STATE: State = {
 	timer: null,
 	alert: [],
 	messageValid: true,
+	messageBlockingRules: [],
 	locale: 'fi',
 	theme: 'light'
 };
@@ -134,6 +136,11 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					break;
 				case 'VALIDATE_TEXT_RESPONSE':
 					this.setState({ messageValid: msg.valid });
+					if (msg.invalidReason) {
+						this.setState({ messageBlockingRules: msg.invalidReason });
+					} else {
+						this.setState({ messageBlockingRules: [] });
+					}
 					break;
 				default:
 					break;
@@ -276,6 +283,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								onSendNewRule={this.handleSendNewRule}
 								onValidateMessage={this.handleValidateMessage}
 								messageValid={this.state.messageValid}
+								messageBlockingRules={this.state.messageBlockingRules}
 								onChangeTheme={onChangeTheme}
 								onChangeLocale={this.handleChangeLocale}
 								onChangeAvatar={this.handleChangeAvatar}
