@@ -22,17 +22,19 @@ import {FormattedMessage} from 'react-intl';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
+		bottom: 0,
 		flex: '1 0 30rem',
 		display: 'flex',
 		flexDirection: 'column',
 		overflowX: 'hidden',
-		transition: 'max-width 0.2s',
+		transition: 'min-height 0.2s, max-height 0.2s',
 		boxSizing: 'border-box',
-		maxWidth: 0,
+		maxHeight: 0,
+		minHeight: 0,
 		'&$visible': {
-			maxWidth: '25vw',
+			minHeight: '15vW',
+			maxHeight: '25vw',
 			overflowY: 'auto',
-			borderLeft: `1px solid ${theme.fluxx.border.darker}`
 		}
 	},
 	ruleListItem: {
@@ -41,6 +43,15 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'column',
 		padding: '1rem 4rem 1rem 2rem',
+		borderBottom: `1px solid ${theme.fluxx.border.darker}`
+	},
+	ruleListItemBlockingMsg: {
+		width: '25vw',
+		boxSizing: 'border-box',
+		display: 'flex',
+		flexDirection: 'column',
+		padding: '1rem 4rem 1rem 2rem',
+		background: theme.fluxx.MessageBlocgingRule.background,
 		borderBottom: `1px solid ${theme.fluxx.border.darker}`
 	},
 	ruleTitle: {
@@ -61,9 +72,10 @@ interface Props extends WithStyles<typeof styles> {
 	rules: Card[];
 	users: User[];
 	visible: boolean;
+	messageBlockingRules: string[];
 }
 
-const RuleList = ({rules, users, visible, classes}: Props) => (
+const RuleList = ({rules, users, visible, messageBlockingRules, classes}: Props) => (
 	<div className={`${classes.root} ${visible ? classes.visible : ''}`}>
 		{rules.length === 0 && (
 			<div className={classes.ruleListItem}>
@@ -81,7 +93,7 @@ const RuleList = ({rules, users, visible, classes}: Props) => (
 			});
 			const paramsStr = params.length > 0 ? ` (${params.join(', ')})` : '';
 			return (
-				<div className={classes.ruleListItem} key={index}>
+				<div className={messageBlockingRules.includes(rule.name) ? classes.ruleListItemBlockingMsg : classes.ruleListItem} key={index}>
 					<div className={classes.ruleTitle}>{rule.name}{paramsStr}</div>
 					<div className={classes.ruleDescription}>{rule.description}</div>
 				</div>

@@ -14,7 +14,7 @@ const ProfileIcon = (props: any) => (
 				<circle cx="105" cy="147" r="103" fill="#e7eced" clipPath="url(#a)" transform="translate(-1557 -385)"/>
 			</g>
 		</SvgIcon>
-	) : <img className={props.imageCSS} src={props.image} width="40" height="40"/>
+	) : <img className={props.imagecss} src={props.image} width="40" height="40"/>
 );
 
 export default ProfileIcon;

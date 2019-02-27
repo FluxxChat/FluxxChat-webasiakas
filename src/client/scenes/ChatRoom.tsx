@@ -75,8 +75,8 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'row',
 		background: theme.fluxx.controlArea.background,
-		justifyContent: 'flex-end',
-		zIndex: 50
+		borderTop: `3px solid ${theme.fluxx.border.darker}`,
+		justifyContent: 'flex-start'
 	},
 	controls: {
 		width: '6rem',
@@ -113,7 +113,7 @@ const styles = (theme: Theme) => createStyles({
 	},
 	userListArea: {
 		flex: 0.6,
-		maxWidth: '60rem',
+		maxWidth: '65rem',
 		display: 'flex',
 		flexDirection: 'column',
 		background: theme.fluxx.users.background,
@@ -151,6 +151,7 @@ interface Props extends WithStyles<typeof styles> {
 	ownCards: Card[];
 	activeCards: Card[];
 	messageValid: boolean;
+	messageBlockingRules: string[];
 	onSendMessage: (message: string) => void;
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
 	onValidateMessage: (message: string) => void;
@@ -294,6 +295,21 @@ class ChatRoom extends React.Component<Props, State> {
 							turnTimePercent={Math.floor((turnTime / 120) * 100)}
 						/>
 					</div>
+					<div className={classes.controlArea}>
+						<RuleList
+							rules={activeCards}
+							users={users}
+							visible={showRules}
+							messageBlockingRules={this.props.messageBlockingRules}
+						/>
+						<div className={classes.controls}>
+							<Tooltip title={<FormattedMessage id="tooltip.toggleRules"/>} placement="left" disableFocusListener>
+								<IconButton onClick={this.handleToggleShowRules}>
+									<RulesIcon/>
+								</IconButton>
+							</Tooltip>
+						</div>
+					</div>
 				</div>
 				<div className={classes.chatArea}>
 					<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale} onChangeAvatar={onChangeAvatar}/>
@@ -329,20 +345,6 @@ class ChatRoom extends React.Component<Props, State> {
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 							/>
-						</div>
-						<div className={classes.controlArea}>
-							<RuleList
-								rules={activeCards}
-								users={users}
-								visible={showRules}
-							/>
-							<div className={classes.controls}>
-								<Tooltip title={<FormattedMessage id="tooltip.toggleRules"/>} placement="left" disableFocusListener>
-									<IconButton onClick={this.handleToggleShowRules}>
-										<RulesIcon/>
-									</IconButton>
-								</Tooltip>
-							</div>
 						</div>
 					</div>
 				</div>
