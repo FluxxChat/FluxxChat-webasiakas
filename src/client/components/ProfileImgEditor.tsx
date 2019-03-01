@@ -3,9 +3,8 @@ import ReactAvatarEditor from 'react-avatar-editor';
 import Dropzone from 'react-dropzone';
 import {FormattedMessage} from 'react-intl';
 import {Button} from '@material-ui/core';
-import Slider from '@material-ui/lab/Slider';
-import ZoomIn from '@material-ui/icons/zoomin';
-import ZoomOut from '@material-ui/icons/zoomout';
+import {Slider} from '@material-ui/lab';
+import {ZoomIn, ZoomOut} from '@material-ui/icons';
 
 interface ImageEditorProps {
 	classes: any;
