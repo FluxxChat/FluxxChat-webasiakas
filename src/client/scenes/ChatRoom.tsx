@@ -17,22 +17,18 @@
 
 import React from 'react';
 import {Card, RuleParameters, User, SystemMessage, TextMessage} from 'fluxxchat-protokolla';
-import {FormattedMessage} from 'react-intl';
 import {
 	createStyles,
 	WithStyles,
 	withStyles,
-	IconButton,
 	Dialog,
 	DialogTitle,
 	DialogContent,
 	DialogContentText,
 	DialogActions,
 	Button,
-	Tooltip,
 	Theme
 } from '@material-ui/core';
-import RulesIcon from '@material-ui/icons/Ballot';
 import ScrollArea from 'react-scrollbar';
 import localeData from '../../../i18n/data.json';
 import UserList from '../components/UserList';
@@ -70,25 +66,13 @@ const styles = (theme: Theme) => createStyles({
 		flexDirection: 'column',
 		minWidth: 0
 	},
-	controlArea: {
+	ruleListArea: {
 		flex: '0 0 auto',
 		display: 'flex',
 		flexDirection: 'row',
 		background: theme.fluxx.controlArea.background,
 		borderTop: `3px solid ${theme.fluxx.border.darker}`,
 		justifyContent: 'flex-start'
-	},
-	controls: {
-		width: '6rem',
-		display: 'flex',
-		flexDirection: 'column',
-		padding: '1rem 0',
-		alignItems: 'center',
-		borderLeft: `1px solid ${theme.fluxx.border.darker}`,
-		'& > button': {
-			width: '4.8rem',
-			color: theme.fluxx.icon.primary
-		}
 	},
 	cardArea: {
 		flex: '0 0 auto',
@@ -295,20 +279,13 @@ class ChatRoom extends React.Component<Props, State> {
 							turnTimePercent={Math.floor((turnTime / 120) * 100)}
 						/>
 					</div>
-					<div className={classes.controlArea}>
+					<div className={classes.ruleListArea}>
 						<RuleList
 							rules={activeCards}
 							users={users}
 							visible={showRules}
 							messageBlockingRules={this.props.messageBlockingRules}
 						/>
-						<div className={classes.controls}>
-							<Tooltip title={<FormattedMessage id="tooltip.toggleRules"/>} placement="left" disableFocusListener>
-								<IconButton onClick={this.handleToggleShowRules}>
-									<RulesIcon/>
-								</IconButton>
-							</Tooltip>
-						</div>
 					</div>
 				</div>
 				<div className={classes.chatArea}>

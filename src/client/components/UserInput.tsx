@@ -24,10 +24,19 @@ import {injectIntl, InjectedIntlProps} from 'react-intl';
 const styles = (theme: Theme) => createStyles({
 	root: {
 		borderTop: `1px solid ${theme.fluxx.border.darker}`,
-		padding: '0.6rem 1rem',
+		borderRadius: '1rem',
+		margin: '0.4rem 0.4rem',
 		display: 'flex',
 		alignItems: 'center',
 		background: theme.fluxx.input.background
+	},
+	disabled: {
+		borderTop: `1px solid ${theme.fluxx.border.darker}`,
+		borderRadius: '1rem',
+		margin: '0.4rem 0.4rem',
+		display: 'flex',
+		alignItems: 'center',
+		background: theme.fluxx.input.disabledBackground
 	},
 	messageField: {
 		flex: 1,
@@ -67,7 +76,7 @@ class UserInput extends React.Component<Props> {
 		const {value, onChange, valid, onToggleCards, onSend, classes, intl} = this.props;
 
 		return (
-			<div className={classes.root}>
+			<div className={valid ? classes.root : classes.disabled}>
 				<IconButton className={classes.iconButton} onClick={onToggleCards}>
 					<CardsIcon/>
 				</IconButton>

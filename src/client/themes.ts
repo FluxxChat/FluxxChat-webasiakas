@@ -64,7 +64,8 @@ interface CustomThemeProps {
 		},
 		input: {
 			background: React.CSSProperties['background'],
-			sendButton: {color: React.CSSProperties['color']}
+			sendButton: {color: React.CSSProperties['color']},
+			disabledBackground: React.CSSProperties['background'],
 		},
 		users: {
 			background: React.CSSProperties['background'],
@@ -156,6 +157,7 @@ export default {
 			},
 			input: {
 				background: '#f4f4f4',
+				disabledBackground: '#ffcccc',
 				sendButton: {color: '#3f51b5'}
 			},
 			users: {
@@ -217,6 +219,7 @@ export default {
 			},
 			input: {
 				background: '#00000033',
+				disabledBackground: '#631c4b',
 				sendButton: {color: '#8cb6cc'}
 			},
 			users: {
