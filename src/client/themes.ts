@@ -65,7 +65,7 @@ interface CustomThemeProps {
 		input: {
 			background: React.CSSProperties['background'],
 			sendButton: {color: React.CSSProperties['color']},
-			disabledBackground: React.CSSProperties['background'],
+			disabledBackground: React.CSSProperties['background']
 		},
 		users: {
 			background: React.CSSProperties['background'],

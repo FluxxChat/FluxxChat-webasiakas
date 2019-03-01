@@ -35,7 +35,7 @@ const styles = (theme: Theme) => createStyles({
 		'&$visible': {
 			minHeight: '15vW',
 			maxHeight: '25vw',
-			overflowY: 'auto',
+			overflowY: 'auto'
 		}
 	},
 	ruleListItem: {
@@ -50,7 +50,7 @@ const styles = (theme: Theme) => createStyles({
 		boxSizing: 'border-box',
 		display: 'flex',
 		flex: 1,
-		flexDirection: 'column',
+		flexDirection: 'column'
 	},
 	ruleTitle: {
 		flex: '0 0 auto',
@@ -104,7 +104,7 @@ const RuleList = ({rules, users, visible, messageBlockingRules, classes}: Props)
 							<Tooltip title={<FormattedMessage id="tooltip.ruleBlockMessage"/>} placement="left" disableFocusListener>
 								<ErrorIcon/>
 							</Tooltip>
-						): null}
+						) : null}
 					</div>
 				</div>
 			);
