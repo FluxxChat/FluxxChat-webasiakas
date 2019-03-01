@@ -35,7 +35,7 @@ export class ImageEditor extends React.Component<ImageEditorProps, ImageEditorSt
 	}
 
 	public onMouseScroll = (scroll: any) => {
-		const x = this.state.scale+(scroll.deltaY/2000);
+		const x = this.state.scale + (scroll.deltaY / 2000);
 		if (this.state.scale >= 0.5 && scroll.deltaY < 0) {
 			this.setState({
 				scale: this.state.scale + (scroll.deltaY / 2000),
@@ -51,9 +51,9 @@ export class ImageEditor extends React.Component<ImageEditorProps, ImageEditorSt
 
 	public handleSliderChange = (event: any, sliderValue: number) => {
 		this.setState({
-			scale: 0.5+0.003*sliderValue+0.00022*sliderValue*sliderValue,
-			sliderValue: sliderValue
-		})
+			scale: 0.5 + 0.003 * sliderValue + 0.00022 * sliderValue * sliderValue,
+			sliderValue
+		});
 	}
 
 	public setEditorRef = (editor: any) => this.editor = editor;
