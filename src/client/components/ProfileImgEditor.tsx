@@ -3,6 +3,9 @@ import ReactAvatarEditor from 'react-avatar-editor';
 import Dropzone from 'react-dropzone';
 import {FormattedMessage} from 'react-intl';
 import {Button} from '@material-ui/core';
+import Slider from '@material-ui/lab/Slider';
+import ZoomIn from '@material-ui/icons/zoomin';
+import ZoomOut from '@material-ui/icons/zoomout';
 
 interface ImageEditorProps {
 	classes: any;
@@ -12,11 +15,16 @@ interface ImageEditorProps {
 
 interface ImageEditorState {
 	scale: number;
+	sliderValue: number;
 }
 
 export class ImageEditor extends React.Component<ImageEditorProps, ImageEditorState> {
-	public state = {scale: 1.2};
+	public state = {scale: 1.2, sliderValue: 50};
 	public editor: any;
+
+	public setDefaultImage = () => {
+		this.props.onChangeAvatar('default');
+	}
 
 	public onClickSave = () => {
 		if (this.editor) {
@@ -26,15 +34,29 @@ export class ImageEditor extends React.Component<ImageEditorProps, ImageEditorSt
 		}
 	}
 
-	public onMouseScroll = scroll => {
-		if (this.state.scale > 0.5 && scroll.deltaY < 0) {
-			this.setState({scale: this.state.scale + (scroll.deltaY / 2000)});
-		} else if (this.state.scale < 3.0 && scroll.deltaY > 0) {
-			this.setState({scale: this.state.scale + (scroll.deltaY / 2000)});
+	public onMouseScroll = (scroll: any) => {
+		const x = this.state.scale + (scroll.deltaY / 2000);
+		if (this.state.scale >= 0.5 && scroll.deltaY < 0) {
+			this.setState({
+				scale: this.state.scale + (scroll.deltaY / 2000),
+				sliderValue: -46.1905 + 101.111 * x - 17.4603 * x * x
+			});
+		} else if (this.state.scale <= 3.0 && scroll.deltaY > 0) {
+			this.setState({
+				scale: this.state.scale + (scroll.deltaY / 2000),
+				sliderValue: -46.1905 + 101.111 * x - 17.4603 * x * x
+			});
 		}
 	}
 
-	public setEditorRef = editor => this.editor = editor;
+	public handleSliderChange = (event: any, sliderValue: number) => {
+		this.setState({
+			scale: 0.5 + 0.003 * sliderValue + 0.00022 * sliderValue * sliderValue,
+			sliderValue
+		});
+	}
+
+	public setEditorRef = (editor: any) => this.editor = editor;
 
 	public render() {
 		const {classes, image} = this.props;
@@ -52,6 +74,25 @@ export class ImageEditor extends React.Component<ImageEditorProps, ImageEditorSt
 						scale={this.state.scale}
 						rotate={0}
 					/>
+				</div>
+				<div className={classes.ImageEditorButtonContainer}>
+					{(this.props.image === '') ? (
+						<Button className={classes.avatarEditorBtn} onClick={this.setDefaultImage}>
+							<FormattedMessage id="avatar.setDefault"/>
+						</Button>
+					) : (
+						<div className={classes.imageEditorZoomContainer}>
+							<div className={classes.imageEditorZoomIcon}>
+								<ZoomOut/>
+							</div>
+							<div className={classes.imageEditorZoomSlider}>
+								<Slider value={this.state.sliderValue} onChange={this.handleSliderChange}/>
+							</div>
+							<div className={classes.imageEditorZoomIcon}>
+								<ZoomIn/>
+							</div>
+						</div>
+					)}
 				</div>
 				<Button className={classes.avatarEditorBtn} onClick={this.onClickSave}>
 					<FormattedMessage id="avatar.confirm"/>
