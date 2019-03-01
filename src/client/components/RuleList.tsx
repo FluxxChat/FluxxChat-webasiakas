@@ -17,7 +17,8 @@
 
 import React from 'react';
 import {User, Card} from 'fluxxchat-protokolla';
-import {withStyles, createStyles, WithStyles, Theme} from '@material-ui/core';
+import {withStyles, createStyles, WithStyles, Theme, Tooltip} from '@material-ui/core';
+import ErrorIcon from '@material-ui/icons/Error';
 import {FormattedMessage} from 'react-intl';
 
 const styles = (theme: Theme) => createStyles({
@@ -34,25 +35,22 @@ const styles = (theme: Theme) => createStyles({
 		'&$visible': {
 			minHeight: '15vW',
 			maxHeight: '25vw',
-			overflowY: 'auto',
+			overflowY: 'auto'
 		}
 	},
 	ruleListItem: {
-		width: '25vw',
+		width: '100%',
 		boxSizing: 'border-box',
 		display: 'flex',
-		flexDirection: 'column',
-		padding: '1rem 4rem 1rem 2rem',
+		flexDirection: 'row',
+		padding: '1rem 1rem 1rem 1rem',
 		borderBottom: `1px solid ${theme.fluxx.border.darker}`
 	},
-	ruleListItemBlockingMsg: {
-		width: '25vw',
+	ruleInfo: {
 		boxSizing: 'border-box',
 		display: 'flex',
-		flexDirection: 'column',
-		padding: '1rem 4rem 1rem 2rem',
-		background: theme.fluxx.MessageBlocgingRule.background,
-		borderBottom: `1px solid ${theme.fluxx.border.darker}`
+		flex: 1,
+		flexDirection: 'column'
 	},
 	ruleTitle: {
 		flex: '0 0 auto',
@@ -64,6 +62,9 @@ const styles = (theme: Theme) => createStyles({
 		marginTop: '0.2rem',
 		fontSize: '1.1rem',
 		wordBreak: 'break-word'
+	},
+	messageBlockIcon: {
+		alignSelf: 'center'
 	},
 	visible: {}
 });
@@ -93,9 +94,18 @@ const RuleList = ({rules, users, visible, messageBlockingRules, classes}: Props)
 			});
 			const paramsStr = params.length > 0 ? ` (${params.join(', ')})` : '';
 			return (
-				<div className={messageBlockingRules.includes(rule.name) ? classes.ruleListItemBlockingMsg : classes.ruleListItem} key={index}>
-					<div className={classes.ruleTitle}>{rule.name}{paramsStr}</div>
-					<div className={classes.ruleDescription}>{rule.description}</div>
+				<div className={classes.ruleListItem} key={index}>
+					<div className={classes.ruleInfo}>
+						<div className={classes.ruleTitle}>{rule.name}{paramsStr}</div>
+						<div className={classes.ruleDescription}>{rule.description}</div>
+					</div>
+					<div className={classes.messageBlockIcon}>
+						{messageBlockingRules.includes(rule.name) ? (
+							<Tooltip title={<FormattedMessage id="tooltip.ruleBlockMessage"/>} placement="left" disableFocusListener>
+								<ErrorIcon/>
+							</Tooltip>
+						) : null}
+					</div>
 				</div>
 			);
 		})}
