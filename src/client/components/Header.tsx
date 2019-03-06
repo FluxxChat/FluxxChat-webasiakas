@@ -49,6 +49,19 @@ const styles = (theme: Theme) => createStyles({
 		paddingRight: '8px',
 		background: theme.fluxx.profileImgEditor.background
 	},
+	imageEditorZoomContainer: {
+		height: '60px',
+		paddingTop: '6px',
+		display: 'flex',
+		flexDirection: 'row'
+	},
+	imageEditorZoomSlider: {
+		width: '270px',
+		paddingTop: '20px'
+	},
+	imageEditorZoomIcon: {
+		padding: '10px'
+	},
 	avatarEditorBtn: {
 		height: '50px',
 		width: '350px',

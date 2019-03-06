@@ -30,13 +30,8 @@ const styles = (theme: Theme) => createStyles({
 		overflowX: 'hidden',
 		transition: 'min-height 0.2s, max-height 0.2s',
 		boxSizing: 'border-box',
-		maxHeight: 0,
-		minHeight: 0,
-		'&$visible': {
-			minHeight: '15vW',
-			maxHeight: '25vw',
-			overflowY: 'auto'
-		}
+		minHeight: '15vW',
+		overflowY: 'auto'
 	},
 	ruleListItem: {
 		width: '100%',
