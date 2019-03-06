@@ -40,7 +40,7 @@ const styles = (theme: Theme) => createStyles({
 	},
 	messageField: {
 		flex: 1,
-		padding: '0 1rem',
+		padding: '12px 1rem',
 		fontSize: '1.6rem',
 		boxSizing: 'border-box',
 		color: 'inherit'
@@ -65,7 +65,7 @@ type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
 
 class UserInput extends React.Component<Props> {
 	public handleKeyDown = (e: React.KeyboardEvent) => {
-		if (e.key === 'Enter') {
+		if (e.key === 'Enter' && !e.shiftKey) {
 			e.preventDefault();
 			e.stopPropagation();
 			this.props.onSend();
@@ -87,6 +87,7 @@ class UserInput extends React.Component<Props> {
 					value={value}
 					onChange={onChange}
 					inputProps={{name: 'messageInput'}}
+					multiline
 				/>
 				<Divider />
 				<IconButton

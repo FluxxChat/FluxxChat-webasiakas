@@ -69,6 +69,9 @@ const styles = (theme: Theme) => createStyles({
 			marginBottom: 0
 		}
 	},
+	preformat: {
+		whiteSpace: 'pre'
+	},
 	messageTimestamp: {
 		display: 'flex',
 		alignItems: 'flex-end',
@@ -107,7 +110,7 @@ const PlayerTextMessage = ({message, previousMessage, clientUser, classes}: Prop
 						/>
 					) : (
 						<div className={classes.messageContent}>
-							{message.textContent}
+							<div className={classes.preformat}>{message.textContent}</div>
 						</div>
 					)}
 					<div className={classes.messageTimestamp}>
