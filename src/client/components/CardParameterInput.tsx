@@ -56,7 +56,7 @@ const CardParameterInput = ({type, value, users, onChange}: Props) => {
 					onChange={onChange}
 				>
 					{users.map(u => (
-						<option value={u.id}>{u.nickname}</option>
+						<option key={u.id} value={u.id}>{u.nickname}</option>
 					))}
 				</Select>
 			</FormControl>
