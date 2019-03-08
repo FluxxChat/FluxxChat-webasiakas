@@ -83,6 +83,7 @@ interface Props extends WithStyles<typeof styles> {
 	users: User[];
 	messageBlockingRules: string[];
 	messageBlockAnimation: boolean;
+	ruleChangeRevalidation: () => void;
 }
 
 interface State {
@@ -95,6 +96,9 @@ class RuleList extends React.Component<Props, State> {
 	public componentDidUpdate(prevProps) {
 		if (this.props.messageBlockAnimation !== prevProps.messageBlockAnimation) {
 			this.setState({animation: this.props.messageBlockAnimation});
+		}
+		if (this.props.rules !== prevProps.rules) {
+			this.props.ruleChangeRevalidation();
 		}
 	}
 
