@@ -126,7 +126,7 @@ class RuleList extends React.Component<Props, State> {
 								classes.ruleListItemBlockingError :
 								classes.ruleListItemBlocking
 							) : classes.ruleListItem}
-							
+
 						>
 							<div className={classes.ruleInfo}>
 								<div className={classes.ruleTitle}>{rule.name}{paramsStr}</div>
@@ -136,7 +136,7 @@ class RuleList extends React.Component<Props, State> {
 					);
 				})}
 			</div>
-		)
+		);
 	}
 }
 
