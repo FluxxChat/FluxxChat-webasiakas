@@ -240,6 +240,10 @@ class ChatRoom extends React.Component<Props, State> {
 		this.setState({messageBlockedAnimation: value});
 	}
 
+	public ruleChangeRevalidation = () => {
+		this.props.onValidateMessage(this.state.messageDraft);
+	}
+
 	public render() {
 		const {
 			messages,
@@ -281,6 +285,7 @@ class ChatRoom extends React.Component<Props, State> {
 							users={users}
 							messageBlockingRules={this.props.messageBlockingRules}
 							messageBlockAnimation={messageBlockedAnimation}
+							ruleChangeRevalidation={this.ruleChangeRevalidation}
 						/>
 					</div>
 				</div>

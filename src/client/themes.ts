@@ -136,8 +136,8 @@ export default {
 			},
 			controlArea: {background: '#fafafa'},
 			MessageBlocgingRule: {
-				background: '#ffbaba',
-				errorBackground: '#ff5656'
+				background: '#ffcccc',
+				errorBackground: '#f96868'
 			},
 			chat: {
 				header: {background: '#ffffff44'},
