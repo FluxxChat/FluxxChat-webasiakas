@@ -59,13 +59,22 @@ interface OwnProps {
 	valid: boolean;
 	onToggleCards: () => void;
 	onSend: () => void;
+	messageBlockedAnimation: (blocked: boolean) => void;
 }
 
 type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
 
 class UserInput extends React.Component<Props> {
+
 	public handleKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
+			if (!this.props.valid) {
+				this.props.messageBlockedAnimation(true);
+				const waitTime = setInterval(() => {
+					clearInterval(waitTime);
+					this.props.messageBlockedAnimation(false);
+				}, 300);
+			}
 			e.preventDefault();
 			e.stopPropagation();
 			this.props.onSend();
