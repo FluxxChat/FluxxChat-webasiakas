@@ -73,7 +73,7 @@ class UserInput extends React.Component<Props> {
 				const waitTime = setInterval(() => {
 					clearInterval(waitTime);
 					this.props.messageBlockedAnimation(false);
-				}, 200);
+				}, 300);
 			}
 			e.preventDefault();
 			e.stopPropagation();

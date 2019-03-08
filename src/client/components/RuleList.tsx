@@ -37,7 +37,8 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'row',
 		padding: '1rem 1rem 1rem 1rem',
-		borderBottom: `1px solid ${theme.fluxx.border.darker}`
+		borderBottom: `1px solid ${theme.fluxx.border.darker}`,
+		transition: 'all 300ms ease-out'
 	},
 	ruleListItemBlocking: {
 		background: theme.fluxx.MessageBlocgingRule.background,
@@ -46,7 +47,8 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'row',
 		padding: '1rem 1rem 1rem 1rem',
-		borderBottom: `1px solid ${theme.fluxx.border.darker}`
+		borderBottom: `1px solid ${theme.fluxx.border.darker}`,
+		transition: 'all 300ms ease-out'
 	},
 	ruleListItemBlockingError: {
 		background: theme.fluxx.MessageBlocgingRule.errorBackground,
@@ -55,8 +57,7 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'row',
 		padding: '1rem 1rem 1rem 1rem',
-		borderBottom: `1px solid ${theme.fluxx.border.darker}`,
-		transition: 'all 500ms ease-out'
+		borderBottom: `1px solid ${theme.fluxx.border.darker}`
 	},
 	ruleInfo: {
 		boxSizing: 'border-box',

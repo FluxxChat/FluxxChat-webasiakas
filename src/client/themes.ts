@@ -137,7 +137,7 @@ export default {
 			controlArea: {background: '#fafafa'},
 			MessageBlocgingRule: {
 				background: '#ffbaba',
-				errorBackground: '#ff0c00'
+				errorBackground: '#ff5656'
 			},
 			chat: {
 				header: {background: '#ffffff44'},
@@ -202,7 +202,7 @@ export default {
 			controlArea: {background: '#313d5a'},
 			MessageBlocgingRule: {
 				background: '#5a314c',
-				errorBackground: '#dd0000'
+				errorBackground: '#990000'
 			},
 			chat: {
 				header: {background: '#29334c'},
