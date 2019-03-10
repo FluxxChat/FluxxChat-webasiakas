@@ -17,8 +17,7 @@
 
 import React from 'react';
 import { User, Card } from 'fluxxchat-protokolla';
-import { withStyles, createStyles, WithStyles, Theme, Tooltip } from '@material-ui/core';
-import ErrorIcon from '@material-ui/icons/Error';
+import { withStyles, createStyles, WithStyles, Theme } from '@material-ui/core';
 import { FormattedMessage } from 'react-intl';
 import { FormattedRuleDescription } from './FormattedRuleDescription';
 
@@ -29,12 +28,31 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'column',
 		overflowX: 'hidden',
-		transition: 'min-height 0.2s, max-height 0.2s',
 		boxSizing: 'border-box',
 		minHeight: '15vW',
 		overflowY: 'auto'
 	},
 	ruleListItem: {
+		width: '100%',
+		boxSizing: 'border-box',
+		display: 'flex',
+		flexDirection: 'row',
+		padding: '1rem 1rem 1rem 1rem',
+		borderBottom: `1px solid ${theme.fluxx.border.darker}`,
+		transition: 'all 300ms ease-out'
+	},
+	ruleListItemBlocking: {
+		background: theme.fluxx.MessageBlocgingRule.background,
+		width: '100%',
+		boxSizing: 'border-box',
+		display: 'flex',
+		flexDirection: 'row',
+		padding: '1rem 1rem 1rem 1rem',
+		borderBottom: `1px solid ${theme.fluxx.border.darker}`,
+		transition: 'all 300ms ease-out'
+	},
+	ruleListItemBlockingError: {
+		background: theme.fluxx.MessageBlocgingRule.errorBackground,
 		width: '100%',
 		boxSizing: 'border-box',
 		display: 'flex',
@@ -58,55 +76,74 @@ const styles = (theme: Theme) => createStyles({
 		marginTop: '0.2rem',
 		fontSize: '1.1rem',
 		wordBreak: 'break-word'
-	},
-	messageBlockIcon: {
-		alignSelf: 'center'
-	},
-	visible: {}
+	}
 });
 
 interface Props extends WithStyles<typeof styles> {
 	rules: Card[];
 	users: User[];
-	visible: boolean;
 	messageBlockingRules: string[];
+	messageBlockAnimation: boolean;
+	ruleChangeRevalidation: () => void;
 }
 
-const RuleList = ({ rules, users, visible, messageBlockingRules, classes }: Props) => (
-	<div className={`${classes.root} ${visible ? classes.visible : ''}`}>
-		{rules.length === 0 && (
-			<div className={classes.ruleListItem}>
-				<div className={classes.ruleTitle}><FormattedMessage id="rules.noRules" /></div>
-			</div>
-		)}
-		{rules.map((rule, index) => {
-			const params = Object.keys(rule.parameters).map(key => {
-				const val = rule.parameters[key];
-				if (rule.parameterTypes[key] === 'player') {
-					const player = users.find(u => u.id === val);
-					return player ? player.nickname : '?';
-				}
-				return val;
-			});
-			const paramsStr = params.length > 0 ? ` (${params.join(', ')})` : '';
+interface State {
+	animation: boolean;
+}
 
-			return (
-				<div className={classes.ruleListItem} key={index}>
-					<div className={classes.ruleInfo}>
-						<div className={classes.ruleTitle}><FormattedMessage id={rule.name}/>{paramsStr}</div>
-						<div className={classes.ruleDescription}><FormattedRuleDescription rule={rule}/></div>
+class RuleList extends React.Component<Props, State> {
+	public state = {animation: false};
+
+	public componentDidUpdate(prevProps) {
+		if (this.props.messageBlockAnimation !== prevProps.messageBlockAnimation) {
+			this.setState({animation: this.props.messageBlockAnimation});
+		}
+		if (this.props.rules !== prevProps.rules) {
+			this.props.ruleChangeRevalidation();
+		}
+	}
+
+	public render() {
+		const {rules, users, messageBlockingRules, classes} = this.props;
+		const {animation} = this.state;
+
+		return (
+			<div className={classes.root}>
+				{rules.length === 0 && (
+					<div className={classes.ruleListItem}>
+						<div className={classes.ruleTitle}><FormattedMessage id="rules.noRules"/></div>
 					</div>
-					<div className={classes.messageBlockIcon}>
-						{messageBlockingRules.includes(rule.name) ? (
-							<Tooltip title={<FormattedMessage id="tooltip.ruleBlockMessage" />} placement="left" disableFocusListener>
-								<ErrorIcon />
-							</Tooltip>
-						) : null}
-					</div>
-				</div>
-			);
-		})}
-	</div>
-);
+				)}
+				{rules.map((rule, index) => {
+					const params = Object.keys(rule.parameters).map(key => {
+						const val = rule.parameters[key];
+						if (rule.parameterTypes[key] === 'player') {
+							const player = users.find(u => u.id === val);
+							return player ? player.nickname : '?';
+						}
+						return val;
+					});
+					const paramsStr = params.length > 0 ? ` (${params.join(', ')})` : '';
+					return (
+						<div
+							key={index}
+							className={messageBlockingRules.includes(rule.name) ? (
+								animation ?
+								classes.ruleListItemBlockingError :
+								classes.ruleListItemBlocking
+							) : classes.ruleListItem}
+
+						>
+							<div className={classes.ruleInfo}>
+							<div className={classes.ruleTitle}><FormattedMessage id={rule.name}/>{paramsStr}</div>
+							<div className={classes.ruleDescription}><FormattedRuleDescription rule={rule}/></div>
+							</div>
+						</div>
+					);
+				})}
+			</div>
+		);
+	}
+}
 
 export default withStyles(styles)(RuleList);

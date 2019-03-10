@@ -37,7 +37,10 @@ interface CustomThemeProps {
 			button: {color: React.CSSProperties['color']}
 		}
 		controlArea: {background: React.CSSProperties['background']},
-		MessageBlocgingRule: {background: React.CSSProperties['background']},
+		MessageBlocgingRule: {
+			background: React.CSSProperties['background'],
+			errorBackground: React.CSSProperties['background']
+		},
 		chat: {
 			header: {background: React.CSSProperties['background']},
 			messages: {
@@ -132,7 +135,10 @@ export default {
 				button: {color: '#39a5d2'}
 			},
 			controlArea: {background: '#fafafa'},
-			MessageBlocgingRule: {background: '#ffbaba'},
+			MessageBlocgingRule: {
+				background: '#ffcccc',
+				errorBackground: '#f96868'
+			},
 			chat: {
 				header: {background: '#ffffff44'},
 				messages: {
@@ -194,7 +200,10 @@ export default {
 				button: {color: '#90a5c3d6'}
 			},
 			controlArea: {background: '#313d5a'},
-			MessageBlocgingRule: {background: '#5a314c'},
+			MessageBlocgingRule: {
+				background: '#5a314c',
+				errorBackground: '#990000'
+			},
 			chat: {
 				header: {background: '#29334c'},
 				messages: {

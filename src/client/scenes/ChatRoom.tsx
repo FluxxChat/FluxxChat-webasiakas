@@ -151,9 +151,9 @@ interface State {
 	messageDraft: string;
 	showCards: boolean;
 	showCard: boolean;
-	showRules: boolean;
 	selectedCard: Card | null;
 	ruleParameters: RuleParameters;
+	messageBlockedAnimation: boolean;
 }
 
 class ChatRoom extends React.Component<Props, State> {
@@ -162,8 +162,8 @@ class ChatRoom extends React.Component<Props, State> {
 		showCards: window.innerWidth >= 1280,
 		selectedCard: null,
 		showCard: false,
-		showRules: window.innerWidth >= 1920,
-		ruleParameters: {}
+		ruleParameters: {},
+		messageBlockedAnimation: false
 	};
 
 	public cardScrollRef = React.createRef<any>();
@@ -239,12 +239,12 @@ class ChatRoom extends React.Component<Props, State> {
 		}));
 	};
 
-	public handleToggleShowRules = () => {
-		this.setState(state => ({showRules: !state.showRules}), () => {
-			setTimeout(() => {
-				this.cardScrollRef.current.handleWindowResize();
-			}, 210);
-		});
+	public messageBlockedAnimation = (value: boolean) => {
+		this.setState({messageBlockedAnimation: value});
+	}
+
+	public ruleChangeRevalidation = () => {
+		this.props.onValidateMessage(this.state.messageDraft);
 	}
 
 	public render() {
@@ -267,7 +267,7 @@ class ChatRoom extends React.Component<Props, State> {
 			showCards,
 			showCard,
 			ruleParameters,
-			showRules
+			messageBlockedAnimation
 		} = this.state;
 
 		return (
@@ -286,8 +286,9 @@ class ChatRoom extends React.Component<Props, State> {
 						<RuleList
 							rules={activeCards}
 							users={users}
-							visible={showRules}
 							messageBlockingRules={this.props.messageBlockingRules}
+							messageBlockAnimation={messageBlockedAnimation}
+							ruleChangeRevalidation={this.ruleChangeRevalidation}
 						/>
 					</div>
 				</div>
@@ -324,6 +325,7 @@ class ChatRoom extends React.Component<Props, State> {
 								valid={messageValid}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
+								messageBlockedAnimation={this.messageBlockedAnimation}
 							/>
 						</div>
 					</div>
