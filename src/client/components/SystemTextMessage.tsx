@@ -62,7 +62,8 @@ const SystemTextMessage = ({message, classes}: Props) => {
 		<div className={classes.root}>
 			<div className={classes.message}>
 				<div className={classes.messageContent}>
-					<FormattedMessage id={message.message} values={message.values as {[key: string]: string } | undefined}/>
+					<FormattedMessage id={message.message} values={message.values}/>
+					{(message.message === 'server.newRule' && message.values) && <FormattedMessage id={message.values.title}/>}
 				</div>
 			</div>
 		</div>

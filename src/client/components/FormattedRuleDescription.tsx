@@ -20,23 +20,24 @@ import { FormattedMessage } from 'react-intl';
 import { Card } from 'fluxxchat-protokolla';
 
 interface Props {
-    rule: Card;
+	rule: Card;
 }
 
+// A workaround for getting dynamically generated descriptions of disabling rules to be translated properly
 export const FormattedRuleDescription = ({ rule }: Props) => {
-    const description = new Array<JSX.Element>();
-    if (rule.values) {
-        description.push(<FormattedMessage id={rule.description} values={rule.values} />);
-        if (Object.keys(rule.values).indexOf('titles') > -1) {
-            const titlesStr = (rule.values as { titles: string }).titles;
-            const titles = titlesStr.split(', ');
-            for (const title of titles) {
-                description.push(<FormattedMessage id={title} />);
-                description.push(<span>, </span>);
-            }
-            description.pop();
-            description.push(<span>.</span>);
-        }
-    }
-    return <span>{description}</span>;
+	const description = new Array<JSX.Element>();
+	description.push(<FormattedMessage id={rule.description} values={rule.values} />);
+	if (rule.values) {
+		if (Object.keys(rule.values).indexOf('titles') > -1) {
+			const titlesStr = (rule.values as { titles: string }).titles;
+			const titles = titlesStr.split(', ');
+			for (const title of titles) {
+				description.push(<FormattedMessage id={title} />);
+				description.push(<span>, </span>);
+			}
+			description.pop();
+			description.push(<span>.</span>);
+		}
+	}
+	return <span>{description}</span>;
 };
