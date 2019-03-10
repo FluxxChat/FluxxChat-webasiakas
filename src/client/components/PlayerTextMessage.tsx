@@ -92,7 +92,10 @@ const PlayerTextMessage = ({message, previousMessage, clientUser, classes}: Prop
 		? previousMessage.type !== 'TEXT' || previousMessage.senderId !== message.senderId
 		: true;
 	const ownMessage = clientUser.id === message.senderId;
-	const md = new Remarkable();
+	const md = new Remarkable('full', {
+		linkify: true,
+		typographer: true
+	});
 
 	return (
 		<div className={`${classes.root} ${ownMessage ? classes.own : ''}`}>
