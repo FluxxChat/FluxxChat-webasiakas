@@ -18,6 +18,7 @@
 import React from 'react';
 import {Card, User, RuleParameters} from 'fluxxchat-protokolla';
 import {createStyles, Theme, WithStyles, withStyles} from '@material-ui/core';
+import { FormattedMessage } from 'react-intl';
 // import {NumberParameter, ChoiceParameter} from './CardParameters';
 
 const styles = (theme: Theme) => createStyles({
@@ -74,7 +75,7 @@ class CardComponent extends React.Component<Props> {
 		return (
 			<div className={classes.cardContainer} onClick={this.handleClick}>
 				<div className={classes.cardName}>
-					{card.name}
+					<FormattedMessage id={card.name}/>
 				</div>
 			</div>
 		);

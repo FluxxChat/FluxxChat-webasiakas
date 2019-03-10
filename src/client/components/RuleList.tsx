@@ -16,10 +16,11 @@
  */
 
 import React from 'react';
-import {User, Card} from 'fluxxchat-protokolla';
-import {withStyles, createStyles, WithStyles, Theme, Tooltip} from '@material-ui/core';
+import { User, Card } from 'fluxxchat-protokolla';
+import { withStyles, createStyles, WithStyles, Theme, Tooltip } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
-import {FormattedMessage} from 'react-intl';
+import { FormattedMessage } from 'react-intl';
+import { FormattedRuleDescription } from './FormattedRuleDescription';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -71,11 +72,11 @@ interface Props extends WithStyles<typeof styles> {
 	messageBlockingRules: string[];
 }
 
-const RuleList = ({rules, users, visible, messageBlockingRules, classes}: Props) => (
+const RuleList = ({ rules, users, visible, messageBlockingRules, classes }: Props) => (
 	<div className={`${classes.root} ${visible ? classes.visible : ''}`}>
 		{rules.length === 0 && (
 			<div className={classes.ruleListItem}>
-				<div className={classes.ruleTitle}><FormattedMessage id="rules.noRules"/></div>
+				<div className={classes.ruleTitle}><FormattedMessage id="rules.noRules" /></div>
 			</div>
 		)}
 		{rules.map((rule, index) => {
@@ -88,16 +89,17 @@ const RuleList = ({rules, users, visible, messageBlockingRules, classes}: Props)
 				return val;
 			});
 			const paramsStr = params.length > 0 ? ` (${params.join(', ')})` : '';
+
 			return (
 				<div className={classes.ruleListItem} key={index}>
 					<div className={classes.ruleInfo}>
-						<div className={classes.ruleTitle}>{rule.name}{paramsStr}</div>
-						<div className={classes.ruleDescription}>{rule.description}</div>
+						<div className={classes.ruleTitle}><FormattedMessage id={rule.name}/>{paramsStr}</div>
+						<div className={classes.ruleDescription}><FormattedRuleDescription rule={rule}/></div>
 					</div>
 					<div className={classes.messageBlockIcon}>
 						{messageBlockingRules.includes(rule.name) ? (
-							<Tooltip title={<FormattedMessage id="tooltip.ruleBlockMessage"/>} placement="left" disableFocusListener>
-								<ErrorIcon/>
+							<Tooltip title={<FormattedMessage id="tooltip.ruleBlockMessage" />} placement="left" disableFocusListener>
+								<ErrorIcon />
 							</Tooltip>
 						) : null}
 					</div>

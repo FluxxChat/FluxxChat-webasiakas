@@ -38,6 +38,9 @@ import CardParameterInput from '../components/CardParameterInput';
 import Header from '../components/Header';
 import CardComponent from '../components/CardComponent';
 import MessageList from '../components/MessageList';
+import { FormattedRuleDescription } from '../components/FormattedRuleDescription';
+
+import { FormattedMessage } from 'react-intl';
 
 const styles = (theme: Theme) => createStyles({
 	sendDiv: {},
@@ -327,11 +330,11 @@ class ChatRoom extends React.Component<Props, State> {
 				</div>
 				<Dialog open={showCard} onClose={this.handleCloseCardDialog}>
 					<DialogTitle>
-						{selectedCard ? selectedCard.name : ''}
+						{selectedCard ? <FormattedMessage id={selectedCard.name}/> : ''}
 					</DialogTitle>
 					<DialogContent>
 						<DialogContentText>
-							{selectedCard && selectedCard.description}
+							{selectedCard && <FormattedRuleDescription rule={selectedCard}/>}
 						</DialogContentText>
 						<div className={classes.ruleParameters}>
 							{selectedCard && Object.keys(selectedCard.parameterTypes).map(key => (

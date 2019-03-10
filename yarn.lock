@@ -3692,9 +3692,9 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
+"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git#0740ab69607da0b02de03b1c67f2b75bc0b04a97":
   version "1.0.0"
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#cd0f250c698eac9ce42c4a0b9989c50c12b426fc"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#0740ab69607da0b02de03b1c67f2b75bc0b04a97"
 
 follow-redirects@^1.0.0:
   version "1.7.0"
