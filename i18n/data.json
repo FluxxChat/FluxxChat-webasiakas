@@ -50,7 +50,7 @@
         "rule.unmute.title": "Unmute",
         "rule.disableFormatting.title": "Disable MarkDown formatting",
         "rule.returnNames.title": "Return original names",
-        "rule.noPosLimit.title": "Disable POS limit",
+        "rule.noPosLimit.title": "Disable verb/noun/adjective limits",
         "rule.disableAll.title": "Disable all",
         "rule.disablingRule.description": "Disables the following rules: ",
         "rule.markdownFormatting.title": "MarkDown Formatting",
