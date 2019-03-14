@@ -25,7 +25,7 @@ interface Props {
 
 // A workaround for getting dynamically generated descriptions of disabling rules to be translated properly
 export const FormattedRuleDescription = ({ rule }: Props) => {
-	const description = new Array<JSX.Element>();
+	const description: JSX.Element[] = [];
 	description.push(<FormattedMessage id={rule.description} values={rule.values} />);
 	if (rule.values) {
 		if (Object.keys(rule.values).indexOf('titles') > -1) {
