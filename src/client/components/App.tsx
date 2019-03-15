@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, ProfileImgChangeMessage, RuleParameters, ValidateTextMessage, SystemMessage} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, ProfileImgChangeMessage, RuleParameters, SystemMessage} from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
@@ -156,7 +156,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		if (connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
-				textContent: message
+				textContent: message,
+				validateOnly: false
 			};
 			connection.send(JSON.stringify(protocolMessage));
 		}
@@ -233,9 +234,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public handleValidateMessage = (message: string) => {
 		if (this.state.connection) {
-			const protocolMessage: ValidateTextMessage = {
-				type: 'VALIDATE_TEXT',
-				textContent: message
+			const protocolMessage: TextMessage = {
+				type: 'TEXT',
+				textContent: message,
+				validateOnly: true
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
