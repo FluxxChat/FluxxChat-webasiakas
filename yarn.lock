@@ -848,6 +848,7 @@
     find-up "^2.1.0"
 
 "@hot-loader/react-dom@npm:@hot-loader/react-dom", react-dom@^16.4.2, "react-dom@npm:@hot-loader/react-dom":
+  name "@hot-loader/react-dom"
   version "16.8.4"
   resolved "https://registry.yarnpkg.com/@hot-loader/react-dom/-/react-dom-16.8.4.tgz#aefe598ca26005c1ec3ac11d92d54ff3c1cd219c"
   integrity sha512-S+5x4HJEMV7p2FzgUBEzrgiNJJeN4m5auTL3rZbmGsuyGt3Tgg8zgz6Mt1Udj8dKDxaryixDSNh0d/63TMqizg==
@@ -3876,7 +3877,7 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git#b7d8da0daf022bbf994a10647806886109797247":
+"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
   version "1.0.0"
   resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#b7d8da0daf022bbf994a10647806886109797247"
 
