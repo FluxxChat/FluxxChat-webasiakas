@@ -18,6 +18,7 @@
 import React from 'react';
 import {SystemMessage} from 'fluxxchat-protokolla';
 import {withStyles, createStyles, WithStyles, Theme} from '@material-ui/core';
+import { FormattedMessage } from 'react-intl';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -60,7 +61,10 @@ const SystemTextMessage = ({message, classes}: Props) => {
 	return (
 		<div className={classes.root}>
 			<div className={classes.message}>
-				<div className={classes.messageContent}>{message.message}</div>
+				<div className={classes.messageContent}>
+					<FormattedMessage id={message.message} values={message.values}/>
+					{(message.message === 'server.newRule' && message.values) && <FormattedMessage id={message.values.title}/>}
+				</div>
 			</div>
 		</div>
 	);

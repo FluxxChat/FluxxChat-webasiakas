@@ -60,7 +60,7 @@
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.0",
     "express": "^4.16.4",
-    "fluxxchat-protokolla": "git://github.com/FluxxChat/FluxxChat-protokolla.git",
+    "fluxxchat-protokolla": "git://github.com/FluxxChat/FluxxChat-protokolla.git#d2b1b2519fbbc55b9208130701b203c211d642d4",
     "fork-ts-checker-webpack-plugin": "^0.5.2",
     "linkifyjs": "^2.1.8",
     "lodash": "^4.17.11",
