@@ -62,6 +62,7 @@
     "express": "^4.16.4",
     "fluxxchat-protokolla": "git://github.com/FluxxChat/FluxxChat-protokolla.git#d2b1b2519fbbc55b9208130701b203c211d642d4",
     "fork-ts-checker-webpack-plugin": "^0.5.2",
+    "linkifyjs": "^2.1.8",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "npm": "^6.7.0",

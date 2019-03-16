@@ -49,6 +49,7 @@ interface State {
 	users: User[];
 	userMap: { [key: string]: User };
 	messages: Array<TextMessage | SystemMessage>;
+	playableCardsLeft: number;
 	ownCards: Card[];
 	activeCards: Card[];
 	turnUserId: string | null;
@@ -71,6 +72,7 @@ const EMPTY_STATE: State = {
 	users: [],
 	userMap: {},
 	messages: [],
+	playableCardsLeft: 0,
 	ownCards: [],
 	activeCards: [],
 	turnUserId: null,
@@ -127,7 +129,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						activeCards: msg.enabledRules,
 						turnUserId: msg.turnUserId,
 						user: msg.users.find(u => u.id === msg.userId) || null,
-						ownCards: msg.hand
+						ownCards: msg.hand,
+						playableCardsLeft: msg.playableCardsLeft
 					});
 					this.startTurnTimer(msg.turnEndTime);
 					break;
@@ -245,7 +248,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match, classes, onChangeTheme} = this.props;
-		const {user, messages, activeCards: activeCards, ownCards: ownCards, locale} = this.state;
+		const {user, messages, activeCards, ownCards, playableCardsLeft, locale} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
@@ -279,6 +282,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								messages={messages}
 								activeCards={activeCards}
 								ownCards={ownCards}
+								playableCardsLeft={playableCardsLeft}
 								onSendMessage={this.handleSendTextMessage}
 								onSendNewRule={this.handleSendNewRule}
 								onValidateMessage={this.handleValidateMessage}

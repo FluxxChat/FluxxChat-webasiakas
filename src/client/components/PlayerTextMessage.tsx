@@ -18,6 +18,7 @@
 import React from 'react';
 import {User, TextMessage, SystemMessage} from 'fluxxchat-protokolla';
 import Remarkable from 'remarkable';
+import Linkify from 'linkifyjs/react';
 import moment from 'moment';
 import {withStyles, createStyles, WithStyles, Theme} from '@material-ui/core';
 
@@ -92,7 +93,10 @@ const PlayerTextMessage = ({message, previousMessage, clientUser, classes}: Prop
 		? previousMessage.type !== 'TEXT' || previousMessage.senderId !== message.senderId
 		: true;
 	const ownMessage = clientUser.id === message.senderId;
-	const md = new Remarkable();
+	const md = new Remarkable('full', {
+		linkify: true,
+		typographer: true
+	});
 
 	return (
 		<div className={`${classes.root} ${ownMessage ? classes.own : ''}`}>
@@ -110,7 +114,7 @@ const PlayerTextMessage = ({message, previousMessage, clientUser, classes}: Prop
 						/>
 					) : (
 						<div className={classes.messageContent}>
-							<div className={classes.preformat}>{message.textContent}</div>
+							<div className={classes.preformat}><Linkify>{message.textContent}</Linkify></div>
 						</div>
 					)}
 					<div className={classes.messageTimestamp}>
