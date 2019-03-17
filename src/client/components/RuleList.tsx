@@ -16,9 +16,10 @@
  */
 
 import React from 'react';
-import {User, Card} from 'fluxxchat-protokolla';
-import {withStyles, createStyles, WithStyles, Theme} from '@material-ui/core';
-import {FormattedMessage} from 'react-intl';
+import { User, Card } from 'fluxxchat-protokolla';
+import { withStyles, createStyles, WithStyles, Theme } from '@material-ui/core';
+import { FormattedMessage } from 'react-intl';
+import { FormattedRuleDescription } from './FormattedRuleDescription';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -134,8 +135,8 @@ class RuleList extends React.Component<Props, State> {
 
 						>
 							<div className={classes.ruleInfo}>
-								<div className={classes.ruleTitle}>{rule.name}{paramsStr}</div>
-								<div className={classes.ruleDescription}>{rule.description}</div>
+							<div className={classes.ruleTitle}><FormattedMessage id={rule.name}/>{paramsStr}</div>
+							<div className={classes.ruleDescription}><FormattedRuleDescription rule={rule}/></div>
 							</div>
 						</div>
 					);
