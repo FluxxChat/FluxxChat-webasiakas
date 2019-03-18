@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {Card, RuleParameters, User, SystemMessage, TextMessage} from 'fluxxchat-protokolla';
+import {Card, RuleParameters, User, SystemMessage, TextMessage, UiVariables} from 'fluxxchat-protokolla';
 import {
 	createStyles,
 	WithStyles,
@@ -145,6 +145,7 @@ interface Props extends WithStyles<typeof styles> {
 	activeCards: Card[];
 	messageValid: boolean;
 	messageBlockingRules: string[];
+	uiVariables: UiVariables;
 	onSendMessage: (textmessage: string, image: string) => void;
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
 	onValidateMessage: (textmessage: string, image: string) => void;
@@ -276,6 +277,7 @@ class ChatRoom extends React.Component<Props, State> {
 			activeCards,
 			turnTime,
 			turnUser,
+			uiVariables,
 			onChangeTheme,
 			onChangeLocale,
 			onChangeAvatar
@@ -346,6 +348,8 @@ class ChatRoom extends React.Component<Props, State> {
 								value={messageDraft}
 								onChange={this.handleChangeMessageDraft}
 								valid={messageValid}
+								inputMinHeight={uiVariables.inputMinHeight ? uiVariables.inputMinHeight : 1}
+								imageMessages={uiVariables.imageMessages ? uiVariables.imageMessages : false}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 								messageBlockedAnimation={this.messageBlockedAnimation}

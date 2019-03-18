@@ -68,6 +68,8 @@ interface OwnProps {
 	value: {textContent: string, imageContent: string};
 	onChange: React.ChangeEventHandler<HTMLInputElement>;
 	valid: boolean;
+	inputMinHeight: number;
+	imageMessages: boolean;
 	onToggleCards: () => void;
 	onSend: () => void;
 	messageBlockedAnimation: (blocked: boolean) => void;
@@ -115,7 +117,7 @@ class UserInput extends React.Component<Props> {
 	public setpreviewImageRef = (previewImageRef: any) => this.previewImageRef = previewImageRef;
 
 	public render() {
-		const {value, onChange, valid, onToggleCards, classes, intl} = this.props;
+		const {value, onChange, valid, inputMinHeight, imageMessages, onToggleCards, classes, intl} = this.props;
 
 		return (
 			<div>
@@ -135,24 +137,28 @@ class UserInput extends React.Component<Props> {
 						value={value.textContent}
 						onChange={onChange}
 						inputProps={{name: 'messageInput'}}
+						rows={inputMinHeight}
+						rowsMax={25}
 						multiline
 					/>
 					<Divider />
-					<IconButton
-						color="primary"
-						className={classes.sendButton}
-						onClick={this.openFileSelect}
-					>
-						<ImageIcon/>
-						<input
-							type="file"
-							onChange={this.onFileSelect}
-							ref={this.setImageUploadRef}
-							style={{display: 'none'}}
-							multiple={false}
-							accept="image/*"
-						/>
-					</IconButton>
+					{imageMessages ? (
+						<IconButton
+							color="primary"
+							className={classes.sendButton}
+							onClick={this.openFileSelect}
+						>
+							<ImageIcon/>
+							<input
+								type="file"
+								onChange={this.onFileSelect}
+								ref={this.setImageUploadRef}
+								style={{display: 'none'}}
+								multiple={false}
+								accept="image/*"
+							/>
+						</IconButton>
+					) : null}
 					<IconButton
 						color="primary"
 						className={classes.sendButton}
