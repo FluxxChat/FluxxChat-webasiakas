@@ -103,7 +103,7 @@ class UserInput extends React.Component<Props> {
 		this.previewImageRef.src = URL.createObjectURL(evt.target.files[0]);
 	}
 
-	public openFileSelect = () => this.imageUploadRef.click()
+	public openFileSelect = () => this.imageUploadRef.click();
 
 	public onFileSelect = (event: any) => {
 		this.setPreviewImage(event);
