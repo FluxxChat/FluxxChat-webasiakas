@@ -20,6 +20,7 @@ import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divi
 import SendIcon from '@material-ui/icons/Send';
 import CardsIcon from '@material-ui/icons/ViewCarousel';
 import {injectIntl, InjectedIntlProps} from 'react-intl';
+import ImageIcon from '@material-ui/icons/Image';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -38,6 +39,9 @@ const styles = (theme: Theme) => createStyles({
 		alignItems: 'center',
 		background: theme.fluxx.input.disabledBackground
 	},
+	messageFieldContainer: {
+		flex: 1
+	},
 	messageField: {
 		flex: 1,
 		padding: '12px 1rem',
@@ -50,11 +54,18 @@ const styles = (theme: Theme) => createStyles({
 	},
 	iconButton: {
 		color: theme.fluxx.icon.primary
-	}
+	},
+	previewImage: {
+		maxHeight: '30rem',
+		maxWidth: '30rem',
+		paddingTop: '10px',
+		paddingLeft: '60px'
+	},
+	focused: {}
 });
 
 interface OwnProps {
-	value: string;
+	value: {textContent: string, imageContent: string};
 	onChange: React.ChangeEventHandler<HTMLInputElement>;
 	valid: boolean;
 	onToggleCards: () => void;
@@ -65,6 +76,8 @@ interface OwnProps {
 type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
 
 class UserInput extends React.Component<Props> {
+	public imageUploadRef: any;
+	public previewImageRef: any;
 
 	public handleKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
@@ -77,37 +90,79 @@ class UserInput extends React.Component<Props> {
 			}
 			e.preventDefault();
 			e.stopPropagation();
-			this.props.onSend();
+			this.sendMessage();
 		}
 	}
 
+	public sendMessage = () => {
+		this.props.onSend();
+		this.imageUploadRef.value = '';
+	}
+
+	public setPreviewImage = (evt: any) => {
+		this.previewImageRef.src = URL.createObjectURL(evt.target.files[0]);
+	}
+
+	public openFileSelect = () => this.imageUploadRef.click()
+
+	public onFileSelect = (event: any) => {
+		this.setPreviewImage(event);
+		this.props.onChange(event);
+	}
+
+	public setImageUploadRef = (imageUploadRef: any) => this.imageUploadRef = imageUploadRef;
+
+	public setpreviewImageRef = (previewImageRef: any) => this.previewImageRef = previewImageRef;
+
 	public render() {
-		const {value, onChange, valid, onToggleCards, onSend, classes, intl} = this.props;
+		const {value, onChange, valid, onToggleCards, classes, intl} = this.props;
 
 		return (
-			<div className={valid ? classes.root : classes.disabled}>
-				<IconButton className={classes.iconButton} onClick={onToggleCards}>
-					<CardsIcon/>
-				</IconButton>
-				<InputBase
-					className={classes.messageField}
-					placeholder={intl.formatMessage({id: 'input.typeMessage'})}
-					onKeyDown={this.handleKeyDown}
-					value={value}
-					onChange={onChange}
-					inputProps={{name: 'messageInput'}}
-					multiline
+			<div>
+				<img
+					className={classes.previewImage}
+					ref={previewImageRef => this.previewImageRef = previewImageRef}
+					style={value.imageContent === '' ? {display: 'none'} : {display: 'block'}}
 				/>
-				<Divider />
-				<IconButton
-					color="primary"
-					className={classes.sendButton}
-					onClick={onSend}
-					disabled={!valid}
-					name="messageSend"
-				>
-					<SendIcon/>
-				</IconButton>
+				<div className={valid ? classes.root : classes.disabled}>
+					<IconButton className={classes.iconButton} onClick={onToggleCards}>
+						<CardsIcon/>
+					</IconButton>
+					<InputBase
+						className={classes.messageField}
+						placeholder={intl.formatMessage({id: 'input.typeMessage'})}
+						onKeyDown={this.handleKeyDown}
+						value={value.textContent}
+						onChange={onChange}
+						inputProps={{name: 'messageInput'}}
+						multiline
+					/>
+					<Divider />
+					<IconButton
+						color="primary"
+						className={classes.sendButton}
+						onClick={this.openFileSelect}
+					>
+						<ImageIcon/>
+						<input
+							type="file"
+							onChange={this.onFileSelect}
+							ref={this.setImageUploadRef}
+							style={{display: 'none'}}
+							multiple={false}
+							accept="image/*"
+						/>
+					</IconButton>
+					<IconButton
+						color="primary"
+						className={classes.sendButton}
+						onClick={this.sendMessage}
+						disabled={!valid}
+						name="messageSend"
+					>
+						<SendIcon/>
+					</IconButton>
+				</div>
 			</div>
 		);
 	}
