@@ -38,6 +38,8 @@ import CardParameterInput from '../components/CardParameterInput';
 import Header from '../components/Header';
 import CardComponent from '../components/CardComponent';
 import MessageList from '../components/MessageList';
+import { FormattedRuleDescription } from '../components/FormattedRuleDescription';
+import { FormattedMessage } from 'react-intl';
 
 const styles = (theme: Theme) => createStyles({
 	sendDiv: {},
@@ -73,6 +75,12 @@ const styles = (theme: Theme) => createStyles({
 		background: theme.fluxx.controlArea.background,
 		borderTop: `3px solid ${theme.fluxx.border.darker}`,
 		justifyContent: 'flex-start'
+	},
+	turnInfo: {
+		flex: '0 0 auto',
+		padding: '1rem',
+		borderTop: `1px solid ${theme.fluxx.border.darker}`,
+		background: theme.fluxx.cards.background
 	},
 	cardArea: {
 		flex: '0 0 auto',
@@ -132,6 +140,7 @@ interface Props extends WithStyles<typeof styles> {
 	turnUser: User;
 	turnTime: number;
 	messages: Array<TextMessage | SystemMessage>;
+	playableCardsLeft: number;
 	ownCards: Card[];
 	activeCards: Card[];
 	messageValid: boolean;
@@ -307,6 +316,9 @@ class ChatRoom extends React.Component<Props, State> {
 					<div className={classes.chatContainer}>
 						<div className={classes.messageArea}>
 							<MessageList clientUser={user} messages={messages}/>
+							<div className={classes.turnInfo}>
+								{this.props.turnUser.id === this.props.user.id ? <FormattedMessage id="room.playableCardsLeft" values={{n: this.props.playableCardsLeft}}/> : 'Ei ole sinun vuorosi'}
+							</div>
 							<ScrollArea
 								ref={this.cardScrollRef}
 								className={`${classes.cardArea} ${showCards ? classes.visible : ''}`}
@@ -324,6 +336,7 @@ class ChatRoom extends React.Component<Props, State> {
 											users={this.props.users}
 											action={this.props.onSendNewRule}
 											onClick={this.handleClickCard}
+											disabled={this.props.turnUser.id !== this.props.user.id || this.props.playableCardsLeft === 0}
 										/>
 									);
 								})}
@@ -342,11 +355,11 @@ class ChatRoom extends React.Component<Props, State> {
 				</div>
 				<Dialog open={showCard} onClose={this.handleCloseCardDialog}>
 					<DialogTitle>
-						{selectedCard ? selectedCard.name : ''}
+						{selectedCard ? <FormattedMessage id={selectedCard.name}/> : ''}
 					</DialogTitle>
 					<DialogContent>
 						<DialogContentText>
-							{selectedCard && selectedCard.description}
+							{selectedCard && <FormattedRuleDescription rule={selectedCard}/>}
 						</DialogContentText>
 						<div className={classes.ruleParameters}>
 							{selectedCard && Object.keys(selectedCard.parameterTypes).map(key => (

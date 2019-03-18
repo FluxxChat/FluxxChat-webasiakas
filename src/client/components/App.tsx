@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, ProfileImgChangeMessage, RuleParameters, ValidateTextMessage, SystemMessage} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, ProfileImgChangeMessage, RuleParameters, SystemMessage} from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
@@ -49,6 +49,7 @@ interface State {
 	users: User[];
 	userMap: { [key: string]: User };
 	messages: Array<TextMessage | SystemMessage>;
+	playableCardsLeft: number;
 	ownCards: Card[];
 	activeCards: Card[];
 	turnUserId: string | null;
@@ -71,6 +72,7 @@ const EMPTY_STATE: State = {
 	users: [],
 	userMap: {},
 	messages: [],
+	playableCardsLeft: 0,
 	ownCards: [],
 	activeCards: [],
 	turnUserId: null,
@@ -127,7 +129,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						activeCards: msg.enabledRules,
 						turnUserId: msg.turnUserId,
 						user: msg.users.find(u => u.id === msg.userId) || null,
-						ownCards: msg.hand
+						ownCards: msg.hand,
+						playableCardsLeft: msg.playableCardsLeft
 					});
 					this.startTurnTimer(msg.turnEndTime);
 					break;
@@ -148,13 +151,14 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		});
 	}
 
-	public handleSendTextMessage = (textmessage: string, image: string) => {
+	public handleSendTextMessage = (textMessage: string, image: string) => {
 		const { connection } = this.state;
 		if (connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
-				textContent: textmessage,
-				imageContent: image
+				textContent: textMessage,
+				imageContent: image,
+				validateOnly: false
 			};
 			connection.send(JSON.stringify(protocolMessage));
 		}
@@ -231,10 +235,11 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public handleValidateMessage = (message: string, image: string) => {
 		if (this.state.connection) {
-			const protocolMessage: ValidateTextMessage = {
-				type: 'VALIDATE_TEXT',
+			const protocolMessage: TextMessage = {
+				type: 'TEXT',
 				textContent: message,
-				imageContent: image
+				imageContent: image,
+				validateOnly: true
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
@@ -247,7 +252,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match, classes, onChangeTheme} = this.props;
-		const {user, messages, activeCards: activeCards, ownCards: ownCards, locale} = this.state;
+		const {user, messages, activeCards, ownCards, playableCardsLeft, locale} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
@@ -281,6 +286,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								messages={messages}
 								activeCards={activeCards}
 								ownCards={ownCards}
+								playableCardsLeft={playableCardsLeft}
 								onSendMessage={this.handleSendTextMessage}
 								onSendNewRule={this.handleSendNewRule}
 								onValidateMessage={this.handleValidateMessage}

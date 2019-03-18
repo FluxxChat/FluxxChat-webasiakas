@@ -18,6 +18,7 @@
 import React from 'react';
 import {Card, User, RuleParameters} from 'fluxxchat-protokolla';
 import {createStyles, Theme, WithStyles, withStyles} from '@material-ui/core';
+import { FormattedMessage } from 'react-intl';
 // import {NumberParameter, ChoiceParameter} from './CardParameters';
 
 const styles = (theme: Theme) => createStyles({
@@ -37,13 +38,13 @@ const styles = (theme: Theme) => createStyles({
 		justifyContent: 'center',
 		alignItems: 'center',
 		textAlign: 'center',
-		cursor: 'pointer',
 		transition: 'box-shadow 0.1s',
 		color: theme.fluxx.text.primary,
 		'&:not(:first-child)': {
 			marginLeft: '1rem'
 		},
-		'&:hover': {
+		'&:hover:not(.disabled)': {
+			cursor: 'pointer',
 			boxShadow: theme.fluxx.cards.card.hover.shadow
 		}
 	},
@@ -59,6 +60,7 @@ interface Props extends WithStyles<typeof styles> {
 	cardId: string;
 	card: Card;
 	users: User[];
+	disabled: boolean;
 	action: (card: Card, ruleParameters: RuleParameters) => void;
 	onClick: (card: Card) => void;
 }
@@ -72,9 +74,9 @@ class CardComponent extends React.Component<Props> {
 		const {card, classes} = this.props;
 
 		return (
-			<div className={classes.cardContainer} onClick={this.handleClick}>
+			<div className={`${classes.cardContainer} ${this.props.disabled ? 'disabled' : ''}`} onClick={!this.props.disabled ? this.handleClick : undefined}>
 				<div className={classes.cardName}>
-					{card.name}
+					<FormattedMessage id={card.name}/>
 				</div>
 			</div>
 		);
