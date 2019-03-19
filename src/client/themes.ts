@@ -36,6 +36,17 @@ interface CustomThemeProps {
 			},
 			button: {color: React.CSSProperties['color']}
 		}
+		alert: {
+			body: {
+				backgroundColor: React.CSSProperties['backgroundColor'],
+				color: React.CSSProperties['color']
+			},
+			button: {
+				normalcolor: React.CSSProperties['color'],
+				hovercolor: React.CSSProperties['color']
+			}
+
+		},
 		controlArea: {background: React.CSSProperties['background']},
 		MessageBlocgingRule: {
 			background: React.CSSProperties['background'],
@@ -134,6 +145,16 @@ export default {
 				},
 				button: {color: '#39a5d2'}
 			},
+			alert: {
+				body: {
+					backgroundColor: '#f44336',
+					color: 'white'
+				},
+				button: {
+					normalcolor: 'white',
+					hovercolor: 'black'
+				}
+			},
 			controlArea: {background: '#fafafa'},
 			MessageBlocgingRule: {
 				background: '#ffcccc',
@@ -198,6 +219,16 @@ export default {
 					}
 				},
 				button: {color: '#90a5c3d6'}
+			},
+			alert: {
+				body: {
+					backgroundColor: '#f44336',
+					color: 'white'
+				},
+				button: {
+					normalcolor: 'white',
+					hovercolor: 'black'
+				}
 			},
 			controlArea: {background: '#313d5a'},
 			MessageBlocgingRule: {
