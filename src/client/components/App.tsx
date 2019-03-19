@@ -47,6 +47,7 @@ const styles = (theme: Theme) => createStyles({
 interface State {
 	connection: WebSocket | null;
 	user: User | null;
+	rName: string | null;
 	users: User[];
 	userMap: { [key: string]: User };
 	messages: Array<TextMessage | SystemMessage>;
@@ -70,6 +71,7 @@ interface Props {
 const EMPTY_STATE: State = {
 	connection: null,
 	user: null,
+	rName: null,
 	users: [],
 	userMap: {},
 	messages: [],
@@ -121,7 +123,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					break;
 				case 'ROOM_CREATED':
 					this.props.history.push(`/room/${msg.roomId}`);
-					this.joinRoom(msg.roomId);
+					this.joinRoom(msg.roomId, this.state.rName!);
 					break;
 				case 'ROOM_STATE':
 					this.setState({
@@ -187,12 +189,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	}
 
-	public joinRoom = (roomId: string) => {
+	public joinRoom = (roomId: string, nickname: string) => {
 		if (this.state.connection) {
 			const protocolMessage: JoinRoomMessage = {
 				type: 'JOIN_ROOM',
 				roomId,
-				nickname: this.state.user!.nickname
+				nickname
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
@@ -200,11 +202,11 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public requestJoinRoom = (nickname: string) => {
 		const roomId = get(this.props.match, 'params.id');
-		this.setState({ user: { nickname, id: '', profileImg: 'default' } }, () => this.joinRoom(roomId));
+		this.setState({rName: nickname}, () => this.joinRoom(roomId, nickname));
 	}
 
 	public requestCreateRoom = (nickname: string) => {
-		this.setState({ user: { nickname, id: '', profileImg: 'default' } }, () => {
+		this.setState({rName: nickname}, () => {
 			if (this.state.connection) {
 				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM' };
 				this.state.connection.send(JSON.stringify(protocolMessage));
