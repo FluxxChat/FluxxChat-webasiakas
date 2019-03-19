@@ -192,13 +192,11 @@ class ChatRoom extends React.Component<Props, State> {
 		} else if (evt.target.files) {
 			const f = evt.target.files[0];
 			const reader = new FileReader();
-			reader.onload = (file => {
-				return (e: any) => {
-					this.setState({messageDraft: {textContent: this.state.messageDraft.textContent, imageContent: e.target.result}}, () => {
-						this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
-					});
-				};
-			})(f);
+			reader.onload = (e: any) => {
+				this.setState({messageDraft: {textContent: this.state.messageDraft.textContent, imageContent: e.target.result}}, () => {
+					this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
+				});
+			};
 			reader.readAsDataURL(f);
 		}
 	}
