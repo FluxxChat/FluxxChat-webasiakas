@@ -151,12 +151,13 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		});
 	}
 
-	public handleSendTextMessage = (message: string) => {
+	public handleSendTextMessage = (textMessage: string, image: string) => {
 		const { connection } = this.state;
 		if (connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
-				textContent: message,
+				textContent: textMessage,
+				imageContent: image,
 				validateOnly: false
 			};
 			connection.send(JSON.stringify(protocolMessage));
@@ -232,11 +233,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({alert: []});
 	}
 
-	public handleValidateMessage = (message: string) => {
+	public handleValidateMessage = (message: string, image: string) => {
 		if (this.state.connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
 				textContent: message,
+				imageContent: image,
 				validateOnly: true
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));

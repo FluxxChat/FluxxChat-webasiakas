@@ -41,10 +41,6 @@ const styles = (theme: Theme) => createStyles({
 		borderRadius: theme.fluxx.chat.messages.message.borderRadius,
 		overflow: 'auto',
 		boxShadow: theme.fluxx.chat.messages.message.shadow,
-		'& img': {
-			maxWidth: '30rem',
-			maxHeight: '30rem'
-		},
 		'$root$own &': {
 			background: theme.fluxx.chat.messages.ownMessage.background
 		}
@@ -69,6 +65,12 @@ const styles = (theme: Theme) => createStyles({
 		'& > :last-child': {
 			marginBottom: 0
 		}
+	},
+	imageContent: {
+		maxWidth: '40rem',
+		maxHeight: 'auto',
+		paddingTop: '0.5rem',
+		paddingBottom: '1rem'
 	},
 	preformat: {
 		whiteSpace: 'pre'
@@ -106,6 +108,7 @@ const PlayerTextMessage = ({message, previousMessage, clientUser, classes}: Prop
 						{message.senderNickname}
 					</div>
 				)}
+				{message.imageContent ? <img className={`${classes.imageContent} ${ownMessage ? classes.own : ''}`} src={message.imageContent}/> : null}
 				<div className={classes.messageContainer}>
 					{message.markdown ? (
 						<div
