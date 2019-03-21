@@ -295,6 +295,13 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"
 
+"@babel/plugin-syntax-dynamic-import@^7.2.0":
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-dynamic-import/-/plugin-syntax-dynamic-import-7.2.0.tgz#69c159ffaf4998122161ad8ebc5e6d1f55df8612"
+  integrity sha512-mVxuJ0YroI/h/tbFTPGZR8cv6ai+STMKNBq0f8hFxsxWjl94qqhsb+wXbpNMDPU3cfR1TIsVFzU3nXyZMqyK4w==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0"
+
 "@babel/plugin-syntax-json-strings@^7.2.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-json-strings/-/plugin-syntax-json-strings-7.2.0.tgz#72bd13f6ffe1d25938129d2a186b11fd62951470"
@@ -3877,9 +3884,9 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
 
-"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git":
+"fluxxchat-protokolla@git://github.com/FluxxChat/FluxxChat-protokolla.git#81f96deed48f18057b238189c640d6c57ebc39b5":
   version "1.0.0"
-  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#b7d8da0daf022bbf994a10647806886109797247"
+  resolved "git://github.com/FluxxChat/FluxxChat-protokolla.git#81f96deed48f18057b238189c640d6c57ebc39b5"
 
 follow-redirects@^1.0.0:
   version "1.7.0"
