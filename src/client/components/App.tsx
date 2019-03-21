@@ -17,7 +17,7 @@
 
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, ProfileImgChangeMessage, RuleParameters, ValidateTextMessage, SystemMessage} from 'fluxxchat-protokolla';
+import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, ProfileImgChangeMessage, RuleParameters, SystemMessage, UiVariables} from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
@@ -56,6 +56,7 @@ interface State {
 	timer: number | null;
 	messageValid: boolean;
 	messageBlockingRules: string[];
+	variables: UiVariables;
 	locale: string;
 	translatedMessages: {[key: string]: {[key: string]: string}};
 	theme: keyof typeof themes;
@@ -81,6 +82,10 @@ const EMPTY_STATE: State = {
 	alert: [],
 	messageValid: true,
 	messageBlockingRules: [],
+	variables: {
+		inputMinHeight: 1,
+		imageMessages: false
+	},
 	locale: 'fi',
 	translatedMessages: localeMessages,
 	theme: 'light'
@@ -131,7 +136,11 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						turnUserId: msg.turnUserId,
 						user: msg.users.find(u => u.id === msg.userId) || null,
 						ownCards: msg.hand,
-						playableCardsLeft: msg.playableCardsLeft
+						playableCardsLeft: msg.playableCardsLeft,
+						variables: {
+							inputMinHeight: msg.variables.inputMinHeight,
+							imageMessages: msg.variables.imageMessages
+						}
 					});
 					this.startTurnTimer(msg.turnEndTime);
 					break;
@@ -154,12 +163,14 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		});
 	}
 
-	public handleSendTextMessage = (message: string) => {
+	public handleSendTextMessage = (textMessage: string, image: string) => {
 		const { connection } = this.state;
 		if (connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
-				textContent: message
+				textContent: textMessage,
+				imageContent: image,
+				validateOnly: false
 			};
 			connection.send(JSON.stringify(protocolMessage));
 		}
@@ -234,11 +245,13 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({alert: []});
 	}
 
-	public handleValidateMessage = (message: string) => {
+	public handleValidateMessage = (message: string, image: string) => {
 		if (this.state.connection) {
-			const protocolMessage: ValidateTextMessage = {
-				type: 'VALIDATE_TEXT',
-				textContent: message
+			const protocolMessage: TextMessage = {
+				type: 'TEXT',
+				textContent: message,
+				imageContent: image,
+				validateOnly: true
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
@@ -263,7 +276,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match, classes, onChangeTheme} = this.props;
-		const {user, messages, activeCards, ownCards, playableCardsLeft, locale, translatedMessages} = this.state;
+		const {user, messages, activeCards, ownCards, playableCardsLeft, variables, locale, translatedMessages} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
@@ -308,6 +321,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								onChangeTheme={onChangeTheme}
 								onChangeLocale={this.handleChangeLocale}
 								onChangeAvatar={this.handleChangeAvatar}
+								uiVariables={variables}
 							/>
 						)}
 					</div>
