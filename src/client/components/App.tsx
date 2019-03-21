@@ -22,8 +22,9 @@ import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@ma
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
 import {IntlProvider, addLocaleData} from 'react-intl';
+import en from 'react-intl/locale-data/fi';
 import fi from 'react-intl/locale-data/fi';
-import localeMessages from '../../../i18n/data.json';
+import defaultMessages from '../../../i18n/data.json';
 import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
@@ -86,8 +87,8 @@ const EMPTY_STATE: State = {
 		inputMinHeight: 1,
 		imageMessages: false
 	},
-	locale: 'fi',
-	translatedMessages: localeMessages,
+	locale: 'en',
+	translatedMessages: defaultMessages,
 	theme: 'light'
 };
 
@@ -257,20 +258,22 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	};
 
-	public handleChangeLocale = (locale: keyof typeof localeMessages) => {
-		this.setState({locale});
+	public handleChangeLocale = (newLocale: keyof typeof defaultMessages) => {
+		this.setState({locale: newLocale});
 	}
 
 	public updateLocalization(translatedMessages: {[key: string]: {[key: string]: string}}) {
-		this.setState({translatedMessages});
-		this.setState({locale: this.state.locale}); // this is required to get IntlProvider to reload
-	}
+		const updatedMessages = this.state.translatedMessages;
 
-	public async loadLocaleData(locales: string[]) {
-		for (const locale of locales) {
-			const localeData = await import('react-intl/locale-data/' + locale);
-			addLocaleData(localeData);
+		// This merges any new translations into the existing translations
+		for (const locale in translatedMessages) {
+			if (!translatedMessages.hasOwnProperty(locale)) continue;
+			for (const key in translatedMessages[locale]) {
+				if (translatedMessages[locale].hasOwnProperty(key)) { updatedMessages[locale][key] = translatedMessages[locale][key]; }
+			}
 		}
+		this.setState({translatedMessages: updatedMessages});
+		this.setState({locale: this.state.locale}); // this is required to get IntlProvider to reload
 	}
 
 	public render() {
@@ -281,11 +284,9 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
 
+		// loads date formats etc.
 		addLocaleData(fi);
-
-		// Loads locale data (date formats etc.) for all languages the client has translations for
-		this.loadLocaleData(Object.keys(localeMessages));
-
+		addLocaleData(en);
 		const localMessages = translatedMessages[locale];
 
 		return (
