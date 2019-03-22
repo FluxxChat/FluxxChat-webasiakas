@@ -16,7 +16,7 @@ export class VoiceMessage extends React.Component<Props, State> {
 			audio: true,
 			video: false
 		});
-		this.setState({audio});
+		this.setState({audio: audio});
 	}
 
 	public stopMicrophone() {
