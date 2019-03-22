@@ -19,8 +19,11 @@ import React from 'react';
 import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divider} from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import CardsIcon from '@material-ui/icons/ViewCarousel';
+import ImageIcon from '@material-ui/icons/InsertPhoto';
+import MicrophoneIcon from '@material-ui/icons/Mic';
+import StopIcon from '@material-ui/icons/Stop';
 import {injectIntl, InjectedIntlProps} from 'react-intl';
-import ImageIcon from '@material-ui/icons/Image';
+import {VoiceMessage} from './VoiceMessage';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -75,9 +78,14 @@ interface OwnProps {
 	messageBlockedAnimation: (blocked: boolean) => void;
 }
 
+interface State {
+	recordingVoiceMessage: boolean;
+}
+
 type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
 
-class UserInput extends React.Component<Props> {
+class UserInput extends React.Component<Props, State> {
+	public state = {recordingVoiceMessage: false};
 	public imageUploadRef: any;
 	public previewImageRef: any;
 
@@ -112,12 +120,25 @@ class UserInput extends React.Component<Props> {
 		this.props.onChange(event);
 	}
 
+	public sendVoiceMessage = (voiceMessage: any) => {
+		this.props.onSend();
+	}
+
+	public toggleVoiceMessage = () => {
+		if (this.state.recordingVoiceMessage) {
+			this.setState({recordingVoiceMessage: false});
+		} else {
+			this.setState({recordingVoiceMessage: true});
+		}
+	}
+
 	public setImageUploadRef = (imageUploadRef: any) => this.imageUploadRef = imageUploadRef;
 
 	public setpreviewImageRef = (previewImageRef: any) => this.previewImageRef = previewImageRef;
 
 	public render() {
 		const {value, onChange, valid, inputMinHeight, imageMessages, onToggleCards, classes, intl} = this.props;
+		const {recordingVoiceMessage} = this.state;
 
 		return (
 			<div>
@@ -142,6 +163,13 @@ class UserInput extends React.Component<Props> {
 						multiline
 					/>
 					<Divider />
+					{recordingVoiceMessage ? (
+						<VoiceMessage onVoiceMessageSend={this.sendVoiceMessage}/>
+					) : (
+						<IconButton  className={classes.iconButton} onClick={this.toggleVoiceMessage}>
+							{recordingVoiceMessage ? <StopIcon/> : <MicrophoneIcon/>}
+						</IconButton>
+					)}
 					{imageMessages ? (
 						<IconButton
 							color="primary"
