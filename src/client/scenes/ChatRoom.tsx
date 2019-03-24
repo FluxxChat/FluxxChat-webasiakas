@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {Card, RuleParameters, User, SystemMessage, TextMessage} from 'fluxxchat-protokolla';
+import {Card, RuleParameters, User, SystemMessage, TextMessage, UiVariables} from 'fluxxchat-protokolla';
 import {
 	createStyles,
 	WithStyles,
@@ -145,16 +145,17 @@ interface Props extends WithStyles<typeof styles> {
 	activeCards: Card[];
 	messageValid: boolean;
 	messageBlockingRules: string[];
-	onSendMessage: (message: string) => void;
+	uiVariables: UiVariables;
+	onSendMessage: (textmessage: string, image: string) => void;
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
-	onValidateMessage: (message: string) => void;
+	onValidateMessage: (textmessage: string, image: string) => void;
 	onChangeTheme: (theme: string) => void;
 	onChangeLocale: (locale: keyof typeof localeData) => void;
 	onChangeAvatar: (image: string) => void;
 }
 
 interface State {
-	messageDraft: string;
+	messageDraft: {textContent: string, imageContent: string};
 	showCards: boolean;
 	showCard: boolean;
 	selectedCard: Card | null;
@@ -164,7 +165,7 @@ interface State {
 
 class ChatRoom extends React.Component<Props, State> {
 	public state: State = {
-		messageDraft: '',
+		messageDraft: {textContent: '', imageContent: ''},
 		showCards: window.innerWidth >= 1280,
 		selectedCard: null,
 		showCard: false,
@@ -176,17 +177,28 @@ class ChatRoom extends React.Component<Props, State> {
 
 	public handleSendMessage = () => {
 		const {messageDraft} = this.state;
-		if (messageDraft && this.props.messageValid) {
-			this.setState({messageDraft: ''}, () => {
-				this.props.onSendMessage(messageDraft);
+		if ((messageDraft.textContent || messageDraft.imageContent) && this.props.messageValid) {
+			this.setState({messageDraft: {textContent: '', imageContent: ''}}, () => {
+				this.props.onSendMessage(messageDraft.textContent, messageDraft.imageContent);
 			});
 		}
 	}
 
 	public handleChangeMessageDraft = (evt: React.ChangeEvent<HTMLInputElement>) => {
-		this.setState({messageDraft: evt.target.value}, () => {
-			this.props.onValidateMessage(this.state.messageDraft);
-		});
+		if (evt.nativeEvent.type !== 'change') {
+			this.setState({messageDraft: {textContent: evt.target.value, imageContent: this.state.messageDraft.imageContent}}, () => {
+				this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
+			});
+		} else if (evt.target.files) {
+			const f = evt.target.files[0];
+			const reader = new FileReader();
+			reader.onload = (e: any) => {
+				this.setState({messageDraft: {textContent: this.state.messageDraft.textContent, imageContent: e.target.result}}, () => {
+					this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
+				});
+			};
+			reader.readAsDataURL(f);
+		}
 	}
 
 	public componentDidUpdate(_prevProps: Props, prevState: State) {
@@ -250,7 +262,7 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public ruleChangeRevalidation = () => {
-		this.props.onValidateMessage(this.state.messageDraft);
+		this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
 	}
 
 	public render() {
@@ -263,6 +275,7 @@ class ChatRoom extends React.Component<Props, State> {
 			activeCards,
 			turnTime,
 			turnUser,
+			uiVariables,
 			onChangeTheme,
 			onChangeLocale,
 			onChangeAvatar
@@ -333,6 +346,8 @@ class ChatRoom extends React.Component<Props, State> {
 								value={messageDraft}
 								onChange={this.handleChangeMessageDraft}
 								valid={messageValid}
+								inputMinHeight={uiVariables.inputMinHeight ? uiVariables.inputMinHeight : 1}
+								imageMessages={uiVariables.imageMessages ? uiVariables.imageMessages : false}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 								messageBlockedAnimation={this.messageBlockedAnimation}
