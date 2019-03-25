@@ -22,7 +22,7 @@ import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@ma
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
 import {IntlProvider, addLocaleData} from 'react-intl';
-import en from 'react-intl/locale-data/fi';
+import en from 'react-intl/locale-data/en';
 import fi from 'react-intl/locale-data/fi';
 import defaultMessages from '../../../i18n/data.json';
 import themes from '../themes';
@@ -267,7 +267,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 		// This merges any new translations into the existing translations
 		for (const locale in translatedMessages) {
-			if (!translatedMessages.hasOwnProperty(locale)) continue;
+			if (!translatedMessages.hasOwnProperty(locale)) { continue; }
 			for (const key in translatedMessages[locale]) {
 				if (translatedMessages[locale].hasOwnProperty(key)) { updatedMessages[locale][key] = translatedMessages[locale][key]; }
 			}
