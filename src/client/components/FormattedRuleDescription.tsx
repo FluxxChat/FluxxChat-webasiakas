@@ -27,12 +27,15 @@ interface Props {
 export const FormattedRuleDescription = ({ rule }: Props) => {
 	const description: JSX.Element[] = [];
 	description.push(<FormattedMessage id={rule.description} values={rule.values} />);
+	// If rule.values contains a field named array, the 'elements' of the array string will be treated as messages to be translated.
+	// This enables localization of lists of localized messages as in the case of disabling rule descriptions,
+	// e.g. "Disables the following rules: Markdown Formatting"
 	if (rule.values) {
-		if (Object.keys(rule.values).indexOf('titles') > -1) {
-			const titlesStr = (rule.values as { titles: string }).titles;
-			const titles = titlesStr.split(', ');
-			for (const title of titles) {
-				description.push(<FormattedMessage id={title} />);
+		if (Object.keys(rule.values).indexOf('array') > -1) {
+			const arrayStr = (rule.values as { array: string }).array;
+			const array = arrayStr.split(', ');
+			for (const message of array) {
+				description.push(<FormattedMessage id={message} />);
 				description.push(<span>, </span>);
 			}
 			description.pop();
