@@ -203,7 +203,9 @@ class ChatRoom extends React.Component<Props, State> {
 
 	public handleInsertEmoji = (emoji: string) => {
 		const d = this.state.messageDraft;
-		this.setState({messageDraft: {...d, textContent: d.textContent + emoji}});
+		this.setState({messageDraft: {...d, textContent: d.textContent + emoji}}, () => {
+			this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
+		});
 	}
 
 	public componentDidUpdate(_prevProps: Props, prevState: State) {
@@ -354,7 +356,7 @@ class ChatRoom extends React.Component<Props, State> {
 								valid={messageValid}
 								inputMinHeight={uiVariables.inputMinHeight || 1}
 								imageMessages={!!uiVariables.imageMessages}
-								emojiPicker={!!uiVariables.emojiPicker}
+								emojiPicker={uiVariables.emojiPicker === undefined ? true : uiVariables.emojiPicker}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 								messageBlockedAnimation={this.messageBlockedAnimation}
