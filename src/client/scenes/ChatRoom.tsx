@@ -317,7 +317,7 @@ class ChatRoom extends React.Component<Props, State> {
 						<div className={classes.messageArea}>
 							<MessageList clientUser={user} messages={messages}/>
 							<div className={classes.turnInfo}>
-								{this.props.turnUser.id === this.props.user.id ? <FormattedMessage id="room.playableCardsLeft" values={{n: this.props.playableCardsLeft}}/> : 'Ei ole sinun vuorosi'}
+								{this.props.turnUser.id === this.props.user.id ? <FormattedMessage id="room.playableCardsLeft" values={{n: this.props.playableCardsLeft}}/> : <FormattedMessage id="room.notYourTurn"/>}
 							</div>
 							<ScrollArea
 								ref={this.cardScrollRef}
