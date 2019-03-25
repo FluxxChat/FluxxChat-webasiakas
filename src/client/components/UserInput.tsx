@@ -71,6 +71,7 @@ interface OwnProps {
 	valid: boolean;
 	inputMinHeight: number;
 	imageMessages: boolean;
+	emojiPicker: boolean;
 	onToggleCards: () => void;
 	onSend: () => void;
 	messageBlockedAnimation: (blocked: boolean) => void;
@@ -135,7 +136,7 @@ class UserInput extends React.Component<Props, State> {
 	public setpreviewImageRef = (previewImageRef: any) => this.previewImageRef = previewImageRef;
 
 	public render() {
-		const {value, onChange, valid, inputMinHeight, imageMessages, onToggleCards, classes, intl} = this.props;
+		const {value, onChange, valid, inputMinHeight, imageMessages, emojiPicker, onToggleCards, classes, intl} = this.props;
 
 		return (
 			<div>
@@ -167,14 +168,16 @@ class UserInput extends React.Component<Props, State> {
 						multiline
 					/>
 					<Divider />
-					<IconButton
-						color="primary"
-						className={classes.sendButton}
-						onClick={this.selectEmoji}
-						name="selectEmoji"
-					>
-						<Face/>
-					</IconButton>
+					{emojiPicker ? (
+						<IconButton
+							color="primary"
+							className={classes.sendButton}
+							onClick={this.selectEmoji}
+							name="selectEmoji"
+						>
+							<Face/>
+						</IconButton>
+					) : null}
 					{imageMessages ? (
 						<IconButton
 							color="primary"

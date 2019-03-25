@@ -352,8 +352,9 @@ class ChatRoom extends React.Component<Props, State> {
 								onChange={this.handleChangeMessageDraft}
 								onInsertEmoji={this.handleInsertEmoji}
 								valid={messageValid}
-								inputMinHeight={uiVariables.inputMinHeight ? uiVariables.inputMinHeight : 1}
-								imageMessages={uiVariables.imageMessages ? uiVariables.imageMessages : false}
+								inputMinHeight={uiVariables.inputMinHeight || 1}
+								imageMessages={!!uiVariables.imageMessages}
+								emojiPicker={!!uiVariables.emojiPicker}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 								messageBlockedAnimation={this.messageBlockedAnimation}
