@@ -115,6 +115,10 @@ class UserInput extends React.Component<Props, State> {
 		this.setState({showEmojiSelector: true, emojiAnchorEl: evt.currentTarget});
 	}
 
+	public closeEmojiSelector = () => {
+		this.setState({showEmojiSelector: false});
+	}
+
 	public handleSelectEmoji = (emoji: any) => {
 		this.setState({showEmojiSelector: false});
 		this.props.onInsertEmoji(emoji.native);
@@ -140,7 +144,11 @@ class UserInput extends React.Component<Props, State> {
 
 		return (
 			<div>
-				<Popover open={this.state.showEmojiSelector} anchorEl={this.state.emojiAnchorEl}>
+				<Popover
+					open={this.state.showEmojiSelector}
+					anchorEl={this.state.emojiAnchorEl}
+					onClose={this.closeEmojiSelector}
+				>
 					<Picker
 						onSelect={this.handleSelectEmoji}
 						title={intl.formatMessage({id: 'input.selectEmoji'})}
