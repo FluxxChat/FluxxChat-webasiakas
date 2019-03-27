@@ -84,7 +84,8 @@ const EMPTY_STATE: State = {
 	messageBlockingRules: [],
 	variables: {
 		inputMinHeight: 1,
-		imageMessages: false
+		imageMessages: false,
+		audioMessages: false
 	},
 	locale: 'fi',
 	theme: 'light'
@@ -138,7 +139,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						playableCardsLeft: msg.playableCardsLeft,
 						variables: {
 							inputMinHeight: msg.variables.inputMinHeight,
-							imageMessages: msg.variables.imageMessages
+							imageMessages: msg.variables.imageMessages,
+							audioMessages: msg.variables.audioMessages
 						}
 					});
 					this.startTurnTimer(msg.turnEndTime);
@@ -160,13 +162,14 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		});
 	}
 
-	public handleSendTextMessage = (textMessage: string, image: string) => {
+	public handleSendTextMessage = (textMessage: string, imageMessage: string, audioMessage: {url: string, length: number}) => {
 		const { connection } = this.state;
 		if (connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
 				textContent: textMessage,
-				imageContent: image,
+				imageContent: imageMessage,
+				audioContent: audioMessage,
 				validateOnly: false
 			};
 			connection.send(JSON.stringify(protocolMessage));
@@ -242,12 +245,13 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({alert: []});
 	}
 
-	public handleValidateMessage = (message: string, image: string) => {
+	public handleValidateMessage = (message: string, image: string, audio: any) => {
 		if (this.state.connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
 				textContent: message,
 				imageContent: image,
+				audioContent: audio,
 				validateOnly: true
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));

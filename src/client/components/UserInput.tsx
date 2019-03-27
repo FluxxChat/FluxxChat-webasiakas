@@ -21,9 +21,8 @@ import SendIcon from '@material-ui/icons/Send';
 import CardsIcon from '@material-ui/icons/ViewCarousel';
 import ImageIcon from '@material-ui/icons/InsertPhoto';
 import MicrophoneIcon from '@material-ui/icons/Mic';
-import StopIcon from '@material-ui/icons/Stop';
 import {injectIntl, InjectedIntlProps} from 'react-intl';
-import {VoiceMessage} from './VoiceMessage';
+import VoiceMessage from './VoiceMessage';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -64,28 +63,43 @@ const styles = (theme: Theme) => createStyles({
 		paddingTop: '10px',
 		paddingLeft: '60px'
 	},
+	audioRecordingWrapper: {
+		display: 'flex',
+		flexDirection: 'row',
+		width: '15rem',
+		background: theme.fluxx.border.darker,
+		justifyContent: 'flex-end',
+		borderRadius: '3rem'
+	},
+	audioLengthText: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		paddingRight: '5px'
+	},
 	focused: {}
 });
 
 interface OwnProps {
 	value: {textContent: string, imageContent: string};
-	onChange: React.ChangeEventHandler<HTMLInputElement>;
 	valid: boolean;
 	inputMinHeight: number;
 	imageMessages: boolean;
+	audioMessages: boolean;
+	onMessageDraftChange: (type: 'TEXT' | 'IMAGE' | 'AUDIO', content: any) => void;
 	onToggleCards: () => void;
 	onSend: () => void;
 	messageBlockedAnimation: (blocked: boolean) => void;
 }
 
 interface State {
-	recordingVoiceMessage: boolean;
+	audioMessageEnabled: boolean;
 }
 
 type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
 
 class UserInput extends React.Component<Props, State> {
-	public state = {recordingVoiceMessage: false};
+	public state = {audioMessageEnabled: false};
 	public imageUploadRef: any;
 	public previewImageRef: any;
 
@@ -106,7 +120,16 @@ class UserInput extends React.Component<Props, State> {
 
 	public sendMessage = () => {
 		this.props.onSend();
-		this.imageUploadRef.value = '';
+		if (this.imageUploadRef) {
+			this.imageUploadRef.value = '';
+		}
+		if (this.state.audioMessageEnabled) {
+			this.setState({audioMessageEnabled: false});
+		}
+	}
+
+	public textInputChange = (event: any) => {
+		this.props.onMessageDraftChange('TEXT', event);
 	}
 
 	public setPreviewImage = (evt: any) => {
@@ -117,28 +140,28 @@ class UserInput extends React.Component<Props, State> {
 
 	public onFileSelect = (event: any) => {
 		this.setPreviewImage(event);
-		this.props.onChange(event);
-	}
-
-	public sendVoiceMessage = (voiceMessage: any) => {
-		this.props.onSend();
-	}
-
-	public toggleVoiceMessage = () => {
-		if (this.state.recordingVoiceMessage) {
-			this.setState({recordingVoiceMessage: false});
-		} else {
-			this.setState({recordingVoiceMessage: true});
-		}
+		this.props.onMessageDraftChange('IMAGE', event);
 	}
 
 	public setImageUploadRef = (imageUploadRef: any) => this.imageUploadRef = imageUploadRef;
 
 	public setpreviewImageRef = (previewImageRef: any) => this.previewImageRef = previewImageRef;
 
+	public changeAudioMessage = (url: string, length: number) => {
+		this.props.onMessageDraftChange('AUDIO', {url, length});
+	}
+
+	public beginAudioRecording = () => {
+		this.setState({audioMessageEnabled: true});
+	}
+
+	public stopAudioRecording = () => {
+		this.setState({audioMessageEnabled: false});
+	}
+
 	public render() {
-		const {value, onChange, valid, inputMinHeight, imageMessages, onToggleCards, classes, intl} = this.props;
-		const {recordingVoiceMessage} = this.state;
+		const {value, valid, inputMinHeight, imageMessages, audioMessages, onToggleCards, classes, intl} = this.props;
+		const {audioMessageEnabled} = this.state;
 
 		return (
 			<div>
@@ -156,24 +179,30 @@ class UserInput extends React.Component<Props, State> {
 						placeholder={intl.formatMessage({id: 'input.typeMessage'})}
 						onKeyDown={this.handleKeyDown}
 						value={value.textContent}
-						onChange={onChange}
+						onChange={this.textInputChange}
 						inputProps={{name: 'messageInput'}}
 						rows={inputMinHeight}
 						rowsMax={25}
 						multiline
 					/>
 					<Divider />
-					{recordingVoiceMessage ? (
-						<VoiceMessage onVoiceMessageSend={this.sendVoiceMessage}/>
-					) : (
-						<IconButton  className={classes.iconButton} onClick={this.toggleVoiceMessage}>
-							{recordingVoiceMessage ? <StopIcon/> : <MicrophoneIcon/>}
-						</IconButton>
-					)}
+					{audioMessages ? (
+						audioMessageEnabled ? (
+							<VoiceMessage
+								classes={classes}
+								changeMessageDraft={this.changeAudioMessage}
+								onRemoveAudio={this.stopAudioRecording}
+							/>
+						) : (
+							<IconButton  className={classes.iconButton} onClick={this.beginAudioRecording}>
+								<MicrophoneIcon/>
+							</IconButton>
+						)
+					) : null}
 					{imageMessages ? (
 						<IconButton
 							color="primary"
-							className={classes.sendButton}
+							className={classes.iconButton}
 							onClick={this.openFileSelect}
 						>
 							<ImageIcon/>

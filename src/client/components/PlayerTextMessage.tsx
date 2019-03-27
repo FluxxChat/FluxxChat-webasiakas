@@ -20,7 +20,9 @@ import {User, TextMessage, SystemMessage} from 'fluxxchat-protokolla';
 import Remarkable from 'remarkable';
 import Linkify from 'linkifyjs/react';
 import moment from 'moment';
-import {withStyles, createStyles, WithStyles, Theme} from '@material-ui/core';
+import {withStyles, createStyles, WithStyles, Theme, IconButton} from '@material-ui/core';
+import PlayIcon from '@material-ui/icons/PlayCircleFilled';
+import PauseIcon from '@material-ui/icons/PauseCircleFilled';
 
 const styles = (theme: Theme) => createStyles({
 	own: {},
@@ -72,6 +74,22 @@ const styles = (theme: Theme) => createStyles({
 		paddingTop: '0.5rem',
 		paddingBottom: '1rem'
 	},
+	audioRecordingWrapper: {
+		fontSize: 16,
+		display: 'flex',
+		flexDirection: 'row',
+		width: '14rem',
+		background: theme.fluxx.border.darker,
+		justifyContent: 'flex-start',
+		borderRadius: '3rem',
+		marginBottom: '1rem'
+	},
+	audioLengthText: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		paddingLeft: '5px'
+	},
 	preformat: {
 		whiteSpace: 'pre'
 	},
@@ -81,6 +99,9 @@ const styles = (theme: Theme) => createStyles({
 		marginLeft: '6rem',
 		fontSize: '1rem',
 		opacity: 0.6
+	},
+	iconButton: {
+		color: theme.fluxx.icon.primary
 	}
 });
 
@@ -90,43 +111,91 @@ interface Props extends WithStyles<typeof styles> {
 	clientUser: User;
 }
 
-const PlayerTextMessage = ({message, previousMessage, clientUser, classes}: Props) => {
-	const showName = previousMessage
-		? previousMessage.type !== 'TEXT' || previousMessage.senderId !== message.senderId
-		: true;
-	const ownMessage = clientUser.id === message.senderId;
-	const md = new Remarkable('full', {
-		linkify: true,
-		typographer: true
-	});
+interface State {
+	audioPlayback: boolean;
+}
 
-	return (
-		<div className={`${classes.root} ${ownMessage ? classes.own : ''}`}>
-			<div className={classes.message}>
-				{showName && (
-					<div className={classes.messageSender}>
-						{message.senderNickname}
-					</div>
-				)}
-				{message.imageContent ? <img className={`${classes.imageContent} ${ownMessage ? classes.own : ''}`} src={message.imageContent}/> : null}
-				<div className={classes.messageContainer}>
-					{message.markdown ? (
-						<div
-							className={classes.messageContent}
-							dangerouslySetInnerHTML={{__html: md.render(message.textContent)}}
-						/>
-					) : (
-						<div className={classes.messageContent}>
-							<div className={classes.preformat}><Linkify>{message.textContent}</Linkify></div>
+class PlayerTextMessage extends React.Component<Props, State> {
+	public state = {audioPlayback: false};
+	public audioRef: any;
+
+	public playAudioMessage = () => {
+		this.audioRef.src = this.props.message.audioContent.url;
+		this.audioRef.onloadedmetadata = (e: any) => {
+			this.audioRef.play();
+		};
+		this.setState({audioPlayback: true});
+	}
+
+	public stopAudioMessage = () => {
+		this.audioRef.src = null;
+		this.setState({audioPlayback: false});
+	}
+
+	public render() {
+		const {message, previousMessage, clientUser, classes} = this.props;
+		const showName = previousMessage
+			? previousMessage.type !== 'TEXT' || previousMessage.senderId !== message.senderId
+			: true;
+		const ownMessage = clientUser.id === message.senderId;
+		const md = new Remarkable('full', {
+			linkify: true,
+			typographer: true
+		});
+
+		return (
+			<div className={`${classes.root} ${ownMessage ? classes.own : ''}`}>
+				<div className={classes.message}>
+					{showName && (
+						<div className={classes.messageSender}>
+							{message.senderNickname}
 						</div>
 					)}
-					<div className={classes.messageTimestamp}>
-						{moment(message.timestamp).format('HH:mm')}
+					{message.imageContent ? <img className={`${classes.imageContent} ${ownMessage ? classes.own : ''}`} src={message.imageContent}/> : null}
+					{message.audioContent.url ? (
+						<div className={classes.audioRecordingWrapper}>
+							<audio
+								ref={audioElement => {this.audioRef = audioElement; }}
+								onEnded={this.stopAudioMessage}
+							/>
+							<IconButton
+								className={classes.iconButton}
+								onClick={this.playAudioMessage}
+								disabled={this.state.audioPlayback}
+							>
+								<PlayIcon/>
+							</IconButton>
+							<IconButton
+								className={classes.iconButton}
+								onClick={this.stopAudioMessage}
+								disabled={!this.state.audioPlayback}
+							>
+								<PauseIcon/>
+							</IconButton>
+							<div className={classes.audioLengthText}>
+								{message.audioContent.length + ' s'}
+							</div>
+						</div>
+					) : null}
+					<div className={classes.messageContainer}>
+						{message.markdown ? (
+							<div
+								className={classes.messageContent}
+								dangerouslySetInnerHTML={{__html: md.render(message.textContent)}}
+							/>
+						) : (
+							<div className={classes.messageContent}>
+								<div className={classes.preformat}><Linkify>{message.textContent}</Linkify></div>
+							</div>
+						)}
+						<div className={classes.messageTimestamp}>
+							{moment(message.timestamp).format('HH:mm')}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	);
-};
+		);
+	}
+}
 
 export default withStyles(styles)(PlayerTextMessage);
