@@ -217,6 +217,17 @@ class ChatRoom extends React.Component<Props, State> {
 		}
 	}
 
+	public handleInsertEmoji = (emoji: string) => {
+		const d = this.state.messageDraft;
+		this.setState({messageDraft: {...d, textContent: d.textContent + emoji}}, () => {
+			this.props.onValidateMessage(
+				this.state.messageDraft.textContent,
+				this.state.messageDraft.imageContent,
+				this.state.messageDraft.audioContent
+			);
+		});
+	}
+
 	public componentDidUpdate(_prevProps: Props, prevState: State) {
 		if (this.state.selectedCard && !prevState.showCard && this.state.showCard) {
 			const defaultRuleParameters = {};
@@ -365,10 +376,12 @@ class ChatRoom extends React.Component<Props, State> {
 							<UserInput
 								value={messageDraft}
 								onMessageDraftChange={this.handleChangeMessageDraft}
+								onInsertEmoji={this.handleInsertEmoji}
 								valid={messageValid}
-								inputMinHeight={uiVariables.inputMinHeight ? uiVariables.inputMinHeight : 1}
-								imageMessages={uiVariables.imageMessages ? uiVariables.imageMessages : false}
-								audioMessages={uiVariables.audioMessages ? uiVariables.audioMessages : false}
+								inputMinHeight={uiVariables.inputMinHeight || 1}
+								imageMessages={!!uiVariables.imageMessages}
+								audioMessages={!!uiVariables.audioMessages}
+								emojiPicker={uiVariables.emojiPicker === undefined ? true : uiVariables.emojiPicker}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 								messageBlockedAnimation={this.messageBlockedAnimation}
