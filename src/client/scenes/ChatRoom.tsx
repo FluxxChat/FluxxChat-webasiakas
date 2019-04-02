@@ -146,16 +146,16 @@ interface Props extends WithStyles<typeof styles> {
 	messageValid: boolean;
 	messageBlockingRules: string[];
 	uiVariables: UiVariables;
-	onSendMessage: (textmessage: string, image: string) => void;
+	onSendMessage: (textmessage: string, image: string, audio: any) => void;
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
-	onValidateMessage: (textmessage: string, image: string) => void;
+	onValidateMessage: (textmessage: string, image: string, audio: any) => void;
 	onChangeTheme: (theme: string) => void;
 	onChangeLocale: (locale: keyof typeof localeData) => void;
 	onChangeAvatar: (image: string) => void;
 }
 
 interface State {
-	messageDraft: {textContent: string, imageContent: string};
+	messageDraft: {textContent: string, imageContent: string, audioContent: {url: string, length: number}};
 	showCards: boolean;
 	showCard: boolean;
 	selectedCard: Card | null;
@@ -165,7 +165,7 @@ interface State {
 
 class ChatRoom extends React.Component<Props, State> {
 	public state: State = {
-		messageDraft: {textContent: '', imageContent: ''},
+		messageDraft: {textContent: '', imageContent: '', audioContent: {url: '', length: 0}},
 		showCards: window.innerWidth >= 1280,
 		selectedCard: null,
 		showCard: false,
@@ -177,34 +177,54 @@ class ChatRoom extends React.Component<Props, State> {
 
 	public handleSendMessage = () => {
 		const {messageDraft} = this.state;
-		if ((messageDraft.textContent || messageDraft.imageContent) && this.props.messageValid) {
-			this.setState({messageDraft: {textContent: '', imageContent: ''}}, () => {
-				this.props.onSendMessage(messageDraft.textContent, messageDraft.imageContent);
+		if ((messageDraft.textContent || messageDraft.imageContent || messageDraft.audioContent.url) && this.props.messageValid) {
+			this.setState({messageDraft: {textContent: '', imageContent: '', audioContent: {url: '', length: 0}}}, () => {
+				this.props.onSendMessage(messageDraft.textContent, messageDraft.imageContent, messageDraft.audioContent);
 			});
 		}
 	}
 
-	public handleChangeMessageDraft = (evt: React.ChangeEvent<HTMLInputElement>) => {
-		if (evt.nativeEvent.type !== 'change') {
-			this.setState({messageDraft: {textContent: evt.target.value, imageContent: this.state.messageDraft.imageContent}}, () => {
-				this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
+	public handleChangeMessageDraft = (type: 'TEXT' | 'IMAGE' | 'AUDIO', newContent: any) => {
+		if (type === 'TEXT') {
+			this.setState({messageDraft: {
+				textContent: newContent.target.value,
+				imageContent: this.state.messageDraft.imageContent,
+				audioContent: this.state.messageDraft.audioContent
+			}}, () => {
+				this.props.onValidateMessage(
+					this.state.messageDraft.textContent,
+					this.state.messageDraft.imageContent,
+					this.state.messageDraft.audioContent
+				);
 			});
-		} else if (evt.target.files) {
-			const f = evt.target.files[0];
+		} else if (type === 'IMAGE') {
+			const f = newContent.target.files[0];
 			const reader = new FileReader();
 			reader.onload = (e: any) => {
-				this.setState({messageDraft: {textContent: this.state.messageDraft.textContent, imageContent: e.target.result}}, () => {
-					this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
-				});
+				this.setState({messageDraft: {
+					textContent: this.state.messageDraft.textContent,
+					imageContent: e.target.result,
+					audioContent: this.state.messageDraft.audioContent
+				}});
 			};
 			reader.readAsDataURL(f);
+		} else if (type === 'AUDIO') {
+			this.setState({messageDraft: {
+				textContent: this.state.messageDraft.textContent,
+				imageContent: this.state.messageDraft.imageContent,
+				audioContent: newContent
+			}});
 		}
 	}
 
 	public handleInsertEmoji = (emoji: string) => {
 		const d = this.state.messageDraft;
 		this.setState({messageDraft: {...d, textContent: d.textContent + emoji}}, () => {
-			this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
+			this.props.onValidateMessage(
+				this.state.messageDraft.textContent,
+				this.state.messageDraft.imageContent,
+				this.state.messageDraft.audioContent
+			);
 		});
 	}
 
@@ -269,7 +289,11 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public ruleChangeRevalidation = () => {
-		this.props.onValidateMessage(this.state.messageDraft.textContent, this.state.messageDraft.imageContent);
+		this.props.onValidateMessage(
+			this.state.messageDraft.textContent,
+			this.state.messageDraft.imageContent,
+			this.state.messageDraft.audioContent
+		);
 	}
 
 	public render() {
@@ -351,11 +375,12 @@ class ChatRoom extends React.Component<Props, State> {
 							</ScrollArea>
 							<UserInput
 								value={messageDraft}
-								onChange={this.handleChangeMessageDraft}
+								onMessageDraftChange={this.handleChangeMessageDraft}
 								onInsertEmoji={this.handleInsertEmoji}
 								valid={messageValid}
 								inputMinHeight={uiVariables.inputMinHeight || 1}
 								imageMessages={!!uiVariables.imageMessages}
+								audioMessages={!!uiVariables.audioMessages}
 								emojiPicker={uiVariables.emojiPicker === undefined ? true : uiVariables.emojiPicker}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}

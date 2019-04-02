@@ -19,8 +19,9 @@ import React from 'react';
 import 'emoji-mart/css/emoji-mart.css';
 import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divider, Popover} from '@material-ui/core';
 import {injectIntl, InjectedIntlProps} from 'react-intl';
-import {Send, ViewCarousel, Face, Image} from '@material-ui/icons';
+import {Send, ViewCarousel, Face, Image, Mic} from '@material-ui/icons';
 import {Picker} from 'emoji-mart';
+import VoiceMessage from './VoiceMessage';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -61,16 +62,31 @@ const styles = (theme: Theme) => createStyles({
 		paddingTop: '10px',
 		paddingLeft: '60px'
 	},
+	audioRecordingWrapper: {
+		display: 'flex',
+		flexDirection: 'row',
+		width: '15rem',
+		background: theme.fluxx.border.darker,
+		justifyContent: 'flex-end',
+		borderRadius: '3rem'
+	},
+	audioLengthText: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		paddingRight: '5px'
+	},
 	focused: {}
 });
 
 interface OwnProps {
 	value: {textContent: string, imageContent: string};
-	onChange: React.ChangeEventHandler<HTMLInputElement>;
 	onInsertEmoji: (emoji: string) => void;
 	valid: boolean;
 	inputMinHeight: number;
 	imageMessages: boolean;
+	audioMessages: boolean;
+	onMessageDraftChange: (type: 'TEXT' | 'IMAGE' | 'AUDIO', content: any) => void;
 	emojiPicker: boolean;
 	onToggleCards: () => void;
 	onSend: () => void;
@@ -82,11 +98,13 @@ type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
 interface State {
 	showEmojiSelector: boolean;
 	emojiAnchorEl?: HTMLButtonElement;
+	audioMessageEnabled: boolean;
 }
 
 class UserInput extends React.Component<Props, State> {
 	public state: State = {
-		showEmojiSelector: false
+		showEmojiSelector: false,
+		audioMessageEnabled: false
 	};
 	public imageUploadRef: HTMLInputElement;
 	public previewImageRef: HTMLImageElement;
@@ -108,7 +126,16 @@ class UserInput extends React.Component<Props, State> {
 
 	public sendMessage = () => {
 		this.props.onSend();
-		this.imageUploadRef.value = '';
+		if (this.imageUploadRef) {
+			this.imageUploadRef.value = '';
+		}
+		if (this.state.audioMessageEnabled) {
+			this.setState({audioMessageEnabled: false});
+		}
+	}
+
+	public textInputChange = (event: any) => {
+		this.props.onMessageDraftChange('TEXT', event);
 	}
 
 	public selectEmoji = (evt: React.MouseEvent<HTMLButtonElement>) => {
@@ -132,15 +159,28 @@ class UserInput extends React.Component<Props, State> {
 
 	public onFileSelect = (event: any) => {
 		this.setPreviewImage(event);
-		this.props.onChange(event);
+		this.props.onMessageDraftChange('IMAGE', event);
 	}
 
 	public setImageUploadRef = (imageUploadRef: any) => this.imageUploadRef = imageUploadRef;
 
 	public setpreviewImageRef = (previewImageRef: any) => this.previewImageRef = previewImageRef;
 
+	public changeAudioMessage = (url: string, length: number) => {
+		this.props.onMessageDraftChange('AUDIO', {url, length});
+	}
+
+	public beginAudioRecording = () => {
+		this.setState({audioMessageEnabled: true});
+	}
+
+	public stopAudioRecording = () => {
+		this.setState({audioMessageEnabled: false});
+	}
+
 	public render() {
-		const {value, onChange, valid, inputMinHeight, imageMessages, emojiPicker, onToggleCards, classes, intl} = this.props;
+		const {value, valid, inputMinHeight, imageMessages, audioMessages, onToggleCards, classes, intl, emojiPicker} = this.props;
+		const {audioMessageEnabled} = this.state;
 
 		return (
 			<div>
@@ -169,7 +209,7 @@ class UserInput extends React.Component<Props, State> {
 						placeholder={intl.formatMessage({id: 'input.typeMessage'})}
 						onKeyDown={this.handleKeyDown}
 						value={value.textContent}
-						onChange={onChange}
+						onChange={this.textInputChange}
 						inputProps={{name: 'messageInput'}}
 						rows={inputMinHeight}
 						rowsMax={25}
@@ -186,10 +226,23 @@ class UserInput extends React.Component<Props, State> {
 							<Face/>
 						</IconButton>
 					) : null}
+					{audioMessages ? (
+						audioMessageEnabled ? (
+							<VoiceMessage
+								classes={classes}
+								changeMessageDraft={this.changeAudioMessage}
+								onRemoveAudio={this.stopAudioRecording}
+							/>
+						) : (
+							<IconButton  className={classes.iconButton} onClick={this.beginAudioRecording}>
+								<Mic/>
+							</IconButton>
+						)
+					) : null}
 					{imageMessages ? (
 						<IconButton
 							color="primary"
-							className={classes.sendButton}
+							className={classes.iconButton}
 							onClick={this.openFileSelect}
 						>
 							<Image/>
