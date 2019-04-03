@@ -28,6 +28,7 @@ import defaultMessages from '../../../i18n/data.json';
 import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
+import ErrorPopUp from './ErrorPopUp';
 
 const styles = (theme: Theme) => createStyles({
 	body: {
@@ -46,6 +47,7 @@ const styles = (theme: Theme) => createStyles({
 interface State {
 	connection: WebSocket | null;
 	user: User | null;
+	rName: string | null;
 	users: User[];
 	userMap: { [key: string]: User };
 	messages: Array<TextMessage | SystemMessage>;
@@ -71,6 +73,7 @@ interface Props {
 const EMPTY_STATE: State = {
 	connection: null,
 	user: null,
+	rName: null,
 	users: [],
 	userMap: {},
 	messages: [],
@@ -94,7 +97,7 @@ const EMPTY_STATE: State = {
 };
 
 class App extends React.Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
-	public state = {...EMPTY_STATE};
+	public state = { ...EMPTY_STATE };
 
 	public componentDidMount() {
 		this.connect();
@@ -124,11 +127,11 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 			switch (msg.type) {
 				case 'TEXT':
 				case 'SYSTEM':
-					this.setState({messages: [...this.state.messages, msg]});
+					this.setState({ messages: [...this.state.messages, msg] });
 					break;
 				case 'ROOM_CREATED':
 					this.props.history.push(`/room/${msg.roomId}`);
-					this.joinRoom(msg.roomId);
+					this.joinRoom(msg.roomId, this.state.rName!);
 					break;
 				case 'ROOM_STATE':
 					this.setState({
@@ -181,7 +184,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 	}
 
 	public handleSendNewRule = (card: Card, ruleParameters: RuleParameters) => {
-		const {connection} = this.state;
+		const { connection } = this.state;
 		if (connection) {
 			const protocolMessage: NewRuleMessage = {
 				type: 'NEW_RULE',
@@ -202,12 +205,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	}
 
-	public joinRoom = (roomId: string) => {
+	public joinRoom = (roomId: string, nickname: string) => {
 		if (this.state.connection) {
 			const protocolMessage: JoinRoomMessage = {
 				type: 'JOIN_ROOM',
 				roomId,
-				nickname: this.state.user!.nickname
+				nickname
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
@@ -215,13 +218,13 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public requestJoinRoom = (nickname: string) => {
 		const roomId = get(this.props.match, 'params.id');
-		this.setState({user: {nickname, id: '', profileImg: 'default'}}, () => this.joinRoom(roomId));
+		this.setState({rName: nickname}, () => this.joinRoom(roomId, nickname));
 	}
 
 	public requestCreateRoom = (nickname: string) => {
-		this.setState({user: {nickname, id: '', profileImg: 'default'}}, () => {
+		this.setState({rName: nickname}, () => {
 			if (this.state.connection) {
-				const protocolMessage: CreateRoomMessage = {type: 'CREATE_ROOM'};
+				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM' };
 				this.state.connection.send(JSON.stringify(protocolMessage));
 			}
 		});
@@ -235,18 +238,18 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		const interval = window.setInterval(() => {
 			const ms = Math.max(turnEndTime - Date.now(), 0);
 			const seconds = Math.floor(ms / 1000);
-			this.setState({turnTime: seconds});
+			this.setState({ turnTime: seconds });
 			if (ms === 0) {
 				window.clearInterval(interval);
-				this.setState({timer: null});
+				this.setState({ timer: null });
 			}
 		}, 1000);
 
-		this.setState({timer: interval});
+		this.setState({ timer: interval });
 	}
 
 	public closeAlert = () => {
-		this.setState({alert: []});
+		this.setState({ alert: [] });
 	}
 
 	public handleValidateMessage = (message: string, image: string, audio: any) => {
@@ -297,6 +300,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 			<IntlProvider locale={locale} key={locale} messages={localMessages}>
 				<div className={classes.body}>
 					<div className={classes.bodyPad}>
+						{this.state.alert.length > 0 && (
+							<ErrorPopUp
+								onCloseAlert={this.closeAlert}
+								alerts={this.state.alert}
+							/>
+						)}
 						{(!user || !roomId) && (
 							<Menu
 								type={roomId ? 'join' : 'create'}
@@ -343,7 +352,7 @@ interface WrapperState {
 }
 
 class AppWrapper extends React.Component<{}, WrapperState> {
-	public state: WrapperState = {theme: 'light'};
+	public state: WrapperState = { theme: 'light' };
 
 	public changeTheme = (theme: keyof typeof themes) => {
 		this.setState({ theme });

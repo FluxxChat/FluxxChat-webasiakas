@@ -69,6 +69,10 @@ class MessageList extends React.Component<Props, State> {
 		}
 	}
 
+	public shouldComponentUpdate(props: Props) {
+		return this.props.messages.length !== props.messages.length;
+	}
+
 	public render() {
 		const {messages, classes, clientUser} = this.props;
 
