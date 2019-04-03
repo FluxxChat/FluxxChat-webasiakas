@@ -29,6 +29,7 @@ import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
 import ErrorPopUp from './ErrorPopUp';
+import * as sound from '../../../assets/soundeffect.mp3';
 
 const styles = (theme: Theme) => createStyles({
 	body: {
@@ -97,7 +98,10 @@ const EMPTY_STATE: State = {
 };
 
 class App extends React.Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
+
 	public state = { ...EMPTY_STATE };
+
+	private soundeffect = new Audio(sound);
 
 	public componentDidMount() {
 		this.connect();
@@ -134,6 +138,9 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					this.joinRoom(msg.roomId, this.state.rName!);
 					break;
 				case 'ROOM_STATE':
+					if (this.state.turnUserId !== msg.turnUserId && this.state.user !== null) {
+						this.soundAlert();
+					}
 					this.setState({
 						users: msg.users,
 						userMap: msg.users.reduce((m, u) => ({ ...m, [u.id]: u }), {}),
@@ -167,6 +174,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					break;
 			}
 		});
+	}
+
+	public soundAlert = () => {
+		this.soundeffect.play();
 	}
 
 	public handleSendTextMessage = (textMessage: string, imageMessage: string, audioMessage: {url: string, length: number}) => {

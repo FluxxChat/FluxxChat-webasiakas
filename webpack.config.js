@@ -36,6 +36,10 @@ module.exports = env => ({
 				use: ['style-loader', 'css-loader']
 			},
 			{
+				test: /\.mp3$/,
+				loader: 'file-loader'
+			},
+			{
 				test: /\.tsx?$/,
 				exclude: /node_modules/,
 				use: {
@@ -62,7 +66,7 @@ module.exports = env => ({
 		]
 	},
 	resolve: {
-		extensions: ['.tsx', '.ts', '.js', '.css']
+		extensions: ['.tsx', '.ts', '.js', '.css', '.mp3']
 	},
 	output: {
 		filename: '[name].js',
