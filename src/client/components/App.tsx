@@ -22,9 +22,9 @@ import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@ma
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
 import {IntlProvider, addLocaleData} from 'react-intl';
-import fi from 'react-intl/locale-data/fi';
 import en from 'react-intl/locale-data/en';
-import localeData from '../../../i18n/data.json';
+import fi from 'react-intl/locale-data/fi';
+import defaultMessages from '../../../i18n/data.json';
 import themes from '../themes';
 import ChatRoom from '../scenes/ChatRoom';
 import Menu from './Menu';
@@ -61,6 +61,7 @@ interface State {
 	messageBlockingRules: string[];
 	variables: UiVariables;
 	locale: string;
+	translatedMessages: {[key: string]: {[key: string]: string}};
 	theme: keyof typeof themes;
 	alert: string[];
 }
@@ -87,9 +88,11 @@ const EMPTY_STATE: State = {
 	messageBlockingRules: [],
 	variables: {
 		inputMinHeight: 1,
-		imageMessages: false
+		imageMessages: false,
+		audioMessages: false
 	},
-	locale: 'fi',
+	locale: 'en',
+	translatedMessages: defaultMessages,
 	theme: 'light'
 };
 
@@ -141,7 +144,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						playableCardsLeft: msg.playableCardsLeft,
 						variables: {
 							inputMinHeight: msg.variables.inputMinHeight,
-							imageMessages: msg.variables.imageMessages
+							imageMessages: msg.variables.imageMessages,
+							audioMessages: msg.variables.audioMessages
 						}
 					});
 					this.startTurnTimer(msg.turnEndTime);
@@ -157,19 +161,22 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						this.setState({ messageBlockingRules: [] });
 					}
 					break;
+				case 'LANGUAGE_DATA':
+					this.updateLocalization(msg.messages);
 				default:
 					break;
 			}
 		});
 	}
 
-	public handleSendTextMessage = (textMessage: string, image: string) => {
+	public handleSendTextMessage = (textMessage: string, imageMessage: string, audioMessage: {url: string, length: number}) => {
 		const { connection } = this.state;
 		if (connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
 				textContent: textMessage,
-				imageContent: image,
+				imageContent: imageMessage,
+				audioContent: audioMessage,
 				validateOnly: false
 			};
 			connection.send(JSON.stringify(protocolMessage));
@@ -245,37 +252,57 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({ alert: [] });
 	}
 
-	public handleValidateMessage = (message: string, image: string) => {
+	public handleValidateMessage = (message: string, image: string, audio: any) => {
 		if (this.state.connection) {
 			const protocolMessage: TextMessage = {
 				type: 'TEXT',
 				textContent: message,
 				imageContent: image,
+				audioContent: audio,
 				validateOnly: true
 			};
 			this.state.connection.send(JSON.stringify(protocolMessage));
 		}
 	};
 
+<<<<<<< HEAD
 	public handleChangeLocale = (locale: keyof typeof localeData) => {
 		this.setState({ locale });
+=======
+	public handleChangeLocale = (newLocale: keyof typeof defaultMessages) => {
+		this.setState({locale: newLocale});
+	}
+
+	public updateLocalization(translatedMessages: {[key: string]: {[key: string]: string}}) {
+		const updatedMessages = this.state.translatedMessages;
+
+		// This merges any new translations into the existing translations
+		for (const locale in translatedMessages) {
+			if (!translatedMessages.hasOwnProperty(locale)) { continue; }
+			for (const key in translatedMessages[locale]) {
+				if (translatedMessages[locale].hasOwnProperty(key)) { updatedMessages[locale][key] = translatedMessages[locale][key]; }
+			}
+		}
+		this.setState({translatedMessages: updatedMessages});
+		this.setState({locale: this.state.locale}); // this is required to get IntlProvider to reload
+>>>>>>> origin/master
 	}
 
 	public render() {
 		// Match contains information about the matched react-router path
 		const {match, classes, onChangeTheme} = this.props;
-		const {user, messages, activeCards, ownCards, playableCardsLeft, variables, locale} = this.state;
+		const {user, messages, activeCards, ownCards, playableCardsLeft, variables, locale, translatedMessages} = this.state;
 
 		// roomId is defined if current path is something like "/room/Aisj23".
 		const roomId = get(match, 'params.id');
 
-		// Sets up translations
+		// loads date formats etc.
 		addLocaleData(fi);
 		addLocaleData(en);
-		const translatedMessages = (locale === 'fi') ? localeData.fi : localeData.en;
+		const localMessages = translatedMessages[locale];
 
 		return (
-			<IntlProvider locale={locale} key={locale} messages={translatedMessages}>
+			<IntlProvider locale={locale} key={locale} messages={localMessages}>
 				<div className={classes.body}>
 					<div className={classes.bodyPad}>
 						{this.state.alert.length > 0 && (
