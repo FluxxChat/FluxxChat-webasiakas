@@ -265,10 +265,6 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 	};
 
-<<<<<<< HEAD
-	public handleChangeLocale = (locale: keyof typeof localeData) => {
-		this.setState({ locale });
-=======
 	public handleChangeLocale = (newLocale: keyof typeof defaultMessages) => {
 		this.setState({locale: newLocale});
 	}
@@ -285,7 +281,6 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		}
 		this.setState({translatedMessages: updatedMessages});
 		this.setState({locale: this.state.locale}); // this is required to get IntlProvider to reload
->>>>>>> origin/master
 	}
 
 	public render() {
