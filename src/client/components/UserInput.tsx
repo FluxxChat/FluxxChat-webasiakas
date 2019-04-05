@@ -19,7 +19,7 @@ import React from 'react';
 import 'emoji-mart/css/emoji-mart.css';
 import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divider, Popover} from '@material-ui/core';
 import {injectIntl, InjectedIntlProps} from 'react-intl';
-import {Send, ViewCarousel, Face, Image, Mic} from '@material-ui/icons';
+import {Send, ViewCarousel, Face, Image, Mic, Delete} from '@material-ui/icons';
 import {Picker} from 'emoji-mart';
 import VoiceMessage from './VoiceMessage';
 
@@ -86,8 +86,9 @@ interface OwnProps {
 	inputMinHeight: number;
 	imageMessages: boolean;
 	audioMessages: boolean;
-	onMessageDraftChange: (type: 'TEXT' | 'IMAGE' | 'AUDIO', content: any) => void;
+	onMessageDraftChange: (event: MessageDraftChangeEvent) => void;
 	emojiPicker: boolean;
+	disableBackspace: boolean;
 	onToggleCards: () => void;
 	onSend: () => void;
 	messageBlockedAnimation: (blocked: boolean) => void;
@@ -99,6 +100,26 @@ interface State {
 	showEmojiSelector: boolean;
 	emojiAnchorEl?: HTMLButtonElement;
 	audioMessageEnabled: boolean;
+}
+
+export type MessageDraftChangeEvent = TextMessageDraftChangeEvent | ImageMessageDraftChangeEvent | AudioMessageDraftChangeEvent;
+
+interface TextMessageDraftChangeEvent {
+	type: 'TEXT';
+	newContent: string;
+}
+
+interface ImageMessageDraftChangeEvent {
+	type: 'IMAGE';
+	event: React.ChangeEvent<HTMLInputElement>;
+}
+
+interface AudioMessageDraftChangeEvent {
+	type: 'AUDIO';
+	newContent: {
+		url: string;
+		length: number;
+	};
 }
 
 class UserInput extends React.Component<Props, State> {
@@ -134,8 +155,14 @@ class UserInput extends React.Component<Props, State> {
 		}
 	}
 
-	public textInputChange = (event: any) => {
-		this.props.onMessageDraftChange('TEXT', event);
+	public textInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		if (!this.props.disableBackspace || event.target.value.length > this.props.value.textContent.length) {
+			this.props.onMessageDraftChange({type: 'TEXT', newContent: event.target.value});
+		}
+	}
+
+	public clearInput = () => {
+		this.props.onMessageDraftChange({type: 'TEXT', newContent: ''});
 	}
 
 	public selectEmoji = (evt: React.MouseEvent<HTMLButtonElement>) => {
@@ -159,7 +186,7 @@ class UserInput extends React.Component<Props, State> {
 
 	public onFileSelect = (event: any) => {
 		this.setPreviewImage(event);
-		this.props.onMessageDraftChange('IMAGE', event);
+		this.props.onMessageDraftChange({type: 'IMAGE', event});
 	}
 
 	public setImageUploadRef = (imageUploadRef: any) => this.imageUploadRef = imageUploadRef;
@@ -167,7 +194,7 @@ class UserInput extends React.Component<Props, State> {
 	public setpreviewImageRef = (previewImageRef: any) => this.previewImageRef = previewImageRef;
 
 	public changeAudioMessage = (url: string, length: number) => {
-		this.props.onMessageDraftChange('AUDIO', {url, length});
+		this.props.onMessageDraftChange({type: 'AUDIO', newContent: {url, length}});
 	}
 
 	public beginAudioRecording = () => {
@@ -179,7 +206,7 @@ class UserInput extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {value, valid, inputMinHeight, imageMessages, audioMessages, onToggleCards, classes, intl, emojiPicker} = this.props;
+		const {value, valid, inputMinHeight, imageMessages, audioMessages, onToggleCards, classes, intl, emojiPicker, disableBackspace} = this.props;
 		const {audioMessageEnabled} = this.state;
 
 		return (
@@ -254,6 +281,11 @@ class UserInput extends React.Component<Props, State> {
 								multiple={false}
 								accept="image/*"
 							/>
+						</IconButton>
+					) : null}
+					{!valid && disableBackspace ? (
+						<IconButton className={classes.iconButton} onClick={this.clearInput}>
+							<Delete/>
 						</IconButton>
 					) : null}
 					<IconButton

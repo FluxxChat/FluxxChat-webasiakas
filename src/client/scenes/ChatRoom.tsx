@@ -32,14 +32,14 @@ import {
 import ScrollArea from 'react-scrollbar';
 import localeData from '../../../i18n/data.json';
 import UserList from '../components/UserList';
-import UserInput from '../components/UserInput';
+import UserInput, {MessageDraftChangeEvent} from '../components/UserInput';
 import RuleList from '../components/RuleList';
 import CardParameterInput from '../components/CardParameterInput';
 import Header from '../components/Header';
 import CardComponent from '../components/CardComponent';
 import MessageList from '../components/MessageList';
-import { FormattedRuleDescription } from '../components/FormattedRuleDescription';
-import { FormattedMessage } from 'react-intl';
+import {FormattedRuleDescription} from '../components/FormattedRuleDescription';
+import {FormattedMessage} from 'react-intl';
 
 const styles = (theme: Theme) => createStyles({
 	sendDiv: {},
@@ -190,10 +190,10 @@ class ChatRoom extends React.Component<Props, State> {
 		}
 	}
 
-	public handleChangeMessageDraft = (type: 'TEXT' | 'IMAGE' | 'AUDIO', newContent: any) => {
-		if (type === 'TEXT') {
+	public handleChangeMessageDraft = (event: MessageDraftChangeEvent) => {
+		if (event.type === 'TEXT') {
 			this.setState({messageDraft: {
-				textContent: newContent.target.value,
+				textContent: event.newContent,
 				imageContent: this.state.messageDraft.imageContent,
 				audioContent: this.state.messageDraft.audioContent
 			}}, () => {
@@ -203,8 +203,8 @@ class ChatRoom extends React.Component<Props, State> {
 					this.state.messageDraft.audioContent
 				);
 			});
-		} else if (type === 'IMAGE') {
-			const f = newContent.target.files[0];
+		} else if (event.type === 'IMAGE') {
+			const f = event.event.target.files![0];
 			const reader = new FileReader();
 			reader.onload = (e: any) => {
 				this.setState({messageDraft: {
@@ -214,11 +214,11 @@ class ChatRoom extends React.Component<Props, State> {
 				}});
 			};
 			reader.readAsDataURL(f);
-		} else if (type === 'AUDIO') {
+		} else if (event.type === 'AUDIO') {
 			this.setState({messageDraft: {
 				textContent: this.state.messageDraft.textContent,
 				imageContent: this.state.messageDraft.imageContent,
-				audioContent: newContent
+				audioContent: event.newContent
 			}});
 		}
 	}
@@ -396,6 +396,7 @@ class ChatRoom extends React.Component<Props, State> {
 								imageMessages={!!uiVariables.imageMessages}
 								audioMessages={!!uiVariables.audioMessages}
 								emojiPicker={uiVariables.emojiPicker === undefined ? true : uiVariables.emojiPicker}
+								disableBackspace={!!uiVariables.disableBackspace}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 								messageBlockedAnimation={this.messageBlockedAnimation}
