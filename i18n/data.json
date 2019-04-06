@@ -34,12 +34,11 @@
         "theme.dark": "Dark",
         "server.userConnected": "{nickname} connected",
         "server.userDisconnected": "{nickname} disconnected",
-		"server.newRule": "New rule: ",
-		"thread.open": "Open thread",
-		"thread.close": "Close thread",
-		"thread.respond": "Respond to thread",
-		"thread.responseLabel": "Reply:"
-		
+        "server.newRule": "New rule: ",
+        "thread.open": "Open thread",
+        "thread.close": "Close thread",
+        "thread.respond": "Respond to thread",
+        "thread.responseLabel": "Reply:"	
     },
     "fi": {
         "login.username": "Nimimerkki",
@@ -77,9 +76,9 @@
         "server.userConnected": "{nickname} liittyi huoneeseen",
         "server.userDisconnected": "{nickname} poistui huoneesta",
         "server.newRule": "Uusi sääntö: ",
-		"thread.open": "Avaa ketju",
-		"thread.close": "Sulje ketju",
-		"thread.respond": "Vastaa ketjuun",
-		"thread.responseLabel": "Vastaa:"
+        "thread.open": "Avaa ketju",
+        "thread.close": "Sulje ketju",
+        "thread.respond": "Vastaa ketjuun",
+        "thread.responseLabel": "Vastaa:"
     }
 }
