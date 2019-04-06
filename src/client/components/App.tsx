@@ -17,7 +17,19 @@
 
 import React from 'react';
 import {withRouter, RouteComponentProps} from 'react-router-dom';
-import {Card, TextMessage, CreateRoomMessage, JoinRoomMessage, Message, NewRuleMessage, User, ProfileImgChangeMessage, RuleParameters, SystemMessage, UiVariables} from 'fluxxchat-protokolla';
+import {
+	Card,
+	TextMessage,
+	CreateRoomMessage,
+	JoinRoomMessage,
+	Message,
+	NewRuleMessage,
+	User,
+	ProfileImgChangeMessage,
+	RuleParameters,
+	SystemMessage,
+	UiVariables
+} from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
 import {hot} from 'react-hot-loader/root';
@@ -86,7 +98,8 @@ const EMPTY_STATE: State = {
 	variables: {
 		inputMinHeight: 1,
 		imageMessages: false,
-		audioMessages: false
+		audioMessages: false,
+		threads: false
 	},
 	locale: 'en',
 	translatedMessages: defaultMessages,
@@ -142,7 +155,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						variables: {
 							inputMinHeight: msg.variables.inputMinHeight,
 							imageMessages: msg.variables.imageMessages,
-							audioMessages: msg.variables.audioMessages
+							audioMessages: msg.variables.audioMessages,
+							threads: msg.variables.threads
 						}
 					});
 					this.startTurnTimer(msg.turnEndTime);
@@ -166,7 +180,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		});
 	}
 
-	public handleSendTextMessage = (textMessage: string, imageMessage: string, audioMessage: {url: string, length: number}) => {
+	public handleSendTextMessage = (textMessage: string, imageMessage: string, audioMessage: any, respondingTo: any | null) => {
 		const { connection } = this.state;
 		if (connection) {
 			const protocolMessage: TextMessage = {
@@ -174,7 +188,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 				textContent: textMessage,
 				imageContent: imageMessage,
 				audioContent: audioMessage,
-				validateOnly: false
+				validateOnly: false,
+				thread: respondingTo
 			};
 			connection.send(JSON.stringify(protocolMessage));
 		}
