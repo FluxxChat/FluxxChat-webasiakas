@@ -82,6 +82,12 @@ const styles = (theme: Theme) => createStyles({
 		borderTop: `1px solid ${theme.fluxx.border.darker}`,
 		background: theme.fluxx.cards.background
 	},
+	tabularNumber: {
+		minWidth: '3rem',
+		display: 'inline-block',
+		textAlign: 'right',
+		fontVariantNumeric: 'tabular-nums'
+	},
 	cardArea: {
 		flex: '0 0 auto',
 		display: 'flex',
@@ -229,6 +235,17 @@ class ChatRoom extends React.Component<Props, State> {
 		}
 	}
 
+	public handleInsertEmoji = (emoji: string) => {
+		const d = this.state.messageDraft;
+		this.setState({messageDraft: {...d, textContent: d.textContent + emoji}}, () => {
+			this.props.onValidateMessage(
+				this.state.messageDraft.textContent,
+				this.state.messageDraft.imageContent,
+				this.state.messageDraft.audioContent
+			);
+		});
+	}
+
 	public componentDidUpdate(_prevProps: Props, prevState: State) {
 		if (this.state.selectedCard && !prevState.showCard && this.state.showCard) {
 			const defaultRuleParameters = {};
@@ -371,8 +388,16 @@ class ChatRoom extends React.Component<Props, State> {
 								respondingTo={respondingTo}
 								onToggleThread={this.onToggleThread}
 							/>
-							<div className={classes.turnInfo}>
-								{this.props.turnUser.id === this.props.user.id ? <FormattedMessage id="room.playableCardsLeft" values={{n: this.props.playableCardsLeft}}/> : <FormattedMessage id="room.notYourTurn"/>}
+							<div className={classes.turnInfo}> {
+								((this.props.turnUser.id === this.props.user.id &&
+									<span>
+									<FormattedMessage id="room.notYourTurn"/>, <span className={classes.tabularNumber}>{this.props.turnTime}</span> <FormattedMessage id="room.secondsInCurrentTurn"/>
+								</span>)
+								&&
+								<span>
+									<FormattedMessage id="room.playableCardsLeft" values={{n: this.props.playableCardsLeft}}/>, <span className={classes.tabularNumber}>{this.props.turnTime}</span> <FormattedMessage id="room.secondsInYourTurn"/>
+								</span>
+								)}
 							</div>
 							<ScrollArea
 								ref={this.cardScrollRef}
@@ -400,12 +425,14 @@ class ChatRoom extends React.Component<Props, State> {
 							<UserInput
 								value={messageDraft}
 								onMessageDraftChange={this.handleChangeMessageDraft}
+								onInsertEmoji={this.handleInsertEmoji}
 								valid={messageValid}
-								inputMinHeight={uiVariables.inputMinHeight ? uiVariables.inputMinHeight : 1}
-								imageMessages={uiVariables.imageMessages ? uiVariables.imageMessages : false}
-								audioMessages={uiVariables.audioMessages ? uiVariables.audioMessages : false}
-								threads={uiVariables.threads ? uiVariables.threads : false}
+								inputMinHeight={uiVariables.inputMinHeight || 1}
+								imageMessages={!!uiVariables.imageMessages}
+								audioMessages={!!uiVariables.audioMessages}
+								threads={!!uiVariables.threads}
 								respondingTo={respondingTo}
+								emojiPicker={uiVariables.emojiPicker === undefined ? true : uiVariables.emojiPicker}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 								messageBlockedAnimation={this.messageBlockedAnimation}

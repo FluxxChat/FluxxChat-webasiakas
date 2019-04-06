@@ -83,6 +83,10 @@ class MessageList extends React.Component<Props, State> {
 			this.setState({currentlyOpenThread: {senderId, timestamp}});
 		}
 		this.props.onToggleThread(senderId, senderNickname, timestamp);
+  }
+                             
+	public shouldComponentUpdate(props: Props) {
+		return this.props.messages.length !== props.messages.length;
 	}
 
 	public render() {

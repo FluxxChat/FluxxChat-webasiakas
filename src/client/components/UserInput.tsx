@@ -16,12 +16,11 @@
  */
 
 import React from 'react';
-import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divider} from '@material-ui/core';
-import SendIcon from '@material-ui/icons/Send';
-import CardsIcon from '@material-ui/icons/ViewCarousel';
-import ImageIcon from '@material-ui/icons/InsertPhoto';
-import MicrophoneIcon from '@material-ui/icons/Mic';
+import 'emoji-mart/css/emoji-mart.css';
+import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divider, Popover} from '@material-ui/core';
 import {injectIntl, InjectedIntlProps, FormattedMessage} from 'react-intl';
+import {Send, ViewCarousel, Face, Image, Mic} from '@material-ui/icons';
+import {Picker} from 'emoji-mart';
 import VoiceMessage from './VoiceMessage';
 import moment from 'moment';
 import CancelIcon from '@material-ui/icons/Cancel';
@@ -118,6 +117,7 @@ const styles = (theme: Theme) => createStyles({
 
 interface OwnProps {
 	value: {textContent: string, imageContent: string};
+	onInsertEmoji: (emoji: string) => void;
 	valid: boolean;
 	inputMinHeight: number;
 	imageMessages: boolean;
@@ -125,22 +125,28 @@ interface OwnProps {
 	threads: boolean;
 	respondingTo: {senderId: string, senderNickname: string, timestamp: string} | null;
 	onMessageDraftChange: (type: 'TEXT' | 'IMAGE' | 'AUDIO', content: any) => void;
+	emojiPicker: boolean;
 	onToggleCards: () => void;
 	onSend: () => void;
 	messageBlockedAnimation: (blocked: boolean) => void;
 	cancelResponse: () => void;
 }
 
+type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
+
 interface State {
+	showEmojiSelector: boolean;
+	emojiAnchorEl?: HTMLButtonElement;
 	audioMessageEnabled: boolean;
 }
 
-type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
-
 class UserInput extends React.Component<Props, State> {
-	public state = {audioMessageEnabled: false};
-	public imageUploadRef: any;
-	public previewImageRef: any;
+	public state: State = {
+		showEmojiSelector: false,
+		audioMessageEnabled: false
+	};
+	public imageUploadRef: HTMLInputElement;
+	public previewImageRef: HTMLImageElement;
 
 	public handleKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
@@ -171,6 +177,19 @@ class UserInput extends React.Component<Props, State> {
 		this.props.onMessageDraftChange('TEXT', event);
 	}
 
+	public selectEmoji = (evt: React.MouseEvent<HTMLButtonElement>) => {
+		this.setState({showEmojiSelector: true, emojiAnchorEl: evt.currentTarget});
+	}
+
+	public closeEmojiSelector = () => {
+		this.setState({showEmojiSelector: false});
+	}
+
+	public handleSelectEmoji = (emoji: any) => {
+		this.setState({showEmojiSelector: false});
+		this.props.onInsertEmoji(emoji.native);
+	}
+
 	public setPreviewImage = (evt: any) => {
 		this.previewImageRef.src = URL.createObjectURL(evt.target.files[0]);
 	}
@@ -199,19 +218,30 @@ class UserInput extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {value, valid, inputMinHeight, imageMessages, audioMessages, threads, respondingTo, onToggleCards, cancelResponse, classes, intl} = this.props;
+		const {value, valid, inputMinHeight, imageMessages, audioMessages, threads, respondingTo, onToggleCards, cancelResponse, classes, intl, emojiPicker} = this.props;
 		const {audioMessageEnabled} = this.state;
 
 		return (
 			<div>
+				<Popover
+					open={this.state.showEmojiSelector}
+					anchorEl={this.state.emojiAnchorEl}
+					onClose={this.closeEmojiSelector}
+				>
+					<Picker
+						onSelect={this.handleSelectEmoji}
+						title={intl.formatMessage({id: 'input.selectEmoji'})}
+						emoji="point_up_2"
+					/>
+				</Popover>
 				<img
 					className={classes.previewImage}
-					ref={previewImageRef => this.previewImageRef = previewImageRef}
+					ref={previewImageRef => this.previewImageRef = previewImageRef!}
 					style={value.imageContent === '' ? {display: 'none'} : {display: 'block'}}
 				/>
 				<div className={valid ? classes.root : classes.disabled}>
 					<IconButton className={classes.iconButton} onClick={onToggleCards}>
-						<CardsIcon/>
+						<ViewCarousel/>
 					</IconButton>
 					{threads && respondingTo && respondingTo.senderId && (
 						<div className={classes.threadResponseWrapper}>
@@ -248,6 +278,16 @@ class UserInput extends React.Component<Props, State> {
 						multiline
 					/>
 					<Divider />
+					{emojiPicker ? (
+						<IconButton
+							color="primary"
+							className={classes.sendButton}
+							onClick={this.selectEmoji}
+							name="selectEmoji"
+						>
+							<Face/>
+						</IconButton>
+					) : null}
 					{audioMessages ? (
 						audioMessageEnabled ? (
 							<VoiceMessage
@@ -257,7 +297,7 @@ class UserInput extends React.Component<Props, State> {
 							/>
 						) : (
 							<IconButton  className={classes.iconButton} onClick={this.beginAudioRecording}>
-								<MicrophoneIcon/>
+								<Mic/>
 							</IconButton>
 						)
 					) : null}
@@ -267,7 +307,7 @@ class UserInput extends React.Component<Props, State> {
 							className={classes.iconButton}
 							onClick={this.openFileSelect}
 						>
-							<ImageIcon/>
+							<Image/>
 							<input
 								type="file"
 								onChange={this.onFileSelect}
@@ -285,7 +325,7 @@ class UserInput extends React.Component<Props, State> {
 						disabled={!valid}
 						name="messageSend"
 					>
-						<SendIcon/>
+						<Send/>
 					</IconButton>
 				</div>
 			</div>
