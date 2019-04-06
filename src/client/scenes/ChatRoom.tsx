@@ -152,7 +152,7 @@ interface Props extends WithStyles<typeof styles> {
 	messageValid: boolean;
 	messageBlockingRules: string[];
 	uiVariables: UiVariables;
-	onSendMessage: (textmessage: string, image: string, audio: any) => void;
+	onSendMessage: (textmessage: string, image: string, audio: any, response: {senderId: string, timestamp: string} | null) => void;
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
 	onValidateMessage: (textmessage: string, image: string, audio: any) => void;
 	onChangeTheme: (theme: string) => void;
@@ -167,6 +167,7 @@ interface State {
 	selectedCard: Card | null;
 	ruleParameters: RuleParameters;
 	messageBlockedAnimation: boolean;
+	respondingTo: {senderId: string, senderNickname: string, timestamp: string} | null;
 }
 
 class ChatRoom extends React.Component<Props, State> {
@@ -176,7 +177,8 @@ class ChatRoom extends React.Component<Props, State> {
 		selectedCard: null,
 		showCard: false,
 		ruleParameters: {},
-		messageBlockedAnimation: false
+		messageBlockedAnimation: false,
+		respondingTo: null
 	};
 
 	public cardScrollRef = React.createRef<any>();
@@ -184,8 +186,18 @@ class ChatRoom extends React.Component<Props, State> {
 	public handleSendMessage = () => {
 		const {messageDraft} = this.state;
 		if ((messageDraft.textContent || messageDraft.imageContent || messageDraft.audioContent.url) && this.props.messageValid) {
-			this.setState({messageDraft: {textContent: '', imageContent: '', audioContent: {url: '', length: 0}}}, () => {
-				this.props.onSendMessage(messageDraft.textContent, messageDraft.imageContent, messageDraft.audioContent);
+			this.setState({messageDraft: {
+				textContent: '',
+				imageContent: '',
+				audioContent: {url: '', length: 0},
+				respondingTo: null
+			}}, () => {
+				this.props.onSendMessage(
+					messageDraft.textContent,
+					messageDraft.imageContent,
+					messageDraft.audioContent,
+					this.state.respondingTo
+				);
 			});
 		}
 	}
@@ -302,6 +314,22 @@ class ChatRoom extends React.Component<Props, State> {
 		);
 	}
 
+	public onToggleThread = (senderId: string, senderNickname: string, timestamp: string) => {
+		if (senderId === '' && senderNickname === '' && timestamp === '') {
+			this.setState({respondingTo: null});
+		} else {
+			this.setState({respondingTo: {
+				senderId,
+				senderNickname,
+				timestamp
+			}});
+		}
+	}
+
+	public onCancelResponse = () => {
+		this.setState({respondingTo: null});
+	}
+
 	public render() {
 		const {
 			messages,
@@ -323,7 +351,8 @@ class ChatRoom extends React.Component<Props, State> {
 			showCards,
 			showCard,
 			ruleParameters,
-			messageBlockedAnimation
+			messageBlockedAnimation,
+			respondingTo
 		} = this.state;
 
 		return (
@@ -352,7 +381,13 @@ class ChatRoom extends React.Component<Props, State> {
 					<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale} onChangeAvatar={onChangeAvatar}/>
 					<div className={classes.chatContainer}>
 						<div className={classes.messageArea}>
-							<MessageList clientUser={user} messages={messages}/>
+							<MessageList
+								clientUser={user}
+								messages={messages}
+								variables={uiVariables}
+								respondingTo={respondingTo}
+								onToggleThread={this.onToggleThread}
+							/>
 							<div className={classes.turnInfo}> {
 								((this.props.turnUser.id === this.props.user.id &&
 									<span>
@@ -395,10 +430,13 @@ class ChatRoom extends React.Component<Props, State> {
 								inputMinHeight={uiVariables.inputMinHeight || 1}
 								imageMessages={!!uiVariables.imageMessages}
 								audioMessages={!!uiVariables.audioMessages}
+								threads={!!uiVariables.threads}
+								respondingTo={respondingTo}
 								emojiPicker={uiVariables.emojiPicker === undefined ? true : uiVariables.emojiPicker}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 								messageBlockedAnimation={this.messageBlockedAnimation}
+								cancelResponse={this.onCancelResponse}
 							/>
 						</div>
 					</div>

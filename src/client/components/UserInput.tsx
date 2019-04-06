@@ -18,10 +18,12 @@
 import React from 'react';
 import 'emoji-mart/css/emoji-mart.css';
 import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divider, Popover} from '@material-ui/core';
-import {injectIntl, InjectedIntlProps} from 'react-intl';
+import {injectIntl, InjectedIntlProps, FormattedMessage} from 'react-intl';
 import {Send, ViewCarousel, Face, Image, Mic} from '@material-ui/icons';
 import {Picker} from 'emoji-mart';
 import VoiceMessage from './VoiceMessage';
+import moment from 'moment';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -76,6 +78,40 @@ const styles = (theme: Theme) => createStyles({
 		justifyContent: 'center',
 		paddingRight: '5px'
 	},
+	threadResponseWrapper: {
+		display: 'flex',
+		flexDirection: 'row',
+		background: theme.fluxx.border.darker,
+		justifyContent: 'flex-end',
+		borderRadius: '3rem'
+	},
+	threadResponseInfoContainer: {
+		alignSelf: 'center',
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'flex-end'
+	},
+	threadResponseInfo: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between'
+	},
+	threadResponseLabel: {
+		fontSize: '1.2rem',
+		marginLeft: '3.2rem',
+		opacity: 0.8
+	},
+	messageSender: {
+		alignSelf: 'center',
+		marginLeft: '1.5rem',
+		marginRight: '1rem',
+		opacity: 0.8
+	},
+	messageTimestamp: {
+		alignSelf: 'center',
+		fontSize: '1rem',
+		opacity: 0.7
+	},
 	focused: {}
 });
 
@@ -86,11 +122,14 @@ interface OwnProps {
 	inputMinHeight: number;
 	imageMessages: boolean;
 	audioMessages: boolean;
+	threads: boolean;
+	respondingTo: {senderId: string, senderNickname: string, timestamp: string} | null;
 	onMessageDraftChange: (type: 'TEXT' | 'IMAGE' | 'AUDIO', content: any) => void;
 	emojiPicker: boolean;
 	onToggleCards: () => void;
 	onSend: () => void;
 	messageBlockedAnimation: (blocked: boolean) => void;
+	cancelResponse: () => void;
 }
 
 type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
@@ -179,7 +218,7 @@ class UserInput extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {value, valid, inputMinHeight, imageMessages, audioMessages, onToggleCards, classes, intl, emojiPicker} = this.props;
+		const {value, valid, inputMinHeight, imageMessages, audioMessages, threads, respondingTo, onToggleCards, cancelResponse, classes, intl, emojiPicker} = this.props;
 		const {audioMessageEnabled} = this.state;
 
 		return (
@@ -204,6 +243,29 @@ class UserInput extends React.Component<Props, State> {
 					<IconButton className={classes.iconButton} onClick={onToggleCards}>
 						<ViewCarousel/>
 					</IconButton>
+					{threads && respondingTo && respondingTo.senderId && (
+						<div className={classes.threadResponseWrapper}>
+							<div className={classes.threadResponseInfoContainer}>
+								<div className={classes.threadResponseLabel}>
+									<FormattedMessage id="thread.responseLabel"/>
+								</div>
+								<div className={classes.threadResponseInfo}>
+									<div className={classes.messageSender}>
+										{respondingTo.senderNickname}
+									</div>
+									<div className={classes.messageTimestamp}>
+										{moment(respondingTo.timestamp).format('HH:mm')}
+									</div>
+								</div>
+							</div>
+							<IconButton
+								className={classes.iconButton}
+								onClick={cancelResponse}
+							>
+								<CancelIcon/>
+							</IconButton>
+						</div>
+					)}
 					<InputBase
 						className={classes.messageField}
 						placeholder={intl.formatMessage({id: 'input.typeMessage'})}

@@ -23,10 +23,14 @@ import moment from 'moment';
 import {withStyles, createStyles, WithStyles, Theme, IconButton} from '@material-ui/core';
 import PlayIcon from '@material-ui/icons/PlayCircleFilled';
 import PauseIcon from '@material-ui/icons/PauseCircleFilled';
+import {FormattedMessage} from 'react-intl';
+import MessageThread from './MessageThread';
 
 const styles = (theme: Theme) => createStyles({
 	own: {},
+	threadLinkTrue: {},
 	root: {
+		minHeight: '54px',
 		display: 'flex',
 		justifyContent: 'flex-start',
 		'&$own': {
@@ -34,8 +38,11 @@ const styles = (theme: Theme) => createStyles({
 		}
 	},
 	message: {
+		minWidth: '20rem',
+		maxWidth: '90%',
 		display: 'flex',
-		flexDirection: 'column',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
 		fontSize: '1.2rem',
 		margin: '0.2rem 1rem',
 		padding: '0.8rem 1.2rem',
@@ -45,6 +52,19 @@ const styles = (theme: Theme) => createStyles({
 		boxShadow: theme.fluxx.chat.messages.message.shadow,
 		'$root$own &': {
 			background: theme.fluxx.chat.messages.ownMessage.background
+		}
+	},
+	messageLeftWrapper: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'flex-end'
+	},
+	messageRightWrapper: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'flex-end',
+		'&$threadLinkTrue': {
+			justifyContent: 'space-between'
 		}
 	},
 	messageSender: {
@@ -59,7 +79,6 @@ const styles = (theme: Theme) => createStyles({
 	},
 	messageContent: {
 		flex: 1,
-		minWidth: '10rem',
 		wordBreak: 'break-word',
 		'& > :first-child': {
 			marginTop: 0
@@ -91,17 +110,37 @@ const styles = (theme: Theme) => createStyles({
 		paddingLeft: '5px'
 	},
 	preformat: {
-		whiteSpace: 'pre'
+		whiteSpace: 'pre-wrap'
 	},
 	messageTimestamp: {
 		display: 'flex',
-		alignItems: 'flex-end',
-		marginLeft: '6rem',
+		justifyContent: 'flex-end',
 		fontSize: '1rem',
 		opacity: 0.6
 	},
 	iconButton: {
 		color: theme.fluxx.icon.primary
+	},
+	threadLinkWrapper: {
+		width: '17rem',
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'flex-end'
+	},
+	threadLink: {
+		marginLeft: '1.5rem',
+		marginBottom: '0.4rem',
+		fontWeight: 600,
+		fontSize: '1.2rem',
+		textDecoration: 'underline',
+		cursor: 'pointer',
+		opacity: 0.6
+	},
+	responsesAmount: {
+		marginBottom: '0.4rem',
+		fontWeight: 600,
+		fontSize: '1.2rem',
+		opacity: 0.6
 	}
 });
 
@@ -109,6 +148,10 @@ interface Props extends WithStyles<typeof styles> {
 	message: TextMessage;
 	previousMessage?: TextMessage | SystemMessage;
 	clientUser: User;
+	threads: boolean;
+	responses: TextMessage[];
+	threadOpen: boolean;
+	onToggleThread: (senderId: string, senderNickname: string, timestamp: string) => void;
 }
 
 interface State {
@@ -132,8 +175,20 @@ class PlayerTextMessage extends React.Component<Props, State> {
 		this.setState({audioPlayback: false});
 	}
 
+	public openThread = () => {
+		if (typeof this.props.message.senderId === 'string'
+		&& typeof this.props.message.senderNickname === 'string'
+		&& typeof this.props.message.timestamp === 'string') {
+			this.props.onToggleThread(this.props.message.senderId, this.props.message.senderNickname, this.props.message.timestamp);
+		}
+	}
+
+	public closeThread = () => {
+		this.props.onToggleThread('', '', '');
+	}
+
 	public render() {
-		const {message, previousMessage, clientUser, classes} = this.props;
+		const {message, previousMessage, clientUser, threads, responses, threadOpen, classes} = this.props;
 		const showName = previousMessage
 			? previousMessage.type !== 'TEXT' || previousMessage.senderId !== message.senderId
 			: true;
@@ -145,54 +200,77 @@ class PlayerTextMessage extends React.Component<Props, State> {
 
 		return (
 			<div className={`${classes.root} ${ownMessage ? classes.own : ''}`}>
-				<div className={classes.message}>
-					{showName && (
-						<div className={classes.messageSender}>
-							{message.senderNickname}
-						</div>
-					)}
-					{message.imageContent ? <img className={`${classes.imageContent} ${ownMessage ? classes.own : ''}`} src={message.imageContent}/> : null}
-					{message.audioContent.url ? (
-						<div className={classes.audioRecordingWrapper}>
-							<audio
-								ref={audioElement => {this.audioRef = audioElement; }}
-								onEnded={this.stopAudioMessage}
-							/>
-							<IconButton
-								className={classes.iconButton}
-								onClick={this.playAudioMessage}
-								disabled={this.state.audioPlayback}
-							>
-								<PlayIcon/>
-							</IconButton>
-							<IconButton
-								className={classes.iconButton}
-								onClick={this.stopAudioMessage}
-								disabled={!this.state.audioPlayback}
-							>
-								<PauseIcon/>
-							</IconButton>
-							<div className={classes.audioLengthText}>
-								{message.audioContent.length + ' s'}
+				{threadOpen ? (
+					<MessageThread
+						message={message}
+						clientUser={clientUser}
+						responses={responses}
+						onClose={this.closeThread}
+					/>
+				) : (
+					<div className={classes.message}>
+						<div className={classes.messageLeftWrapper}>
+							{showName && (
+								<div className={classes.messageSender}>
+									{message.senderNickname}
+								</div>
+							)}
+							{message.imageContent ? <img className={classes.imageContent} src={message.imageContent}/> : null}
+							{message.audioContent.url ? (
+								<div className={classes.audioRecordingWrapper}>
+									<audio
+										ref={audioElement => {this.audioRef = audioElement; }}
+										onEnded={this.stopAudioMessage}
+									/>
+									<IconButton
+										className={classes.iconButton}
+										onClick={this.playAudioMessage}
+										disabled={this.state.audioPlayback}
+									>
+										<PlayIcon/>
+									</IconButton>
+									<IconButton
+										className={classes.iconButton}
+										onClick={this.stopAudioMessage}
+										disabled={!this.state.audioPlayback}
+									>
+										<PauseIcon/>
+									</IconButton>
+									<div className={classes.audioLengthText}>
+										{message.audioContent.length + ' s'}
+									</div>
+								</div>
+							) : null}
+							<div className={classes.messageContainer}>
+								{message.markdown ? (
+									<div
+										className={classes.messageContent}
+										dangerouslySetInnerHTML={{__html: md.render(message.textContent)}}
+									/>
+								) : (
+									<div className={classes.messageContent}>
+										<div className={classes.preformat}><Linkify>{message.textContent}</Linkify></div>
+									</div>
+								)}
 							</div>
 						</div>
-					) : null}
-					<div className={classes.messageContainer}>
-						{message.markdown ? (
-							<div
-								className={classes.messageContent}
-								dangerouslySetInnerHTML={{__html: md.render(message.textContent)}}
-							/>
-						) : (
-							<div className={classes.messageContent}>
-								<div className={classes.preformat}><Linkify>{message.textContent}</Linkify></div>
+						<div className={`${classes.messageRightWrapper} ${threads ? classes.threadLinkTrue : ''}`}>
+							{(threads || responses) && (
+								<div className={classes.threadLinkWrapper}>
+									<div className={classes.responsesAmount}>
+										{responses && responses.length ? responses.length : ''}
+									</div>
+									<div className={classes.threadLink} onClick={this.openThread}>
+										<FormattedMessage id="thread.open"/>
+									</div>
+								</div>
+							)}
+							<div className={classes.messageTimestamp}>
+								{moment(message.timestamp).format('HH:mm')}
 							</div>
-						)}
-						<div className={classes.messageTimestamp}>
-							{moment(message.timestamp).format('HH:mm')}
 						</div>
 					</div>
-				</div>
+				)}
 			</div>
 		);
 	}
