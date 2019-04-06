@@ -86,7 +86,7 @@ class MessageList extends React.Component<Props, State> {
 	}
                              
 	public shouldComponentUpdate(props: Props) {
-		return this.props.messages.length !== props.messages.length;
+		return this.props.messages.length !== props.messages.length || this.props.respondingTo !== props.respondingTo;
 	}
 
 	public render() {
