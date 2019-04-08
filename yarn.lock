@@ -3421,9 +3421,9 @@ elliptic@^6.0.0:
     minimalistic-crypto-utils "^1.0.0"
 
 emoji-mart@^2.10.0:
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/emoji-mart/-/emoji-mart-2.10.0.tgz#e1adec430f4963f79055b12b80e6d60c5abb742d"
-  integrity sha512-VhcX463f8TDaQc1Tpc8rI31E15+8KXOYff1vwjokjMT52bZlCQCyq3zrnNScSYjv95f1+R4DMMreeuPvYFvOhg==
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/emoji-mart/-/emoji-mart-2.11.0.tgz#fed7c44d3a642b5de08848e8833d65a656ea8414"
+  integrity sha512-ol1ABg0xfDwCeKVu0Mmr/iTRHUMvqlyLZJFRQy+e6aWV83/Y+TEbJpBbtk7NxaW3BLAOyJ8r0NWthRQwxTtT1A==
   dependencies:
     prop-types "^15.6.0"
 

@@ -99,12 +99,7 @@ const EMPTY_STATE: State = {
 	alert: [],
 	messageValid: true,
 	messageBlockingRules: [],
-	variables: {
-		inputMinHeight: 1,
-		imageMessages: false,
-		audioMessages: false,
-		threads: false
-	},
+	variables: {},
 	locale: 'en',
 	translatedMessages: defaultMessages,
 	theme: 'light'
@@ -162,12 +157,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						user: msg.users.find(u => u.id === msg.userId) || null,
 						ownCards: msg.hand,
 						playableCardsLeft: msg.playableCardsLeft,
-						variables: {
-							inputMinHeight: msg.variables.inputMinHeight,
-							imageMessages: msg.variables.imageMessages,
-							audioMessages: msg.variables.audioMessages,
-							threads: msg.variables.threads
-						}
+						variables: msg.variables
 					});
 					this.startTurnTimer(msg.turnEndTime);
 					break;
