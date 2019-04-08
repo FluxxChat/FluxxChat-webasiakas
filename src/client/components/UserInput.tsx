@@ -156,7 +156,7 @@ class UserInput extends React.Component<Props, State> {
 	}
 
 	public textInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-		if (!this.props.disableBackspace || event.target.value.length > this.props.value.textContent.length) {
+		if (!this.props.disableBackspace || event.target.value.startsWith(this.props.value.textContent)) {
 			this.props.onMessageDraftChange({type: 'TEXT', newContent: event.target.value});
 		}
 	}
