@@ -64,6 +64,11 @@ interface CustomThemeProps {
 				systemMessage: {
 					background: React.CSSProperties['background'],
 					fontWeight: React.CSSProperties['fontWeight']
+				},
+				thread: {
+					background: React.CSSProperties['background'],
+					message: React.CSSProperties['background'],
+					threadOwnerMessage: React.CSSProperties['background']
 				}
 			}
 		},
@@ -171,6 +176,11 @@ export default {
 					systemMessage: {
 						background: '#f9ecb0',
 						fontWeight: 400
+					},
+					thread: {
+						background: '#e8eef5',
+						message: '#ffffff',
+						threadOwnerMessage: '#f1f3f5'
 					}
 				}
 			},
@@ -246,6 +256,11 @@ export default {
 					systemMessage: {
 						background: '#3c50b6',
 						fontWeight: 500
+					},
+					thread: {
+						background: '#666e8c',
+						message: '#394460',
+						threadOwnerMessage: '#4d5977'
 					}
 				}
 			},

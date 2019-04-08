@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {User, TextMessage, SystemMessage} from 'fluxxchat-protokolla';
+import {User, TextMessage, SystemMessage, UiVariables} from 'fluxxchat-protokolla';
 import {withStyles, createStyles, WithStyles} from '@material-ui/core';
 import ScrollArea from 'react-scrollbar';
 import PlayerTextMessage from './PlayerTextMessage';
@@ -35,14 +35,18 @@ const styles = createStyles({
 interface Props extends WithStyles<typeof styles> {
 	messages: Array<TextMessage | SystemMessage>;
 	clientUser: User;
+	variables: UiVariables;
+	respondingTo: {senderId: string, timestamp: string} | null;
+	onToggleThread: (senderId: string, senderNickname: string, timestamp: string) => void;
 }
 
 interface State {
 	scrolledToBottom: boolean;
+	currentlyOpenThread: {senderId: string, timestamp: string} | null;
 }
 
 class MessageList extends React.Component<Props, State> {
-	public state: State = {scrolledToBottom: true};
+	public state: State = {scrolledToBottom: true, currentlyOpenThread: null};
 
 	public scrollAreaRef = React.createRef<any>();
 
@@ -58,6 +62,9 @@ class MessageList extends React.Component<Props, State> {
 		if (prevProps.messages.length !== this.props.messages.length && this.state.scrolledToBottom) {
 			this.scrollToBottom();
 		}
+		if (prevProps.respondingTo !== this.props.respondingTo && !this.props.respondingTo) {
+			this.setState({currentlyOpenThread: this.props.respondingTo});
+		}
 	}
 
 	public handleScroll = (obj: any) => {
@@ -69,12 +76,33 @@ class MessageList extends React.Component<Props, State> {
 		}
 	}
 
+	public onToggleThread = (senderId: string, senderNickname: string, timestamp: string) => {
+		if (senderId === '' &&  senderNickname === '' && timestamp === '') {
+			this.setState({currentlyOpenThread: null});
+		} else {
+			this.setState({currentlyOpenThread: {senderId, timestamp}});
+		}
+		this.props.onToggleThread(senderId, senderNickname, timestamp);
+	}
+                             
 	public shouldComponentUpdate(props: Props) {
-		return this.props.messages.length !== props.messages.length;
+		return this.props.messages.length !== props.messages.length || this.props.respondingTo !== props.respondingTo;
 	}
 
 	public render() {
-		const {messages, classes, clientUser} = this.props;
+		const {messages, classes, clientUser, variables} = this.props;
+		const {currentlyOpenThread} = this.state;
+
+		const responses: { [key: string]: TextMessage[] } = {};
+		messages.filter((message: TextMessage) => message.thread).forEach((message: TextMessage) => {
+			if (message.thread) {
+				const key = message.thread.senderId + message.thread.timestamp;
+				if (!responses[key]) {
+					responses[key] = [];
+				}
+				responses[key].push(message);
+			}
+		});
 
 		return (
 			<ScrollArea
@@ -89,14 +117,25 @@ class MessageList extends React.Component<Props, State> {
 						case 'SYSTEM':
 						return <SystemTextMessage key={index} message={message}/>;
 						case 'TEXT':
-							return (
-								<PlayerTextMessage
-									key={index}
-									message={message}
-									previousMessage={messages[index - 1]}
-									clientUser={clientUser}
-								/>
-							);
+							if (message.senderId && message.timestamp && !message.thread) {
+								return (
+									<PlayerTextMessage
+										key={message.senderId + message.timestamp}
+										message={message}
+										previousMessage={messages[index - 1]}
+										clientUser={clientUser}
+										threads={variables.threads ? variables.threads : false}
+										responses={responses[message.senderId + message.timestamp]}
+										threadOpen={(
+											(variables.threads || responses[message.senderId + message.timestamp])
+											&& currentlyOpenThread
+											&& currentlyOpenThread.senderId === message.senderId
+											&& currentlyOpenThread.timestamp === message.timestamp
+										) ? true : false}
+										onToggleThread={this.onToggleThread}
+									/>
+								);
+							}
 						default:
 							return null;
 					}
