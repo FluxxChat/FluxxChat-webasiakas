@@ -110,7 +110,7 @@ class Menu extends React.Component<Props, State> {
 						onKeyDown={this.handleKeyDown}
 						value={this.state.nickname}
 						onChange={this.handleChangeNickname}
-						inputProps={{maxlength: 16}}
+						inputProps={{maxLength: 30}}
 						autoFocus
 						classes={{focused: classes.focused}}
 						endAdornment={

@@ -75,7 +75,8 @@ const styles = (theme: Theme) => createStyles({
 		flex: '0 0 auto',
 		marginTop: '0.2rem',
 		fontSize: '1.1rem',
-		wordBreak: 'break-word'
+		wordBreak: 'break-word',
+		whiteSpace: 'pre'
 	}
 });
 
