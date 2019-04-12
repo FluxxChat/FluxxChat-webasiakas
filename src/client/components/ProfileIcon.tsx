@@ -18,20 +18,43 @@
 import * as React from 'react';
 import SvgIcon from '@material-ui/core/SvgIcon';
 
-const ProfileIcon = (props: any) => (
-	(props.image === 'default') ? (
-		<SvgIcon {...props} viewBox="0 0 64 64">
+interface Props {
+	image: 'default' | string;
+	imagecss: string;
+	userId: string;
+}
+
+const ProfileIcon = (props: Props) => {
+	if (props.image !== 'default') {
+		return <img className={props.imagecss} src={props.image} width="40" height="40"/>;
+	}
+
+	let seed = 1;
+	let i = 1;
+	for (const char of props.userId) {
+		seed += char.charCodeAt(0) * i++;
+	}
+	// https://stackoverflow.com/a/19303725/4194997
+	function random(): number {
+		const x = Math.sin(seed++);
+		return x * 10000 - Math.floor(x * 10000);
+	}
+
+	return (
+		<SvgIcon viewBox="0 0 64 64">
 			<defs>
-				<clipPath id="a">
-					<path fill="#e9c6af" strokeWidth="0" d="M35 229l53-15c2-9 3-22-10-39l-4-2c-3-3-6-17-1-19v-31c1-15 11-28 28-28h15c18 0 25 14 25 28l1 30c4 5 2 17-1 20l-4 2c-11 17-11 30-10 38l53 14c-31 30-101 39-145 2z"/>
+				<clipPath id="circle">
+					<circle cx="32" cy="32" r="32"/>
 				</clipPath>
 			</defs>
-			<g transform="matrix(.30978 0 0 .30921 482 106)">
-				<circle cx="-1451" cy="-238" r="103" fill="#556080"/>
-				<circle cx="105" cy="147" r="103" fill="#e7eced" clipPath="url(#a)" transform="translate(-1557 -385)"/>
-			</g>
+			<circle cx="32" cy="32" r="32" fill="#fff" clip-path="url(#circle)"/>
+			<circle cx={random() * 64} cy={random() * 64} r={random() * 32} fill={'#' + Math.floor(random() * 4095).toString(16)} clip-path="url(#circle)"/>
+			<circle cx={random() * 64} cy={random() * 64} r={random() * 32} fill={'#' + Math.floor(random() * 4095).toString(16)} clip-path="url(#circle)"/>
+			<circle cx={random() * 64} cy={random() * 64} r={random() * 32} fill={'#' + Math.floor(random() * 4095).toString(16)} clip-path="url(#circle)"/>
+			<circle cx={random() * 64} cy={random() * 64} r={random() * 32} fill={'#' + Math.floor(random() * 4095).toString(16)} clip-path="url(#circle)"/>
+			<circle cx={random() * 64} cy={random() * 64} r={random() * 32} fill={'#' + Math.floor(random() * 4095).toString(16)} clip-path="url(#circle)"/>
 		</SvgIcon>
-	) : <img className={props.imagecss} src={props.image} width="40" height="40"/>
-);
+	);
+};
 
 export default ProfileIcon;
