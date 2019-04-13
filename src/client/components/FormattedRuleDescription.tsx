@@ -34,10 +34,10 @@ export const FormattedRuleDescription = ({ rule }: Props) => {
 		if (Object.keys(rule.values).indexOf('array') > -1) {
 			const arrayStr = (rule.values as { array: string }).array;
 			const array = arrayStr.split(', ');
-			for (const message of array) {
-				description.push(<FormattedMessage id={message} />);
-				description.push(<span>, </span>);
-			}
+			array.forEach((message, i) => {
+				description.push(<FormattedMessage id={message} key={`${i}-message`} />);
+				description.push(<span key={`${i}-span`}>, </span>);
+			});
 			description.pop();
 			description.push(<span>.</span>);
 		}
