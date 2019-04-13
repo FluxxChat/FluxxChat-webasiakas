@@ -35,8 +35,8 @@ export const FormattedRuleDescription = ({ rule }: Props) => {
 			const arrayStr = (rule.values as { array: string }).array;
 			const array = arrayStr.split(', ');
 			array.forEach((message, i) => {
-				description.push(<FormattedMessage id={message} key={i} />);
-				description.push(<span>, </span>);
+				description.push(<FormattedMessage id={message} key={`${i}-message`} />);
+				description.push(<span key={`${i}-span`}>, </span>);
 			});
 			description.pop();
 			description.push(<span>.</span>);
