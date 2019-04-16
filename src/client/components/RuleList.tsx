@@ -93,11 +93,11 @@ interface State {
 }
 
 class RuleList extends React.Component<Props, State> {
-	public state = {animation: false};
+	public state = { animation: false };
 
 	public componentDidUpdate(prevProps) {
 		if (this.props.messageBlockAnimation !== prevProps.messageBlockAnimation) {
-			this.setState({animation: this.props.messageBlockAnimation});
+			this.setState({ animation: this.props.messageBlockAnimation });
 		}
 		if (this.props.rules !== prevProps.rules) {
 			this.props.ruleChangeRevalidation();
@@ -105,14 +105,14 @@ class RuleList extends React.Component<Props, State> {
 	}
 
 	public render() {
-		const {rules, users, messageBlockingRules, classes} = this.props;
-		const {animation} = this.state;
+		const { rules, users, messageBlockingRules, classes } = this.props;
+		const { animation } = this.state;
 
 		return (
 			<div className={classes.root}>
 				{rules.length === 0 && (
 					<div className={classes.ruleListItem}>
-						<div className={classes.ruleTitle}><FormattedMessage id="rules.noRules"/></div>
+						<div className={classes.ruleTitle}><FormattedMessage id="rules.noRules" /></div>
 					</div>
 				)}
 				{rules.map((rule, index) => {
@@ -124,20 +124,32 @@ class RuleList extends React.Component<Props, State> {
 						}
 						return val;
 					});
-					const paramsStr = params.length > 0 ? ` (${params.join(', ')})` : '';
+					// const paramsStr = params.length > 0 ? ` (${params.join(', ')})` : '';
+
+					const paramsComponents: JSX.Element[] = [];
+					if (params.length > 0) {
+						paramsComponents.push(<span> (</span>);
+						for (const param of params) {
+							paramsComponents.push(<FormattedMessage id={param} />);
+							paramsComponents.push(<span>, </span>);
+						}
+						paramsComponents.pop();
+						paramsComponents.push(<span>)</span>);
+					}
+
 					return (
 						<div
 							key={index}
 							className={messageBlockingRules.includes(rule.name) ? (
 								animation ?
-								classes.ruleListItemBlockingError :
-								classes.ruleListItemBlocking
+									classes.ruleListItemBlockingError :
+									classes.ruleListItemBlocking
 							) : classes.ruleListItem}
 
 						>
 							<div className={classes.ruleInfo}>
-							<div className={classes.ruleTitle}><FormattedMessage id={rule.name}/>{paramsStr}</div>
-							<div className={classes.ruleDescription}><FormattedRuleDescription rule={rule}/></div>
+								<div className={classes.ruleTitle}><FormattedMessage id={rule.name} />{paramsComponents}</div>
+								<div className={classes.ruleDescription}><FormattedRuleDescription rule={rule} /></div>
 							</div>
 						</div>
 					);

@@ -16,9 +16,9 @@
  */
 
 import React from 'react';
-import {TextField, FormControl, InputLabel, Select} from '@material-ui/core';
-import {FormattedMessage} from 'react-intl';
-import {User, RuleParameterType} from 'fluxxchat-protokolla';
+import { TextField, FormControl, InputLabel, Select } from '@material-ui/core';
+import { FormattedMessage } from 'react-intl';
+import { User, RuleParameterType } from 'fluxxchat-protokolla';
 
 interface Props {
 	type: RuleParameterType;
@@ -27,19 +27,21 @@ interface Props {
 	onChange: React.ChangeEventHandler<HTMLSelectElement | HTMLInputElement>;
 }
 
-const CardParameterInput = ({type, value, users, onChange}: Props) => {
+const CardParameterInput = ({ type, value, users, onChange }: Props) => {
 	if (Array.isArray(type)) {
 		const choices = type as string[];
 		return (
 			<FormControl>
-				<InputLabel><FormattedMessage id="card.selectValue"/></InputLabel>
+				<InputLabel><FormattedMessage id="card.selectValue" /></InputLabel>
 				<Select
 					native
 					value={value}
 					onChange={onChange}
 				>
 					{choices.map(c => (
-						<option key={c} value={c}>{c}</option>
+						<FormattedMessage id={c}>
+							{message => <option key={c} value={c}>{message}</option>}
+						</FormattedMessage>
 					))}
 				</Select>
 			</FormControl>
@@ -49,7 +51,7 @@ const CardParameterInput = ({type, value, users, onChange}: Props) => {
 	if (type === 'player') {
 		return (
 			<FormControl>
-				<InputLabel><FormattedMessage id="card.selectValue"/></InputLabel>
+				<InputLabel><FormattedMessage id="card.selectValue" /></InputLabel>
 				<Select
 					native
 					value={value}
@@ -66,7 +68,7 @@ const CardParameterInput = ({type, value, users, onChange}: Props) => {
 	if (type === 'number') {
 		return (
 			<TextField
-				label={<FormattedMessage id="card.giveNumber"/>}
+				label={<FormattedMessage id="card.giveNumber" />}
 				value={value || 0}
 				onChange={onChange}
 				margin="normal"
