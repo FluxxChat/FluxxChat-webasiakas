@@ -18,7 +18,7 @@
 import React from 'react';
 import {hot} from 'react-hot-loader/root';
 import {snakeCase} from 'lodash';
-import {withStyles, WithStyles, createStyles, Theme, Button, Table, TableHead, TableRow, TableCell, TableBody, Tooltip, Paper} from '@material-ui/core';
+import {withStyles, WithStyles, createStyles, Theme, Button, Table, TableHead, TableRow, TableCell, TableBody, Paper} from '@material-ui/core';
 import axios from 'axios';
 import AceEditor from 'react-ace';
 import Login from './Login';
@@ -83,7 +83,7 @@ interface State {
 
 class AdminApp extends React.Component<WithStyles<typeof styles>, State> {
 	public state: State = {
-		query: localStorage.getItem('query') || '',
+		query: localStorage.getItem('query') || `SELECT name FROM sqlite_master WHERE type ='table'`,
 		queryResponse: []
 	};
 
