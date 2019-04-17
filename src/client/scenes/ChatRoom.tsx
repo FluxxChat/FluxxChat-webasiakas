@@ -16,7 +16,7 @@
  */
 
 import React from 'react';
-import {Card, RuleParameters, User, SystemMessage, TextMessage, UiVariables} from 'fluxxchat-protokolla';
+import { Card, RuleParameters, User, SystemMessage, TextMessage, UiVariables } from 'fluxxchat-protokolla';
 import {
 	createStyles,
 	WithStyles,
@@ -32,14 +32,14 @@ import {
 import ScrollArea from 'react-scrollbar';
 import localeData from '../../../i18n/data.json';
 import UserList from '../components/UserList';
-import UserInput, {MessageDraftChangeEvent} from '../components/UserInput';
+import UserInput, { MessageDraftChangeEvent } from '../components/UserInput';
 import RuleList from '../components/RuleList';
 import CardParameterInput from '../components/CardParameterInput';
 import Header from '../components/Header';
 import CardComponent from '../components/CardComponent';
 import MessageList from '../components/MessageList';
-import {FormattedRuleDescription} from '../components/FormattedRuleDescription';
-import {FormattedMessage} from 'react-intl';
+import { FormattedRuleDescription } from '../components/FormattedRuleDescription';
+import { FormattedMessage } from 'react-intl';
 
 const styles = (theme: Theme) => createStyles({
 	sendDiv: {},
@@ -144,7 +144,8 @@ interface Props extends WithStyles<typeof styles> {
 	roomId: string;
 	users: User[];
 	turnUser: User;
-	turnTime: number;
+	turnTimeLeft: number; // in seconds
+	turnLength: number; // in seconds
 	messages: Array<TextMessage | SystemMessage>;
 	playableCardsLeft: number;
 	ownCards: Card[];
@@ -153,7 +154,7 @@ interface Props extends WithStyles<typeof styles> {
 	messageBlockingRules: string[];
 	suggestedWord: string;
 	uiVariables: UiVariables;
-	onSendMessage: (textmessage: string, image: string, audio: any, response: {senderId: string, timestamp: string} | null) => void;
+	onSendMessage: (textmessage: string, image: string, audio: any, response: { senderId: string, timestamp: string } | null) => void;
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
 	onValidateMessage: (textmessage: string, image: string, audio: any) => void;
 	onChangeTheme: (theme: string) => void;
@@ -162,18 +163,18 @@ interface Props extends WithStyles<typeof styles> {
 }
 
 interface State {
-	messageDraft: {textContent: string, imageContent: string, audioContent: {url: string, length: number}};
+	messageDraft: { textContent: string, imageContent: string, audioContent: { url: string, length: number } };
 	showCards: boolean;
 	showCard: boolean;
 	selectedCard: Card | null;
 	ruleParameters: RuleParameters;
 	messageBlockedAnimation: boolean;
-	respondingTo: {senderId: string, senderNickname: string, timestamp: string} | null;
+	respondingTo: { senderId: string, senderNickname: string, timestamp: string } | null;
 }
 
 class ChatRoom extends React.Component<Props, State> {
 	public state: State = {
-		messageDraft: {textContent: '', imageContent: '', audioContent: {url: '', length: 0}},
+		messageDraft: { textContent: '', imageContent: '', audioContent: { url: '', length: 0 } },
 		showCards: window.innerWidth >= 1280,
 		selectedCard: null,
 		showCard: false,
@@ -190,12 +191,14 @@ class ChatRoom extends React.Component<Props, State> {
 			this.setState({respondingTo: null});
 		}
 		if ((messageDraft.textContent || messageDraft.imageContent || messageDraft.audioContent.url) && this.props.messageValid) {
-			this.setState({messageDraft: {
-				textContent: '',
-				imageContent: '',
-				audioContent: {url: '', length: 0},
-				respondingTo: null
-			}}, () => {
+			this.setState({
+				messageDraft: {
+					textContent: '',
+					imageContent: '',
+					audioContent: { url: '', length: 0 },
+					respondingTo: null
+				}
+			}, () => {
 				this.props.onSendMessage(
 					messageDraft.textContent,
 					messageDraft.imageContent,
@@ -208,11 +211,13 @@ class ChatRoom extends React.Component<Props, State> {
 
 	public handleChangeMessageDraft = (event: MessageDraftChangeEvent) => {
 		if (event.type === 'TEXT') {
-			this.setState({messageDraft: {
-				textContent: event.newContent,
-				imageContent: this.state.messageDraft.imageContent,
-				audioContent: this.state.messageDraft.audioContent
-			}}, () => {
+			this.setState({
+				messageDraft: {
+					textContent: event.newContent,
+					imageContent: this.state.messageDraft.imageContent,
+					audioContent: this.state.messageDraft.audioContent
+				}
+			}, () => {
 				this.props.onValidateMessage(
 					this.state.messageDraft.textContent,
 					this.state.messageDraft.imageContent,
@@ -223,25 +228,29 @@ class ChatRoom extends React.Component<Props, State> {
 			const f = event.event.target.files![0];
 			const reader = new FileReader();
 			reader.onload = (e: any) => {
-				this.setState({messageDraft: {
-					textContent: this.state.messageDraft.textContent,
-					imageContent: e.target.result,
-					audioContent: this.state.messageDraft.audioContent
-				}});
+				this.setState({
+					messageDraft: {
+						textContent: this.state.messageDraft.textContent,
+						imageContent: e.target.result,
+						audioContent: this.state.messageDraft.audioContent
+					}
+				});
 			};
 			reader.readAsDataURL(f);
 		} else if (event.type === 'AUDIO') {
-			this.setState({messageDraft: {
-				textContent: this.state.messageDraft.textContent,
-				imageContent: this.state.messageDraft.imageContent,
-				audioContent: event.newContent
-			}});
+			this.setState({
+				messageDraft: {
+					textContent: this.state.messageDraft.textContent,
+					imageContent: this.state.messageDraft.imageContent,
+					audioContent: event.newContent
+				}
+			});
 		}
 	}
 
 	public handleInsertEmoji = (emoji: string) => {
 		const d = this.state.messageDraft;
-		this.setState({messageDraft: {...d, textContent: d.textContent + emoji}}, () => {
+		this.setState({ messageDraft: { ...d, textContent: d.textContent + emoji } }, () => {
 			this.props.onValidateMessage(
 				this.state.messageDraft.textContent,
 				this.state.messageDraft.imageContent,
@@ -280,15 +289,15 @@ class ChatRoom extends React.Component<Props, State> {
 	}
 
 	public toggleShowCards = () => {
-		this.setState(state => ({showCards: !state.showCards}));
+		this.setState(state => ({ showCards: !state.showCards }));
 	}
 
 	public handleClickCard = (card: Card) => {
-		this.setState({showCard: true, selectedCard: card});
+		this.setState({ showCard: true, selectedCard: card });
 	};
 
 	public handleCloseCardDialog = () => {
-		this.setState({showCard: false, ruleParameters: {}});
+		this.setState({ showCard: false, ruleParameters: {} });
 	}
 
 	public handlePlayCard = () => {
@@ -307,7 +316,7 @@ class ChatRoom extends React.Component<Props, State> {
 	};
 
 	public messageBlockedAnimation = (value: boolean) => {
-		this.setState({messageBlockedAnimation: value});
+		this.setState({ messageBlockedAnimation: value });
 	}
 
 	public ruleChangeRevalidation = () => {
@@ -320,18 +329,20 @@ class ChatRoom extends React.Component<Props, State> {
 
 	public onToggleThread = (senderId: string, senderNickname: string, timestamp: string) => {
 		if (senderId === '' && senderNickname === '' && timestamp === '') {
-			this.setState({respondingTo: null});
+			this.setState({ respondingTo: null });
 		} else {
-			this.setState({respondingTo: {
-				senderId,
-				senderNickname,
-				timestamp
-			}});
+			this.setState({
+				respondingTo: {
+					senderId,
+					senderNickname,
+					timestamp
+				}
+			});
 		}
 	}
 
 	public onCancelResponse = () => {
-		this.setState({respondingTo: null});
+		this.setState({ respondingTo: null });
 	}
 
 	public render() {
@@ -342,7 +353,7 @@ class ChatRoom extends React.Component<Props, State> {
 			users,
 			user,
 			activeCards,
-			turnTime,
+			turnTimeLeft: turnTime,
 			turnUser,
 			uiVariables,
 			suggestedWord,
@@ -363,13 +374,13 @@ class ChatRoom extends React.Component<Props, State> {
 		return (
 			<div className={classes.chatApp}>
 				<div className={classes.userListArea}>
-					<div className={classes.header}/>
+					<div className={classes.header} />
 					<div className={classes.userListContainer}>
 						<UserList
 							users={users}
 							clientUser={user}
 							turnUser={turnUser}
-							turnTimePercent={Math.floor((turnTime / 120) * 100)}
+							turnTimePercent={Math.floor((turnTime / this.props.turnLength) * 100)}
 						/>
 					</div>
 					<div className={classes.ruleListArea}>
@@ -383,7 +394,7 @@ class ChatRoom extends React.Component<Props, State> {
 					</div>
 				</div>
 				<div className={classes.chatArea}>
-					<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale} onChangeAvatar={onChangeAvatar}/>
+					<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale} onChangeAvatar={onChangeAvatar} />
 					<div className={classes.chatContainer}>
 						<div className={classes.messageArea}>
 							<MessageList
@@ -394,21 +405,32 @@ class ChatRoom extends React.Component<Props, State> {
 								onToggleThread={this.onToggleThread}
 							/>
 							<div className={classes.turnInfo}> {
-								((this.props.turnUser.id === this.props.user.id &&
+								this.props.turnUser.id === this.props.user.id ?
 									<span>
-									<FormattedMessage id="room.notYourTurn"/>, <span className={classes.tabularNumber}>{this.props.turnTime}</span> <FormattedMessage id="room.secondsInCurrentTurn"/>
-								</span>)
-								&&
-								<span>
-									<FormattedMessage id="room.playableCardsLeft" values={{n: this.props.playableCardsLeft}}/>, <span className={classes.tabularNumber}>{this.props.turnTime}</span> <FormattedMessage id="room.secondsInYourTurn"/>
-								</span>
-								)}
+										<FormattedMessage id="room.playableCardsLeft" values={{ n: this.props.playableCardsLeft }} />
+										, <span className={classes.tabularNumber}>
+											{this.props.turnTimeLeft}
+										</span>
+										<FormattedMessage id="room.secondsInYourTurn" />
+									</span>
+									:
+									<span>
+										<FormattedMessage id="room.notYourTurn" />
+										, <span className={classes.tabularNumber}>{
+											this.props.turnTimeLeft + (this.props.turnLength * (
+												// all of this just calculates the number of turns between the active player and the current player
+												(((this.props.users.indexOf(this.props.user) - this.props.users.indexOf(this.props.turnUser) - 1) % this.props.users.length) + this.props.users.length) % this.props.users.length
+											))
+										}</span>
+										<FormattedMessage id="room.secondsTillYourTurn" />
+									</span>
+							}
 							</div>
 							<ScrollArea
 								ref={this.cardScrollRef}
 								className={`${classes.cardArea} ${showCards ? classes.visible : ''}`}
 								contentClassName={classes.cardAreaScrollContent}
-								horizontalContainerStyle={{height: '0.4rem'}}
+								horizontalContainerStyle={{ height: '0.4rem' }}
 								smoothScrolling
 								swapWheelAxes
 							>
@@ -425,7 +447,7 @@ class ChatRoom extends React.Component<Props, State> {
 										/>
 									);
 								})}
-								<div style={{flex: '0 0 1rem'}}/>
+								<div style={{ flex: '0 0 1rem' }} />
 							</ScrollArea>
 							<UserInput
 								value={messageDraft}
@@ -451,11 +473,11 @@ class ChatRoom extends React.Component<Props, State> {
 				</div>
 				<Dialog open={showCard} onClose={this.handleCloseCardDialog}>
 					<DialogTitle>
-						{selectedCard ? <FormattedMessage id={selectedCard.name}/> : ''}
+						{selectedCard ? <FormattedMessage id={selectedCard.name} /> : ''}
 					</DialogTitle>
 					<DialogContent>
 						<DialogContentText>
-							{selectedCard && <FormattedRuleDescription rule={selectedCard}/>}
+							{selectedCard && <FormattedRuleDescription rule={selectedCard} />}
 						</DialogContentText>
 						<div className={classes.ruleParameters}>
 							{selectedCard && Object.keys(selectedCard.parameterTypes).map(key => (

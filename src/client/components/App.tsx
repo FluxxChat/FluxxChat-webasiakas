@@ -69,7 +69,8 @@ interface State {
 	ownCards: Card[];
 	activeCards: Card[];
 	turnUserId: string | null;
-	turnTime: number;
+	turnTimeLeft: number; // in seconds
+	turnLength: number; // in seconds
 	timer: number | null;
 	messageValid: boolean;
 	messageBlockingRules: string[];
@@ -96,7 +97,8 @@ const EMPTY_STATE: State = {
 	ownCards: [],
 	activeCards: [],
 	turnUserId: null,
-	turnTime: 0,
+	turnTimeLeft: 0,
+	turnLength: 120,
 	timer: null,
 	alert: [],
 	messageValid: true,
@@ -157,6 +159,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						userMap: msg.users.reduce((m, u) => ({ ...m, [u.id]: u }), {}),
 						activeCards: msg.enabledRules,
 						turnUserId: msg.turnUserId,
+						turnLength: msg.turnLength,
 						user: msg.users.find(u => u.id === msg.userId) || null,
 						ownCards: msg.hand,
 						playableCardsLeft: msg.playableCardsLeft,
@@ -260,7 +263,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		const interval = window.setInterval(() => {
 			const ms = Math.max(turnEndTime - Date.now(), 0);
 			const seconds = Math.floor(ms / 1000);
-			this.setState({ turnTime: seconds });
+			this.setState({ turnTimeLeft: seconds });
 			if (ms === 0) {
 				window.clearInterval(interval);
 				this.setState({ timer: null });
@@ -351,7 +354,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								roomId={roomId}
 								users={this.state.users}
 								turnUser={this.state.userMap[this.state.turnUserId || ''] || { nickname: '' }}
-								turnTime={this.state.turnTime}
+								turnTimeLeft={this.state.turnTimeLeft}
+								turnLength={this.state.turnLength}
 								messages={messages}
 								activeCards={activeCards}
 								ownCards={ownCards}
