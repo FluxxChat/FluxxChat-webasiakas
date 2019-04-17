@@ -28,7 +28,8 @@ import {
 	ProfileImgChangeMessage,
 	RuleParameters,
 	SystemMessage,
-	UiVariables
+	UiVariables,
+	ClientLanguageChangeMessage
 } from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
@@ -73,6 +74,7 @@ interface State {
 	timer: number | null;
 	messageValid: boolean;
 	messageBlockingRules: string[];
+	suggestedWord: string;
 	variables: UiVariables;
 	locale: string;
 	translatedMessages: {[key: string]: {[key: string]: string}};
@@ -101,6 +103,7 @@ const EMPTY_STATE: State = {
 	alert: [],
 	messageValid: true,
 	messageBlockingRules: [],
+	suggestedWord: '',
 	variables: {},
 	locale: 'en',
 	translatedMessages: defaultMessages,
@@ -163,6 +166,9 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						variables: msg.variables
 					});
 					this.startTurnTimer(msg.turnEndTime);
+					break;
+				case 'WORD_PREDICTION':
+					this.setState({suggestedWord: msg.prediction ? msg.prediction : ''});
 					break;
 				case 'ERROR':
 					this.setState({ alert: [...this.state.alert, msg.message] });
@@ -286,6 +292,13 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 
 	public handleChangeLocale = (newLocale: keyof typeof defaultMessages) => {
 		this.setState({locale: newLocale});
+		if (this.state.connection) {
+			const protocolMessage: ClientLanguageChangeMessage = {
+				type: 'CLIENT_LANGUAGE_CHANGE',
+				language: newLocale
+			};
+			this.state.connection.send(JSON.stringify(protocolMessage));
+		}
 	}
 
 	public updateLocalization(translatedMessages: {[key: string]: {[key: string]: string}}) {
@@ -352,6 +365,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 								onValidateMessage={this.handleValidateMessage}
 								messageValid={this.state.messageValid}
 								messageBlockingRules={this.state.messageBlockingRules}
+								suggestedWord={this.state.suggestedWord}
 								onChangeTheme={onChangeTheme}
 								onChangeLocale={this.handleChangeLocale}
 								onChangeAvatar={this.handleChangeAvatar}

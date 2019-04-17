@@ -152,6 +152,7 @@ interface Props extends WithStyles<typeof styles> {
 	activeCards: Card[];
 	messageValid: boolean;
 	messageBlockingRules: string[];
+	suggestedWord: string;
 	uiVariables: UiVariables;
 	onSendMessage: (textmessage: string, image: string, audio: any, response: { senderId: string, timestamp: string } | null) => void;
 	onSendNewRule: (card: Card, ruleParameters: RuleParameters) => void;
@@ -185,7 +186,10 @@ class ChatRoom extends React.Component<Props, State> {
 	public cardScrollRef = React.createRef<any>();
 
 	public handleSendMessage = () => {
-		const { messageDraft } = this.state;
+		const {messageDraft} = this.state;
+		if(!!this.props.uiVariables.threads === false) {
+			this.setState({respondingTo: null});
+		}
 		if ((messageDraft.textContent || messageDraft.imageContent || messageDraft.audioContent.url) && this.props.messageValid) {
 			this.setState({
 				messageDraft: {
@@ -352,6 +356,7 @@ class ChatRoom extends React.Component<Props, State> {
 			turnTimeLeft: turnTime,
 			turnUser,
 			uiVariables,
+			suggestedWord,
 			onChangeTheme,
 			onChangeLocale,
 			onChangeAvatar
@@ -456,6 +461,8 @@ class ChatRoom extends React.Component<Props, State> {
 								respondingTo={respondingTo}
 								emojiPicker={uiVariables.emojiPicker === undefined ? true : uiVariables.emojiPicker}
 								disableBackspace={!!uiVariables.disableBackspace}
+								wordSuggestions={!!uiVariables.wordSuggestions}
+								suggestedWord={suggestedWord}
 								onToggleCards={this.toggleShowCards}
 								onSend={this.handleSendMessage}
 								messageBlockedAnimation={this.messageBlockedAnimation}
