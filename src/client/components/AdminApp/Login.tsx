@@ -111,6 +111,7 @@ class Login extends React.Component<Props & WithStyles<typeof styles>, State> {
 					<InputBase
 						className={classes.input}
 						placeholder="Password"
+						type="password"
 						value={this.state.password}
 						onChange={this.handleChangePassword}
 						classes={{focused: classes.focused}}
