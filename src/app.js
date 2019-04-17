@@ -9,6 +9,13 @@ app.use(express.static(path.resolve(distFolder, 'client')));
 
 const BROWSER_ENV_PREFIX = 'BROWSER_';
 
+app.get('/admin', (_req, res) => {
+	res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+	res.header('Pragma', 'no-cache');
+	res.header('Expires', '0');
+	res.sendFile(path.resolve(distFolder, 'client/admin.html'));
+});
+
 app.get('/env.js', (_req, res) => {
 	/* Transform environment variables that start with BROWSER_ENV_PREFIX into a
 	 * `key1:env1,key2:env2` string.
