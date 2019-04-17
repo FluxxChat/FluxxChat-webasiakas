@@ -5,13 +5,14 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const BROWSER_ENV_PREFIX = 'BROWSER_';
 
-module.exports = env => ({
+module.exports = () => ({
 	entry: {
 		vendor: [
 			// Required to support async/await
 			'@babel/polyfill'
 		],
-		main: ['react-hot-loader/patch', './src/client/index.tsx']
+		main: ['react-hot-loader/patch', './src/client/index.tsx'],
+		admin: ['react-hot-loader/patch', './src/client/admin.tsx']
 	},
 	module: {
 		rules: [
@@ -80,6 +81,7 @@ module.exports = env => ({
 		port: process.env.PORT || 8888,
 		historyApiFallback: {
 			rewrites: [
+				{from: /^\/admin(\/.*)?$/, to: '/admin.html'},
 				{from: /^(\/.*)?$/, to: '/'}
 			]
 		},
@@ -98,7 +100,13 @@ module.exports = env => ({
 		new webpack.NamedModulesPlugin(),
 		new HtmlWebpackPlugin({
 			template: './public/index.html',
-			filename: 'index.html'
+			filename: 'index.html',
+			chunks: ['vendor', 'main']
+		}),
+		new HtmlWebpackPlugin({
+			template: './public/admin.html',
+			filename: 'admin.html',
+			chunks: ['vendor', 'admin']
 		})
 	]
 });
