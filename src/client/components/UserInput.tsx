@@ -17,7 +17,7 @@
 
 import React from 'react';
 import 'emoji-mart/css/emoji-mart.css';
-import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divider, Popover} from '@material-ui/core';
+import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divider, Popover, Paper, MenuItem, Popper, ClickAwayListener} from '@material-ui/core';
 import {injectIntl, InjectedIntlProps, FormattedMessage} from 'react-intl';
 import {Send, ViewCarousel, Face, Image, Mic, Delete} from '@material-ui/icons';
 import {Picker} from 'emoji-mart';
@@ -127,6 +127,8 @@ interface OwnProps {
 	respondingTo: {senderId: string, senderNickname: string, timestamp: string} | null;
 	emojiPicker: boolean;
 	disableBackspace: boolean;
+	suggestedWord: string;
+	wordSuggestions: boolean;
 	onToggleCards: () => void;
 	onSend: () => void;
 	messageBlockedAnimation: (blocked: boolean) => void;
@@ -138,6 +140,7 @@ type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
 interface State {
 	showEmojiSelector: boolean;
 	emojiAnchorEl?: HTMLButtonElement;
+	showWordSuggestion: boolean;
 	audioMessageEnabled: boolean;
 }
 
@@ -164,10 +167,18 @@ interface AudioMessageDraftChangeEvent {
 class UserInput extends React.Component<Props, State> {
 	public state: State = {
 		showEmojiSelector: false,
+		showWordSuggestion: false,
 		audioMessageEnabled: false
 	};
+	public inputRef: any;
 	public imageUploadRef: HTMLInputElement;
 	public previewImageRef: HTMLImageElement;
+
+	public componentDidUpdate = prevProps => {
+		if (this.props.value.textContent !== prevProps.value.textContent) {
+			this.setState({showWordSuggestion: true});
+		}
+	}
 
 	public handleKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === 'Enter' && !e.shiftKey) {
@@ -181,6 +192,11 @@ class UserInput extends React.Component<Props, State> {
 			e.preventDefault();
 			e.stopPropagation();
 			this.sendMessage();
+		}
+		if (e.key === 'Tab' && this.props.wordSuggestions && this.state.showWordSuggestion && this.props.suggestedWord) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.selectPredictedWord();
 		}
 	}
 
@@ -228,6 +244,8 @@ class UserInput extends React.Component<Props, State> {
 		this.props.onMessageDraftChange({type: 'IMAGE', event});
 	}
 
+	public setInputRef = (inputRef: React.RefObject<any>) => {this.inputRef = inputRef; };
+
 	public setImageUploadRef = (imageUploadRef: any) => this.imageUploadRef = imageUploadRef;
 
 	public setpreviewImageRef = (previewImageRef: any) => this.previewImageRef = previewImageRef;
@@ -244,12 +262,55 @@ class UserInput extends React.Component<Props, State> {
 		this.setState({audioMessageEnabled: false});
 	}
 
+	public selectPredictedWord = () => {
+		let newText = this.props.value.textContent;
+		if (newText.lastIndexOf(' ') !== newText.length - 1) {
+			newText = newText + ' ';
+		}
+		newText = newText + this.props.suggestedWord + ' ';
+		this.props.onMessageDraftChange({type: 'TEXT', newContent: newText});
+	}
+
+	public closeWordSuggestion = () => {
+		this.setState({showWordSuggestion: false});
+	}
+
 	public render() {
-		const {value, valid, inputMinHeight, imageMessages, audioMessages, threads, respondingTo, onToggleCards, cancelResponse, classes, intl, emojiPicker, disableBackspace} = this.props;
-		const {audioMessageEnabled} = this.state;
+		const {
+			value,
+			valid,
+			inputMinHeight,
+			imageMessages,
+			audioMessages,
+			threads,
+			respondingTo,
+			onToggleCards,
+			cancelResponse,
+			classes,
+			intl,
+			emojiPicker,
+			disableBackspace,
+			suggestedWord,
+			wordSuggestions
+		} = this.props;
+		const {showWordSuggestion, audioMessageEnabled} = this.state;
 
 		return (
 			<div>
+				{showWordSuggestion && suggestedWord && <Popper
+					open={wordSuggestions && value.textContent.split(' ').length > 2}
+					anchorEl={this.inputRef}
+					placement="top"
+					children={
+						<Paper>
+							<ClickAwayListener onClickAway={this.closeWordSuggestion}>
+								<MenuItem onClick={this.selectPredictedWord}>
+									{suggestedWord}
+								</MenuItem>
+							</ClickAwayListener>
+						</Paper>
+					}
+				/>}
 				<Popover
 					open={this.state.showEmojiSelector}
 					anchorEl={this.state.emojiAnchorEl}
@@ -266,7 +327,7 @@ class UserInput extends React.Component<Props, State> {
 					ref={previewImageRef => this.previewImageRef = previewImageRef!}
 					style={value.imageContent === '' ? {display: 'none'} : {display: 'block'}}
 				/>
-				<div className={valid ? classes.root : classes.disabled}>
+				<div className={valid ? classes.root : classes.disabled} >
 					<IconButton className={classes.iconButton} onClick={onToggleCards}>
 						<ViewCarousel/>
 					</IconButton>
@@ -302,6 +363,7 @@ class UserInput extends React.Component<Props, State> {
 						inputProps={{name: 'messageInput'}}
 						rows={inputMinHeight}
 						rowsMax={25}
+						inputRef={this.setInputRef}
 						multiline
 					/>
 					<Divider />
