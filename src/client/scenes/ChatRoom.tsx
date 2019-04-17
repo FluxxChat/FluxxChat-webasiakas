@@ -186,6 +186,9 @@ class ChatRoom extends React.Component<Props, State> {
 
 	public handleSendMessage = () => {
 		const {messageDraft} = this.state;
+		if(!!this.props.uiVariables.threads === false) {
+			this.setState({respondingTo: null});
+		}
 		if ((messageDraft.textContent || messageDraft.imageContent || messageDraft.audioContent.url) && this.props.messageValid) {
 			this.setState({messageDraft: {
 				textContent: '',
