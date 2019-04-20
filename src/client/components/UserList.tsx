@@ -25,7 +25,9 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'column',
 		maxWidth: '30rem',
-		flex: 1
+		flex: 1,
+		overflowY: 'auto',
+		maxHeight: '65vh'
 	},
 	listItem: {
 		display: 'flex',

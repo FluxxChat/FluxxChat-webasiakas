@@ -30,6 +30,7 @@ const styles = (theme: Theme) => createStyles({
 		overflowX: 'hidden',
 		boxSizing: 'border-box',
 		minHeight: '15vW',
+		maxHeight: '30vh',
 		overflowY: 'auto'
 	},
 	ruleListItem: {
