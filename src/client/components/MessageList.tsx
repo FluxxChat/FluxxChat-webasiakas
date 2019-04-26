@@ -79,6 +79,7 @@ class MessageList extends React.Component<Props, State> {
 	public onToggleThread = (senderId: string, senderNickname: string, timestamp: string) => {
 		if (senderId === '' &&  senderNickname === '' && timestamp === '') {
 			this.setState({currentlyOpenThread: null});
+			this.forceUpdate();
 		} else {
 			this.setState({currentlyOpenThread: {senderId, timestamp}});
 		}
