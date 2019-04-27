@@ -29,7 +29,8 @@ import {
 	RuleParameters,
 	SystemMessage,
 	UiVariables,
-	ClientLanguageChangeMessage
+	ClientLanguageChangeMessage,
+	RoomParameters
 } from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
@@ -246,10 +247,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({rName: nickname}, () => this.joinRoom(roomId, nickname));
 	}
 
-	public requestCreateRoom = (nickname: string) => {
+	public requestCreateRoom = (nickname: string, params: RoomParameters) => {
 		this.setState({rName: nickname}, () => {
 			if (this.state.connection) {
-				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM' };
+				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM', params };
 				this.state.connection.send(JSON.stringify(protocolMessage));
 			}
 		});
