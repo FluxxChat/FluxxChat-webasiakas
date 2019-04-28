@@ -21,7 +21,7 @@ import { Theme, createStyles, withStyles, WithStyles, InputBase, Button, InputAd
 import localeData from '../../../i18n/data.json';
 import Header from './Header';
 import themes from '../themes';
-import { RoomParameters } from 'fluxxchat-protokolla';
+import { RoomParameters, Card } from 'fluxxchat-protokolla';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -35,7 +35,8 @@ const styles = (theme: Theme) => createStyles({
 		flexDirection: 'column',
 		width: '80vw',
 		maxWidth: '50rem',
-		alignSelf: 'center'
+		alignSelf: 'center',
+		maxHeight: '80vh'
 	},
 	input: {
 		display: 'flex',
@@ -57,9 +58,23 @@ const styles = (theme: Theme) => createStyles({
 			boxShadow: theme.fluxx.menu.input.focus.shadow
 		}
 	},
+	deckEditor: {
+		overflow: 'auto'
+	},
 	roomOptionsPanel: {
 		borderRadius: '0.8rem',
-		marginTop: '1rem'
+		marginTop: '1rem',
+		'&:*': {
+			overflow: 'auto',
+			display: 'flex',
+			flexDirection: 'column',
+			backgroundColor: 'blue'
+		}
+	},
+	cardField: {
+		overflow: 'auto',
+		display: 'flex',
+		flexDirection: 'column'
 	},
 	focused: {}
 });
@@ -71,6 +86,7 @@ const DEFAULT_N_PLAY = 3;
 
 interface OwnProps {
 	type: 'join' | 'create';
+	availableCards?: Card[];
 	onJoinRoom: (nickname: string) => any;
 	onCreateRoom: (nickname: string, params: RoomParameters) => any;
 	onChangeTheme: (theme: keyof typeof themes) => void;
@@ -86,10 +102,20 @@ interface State {
 }
 
 class Menu extends React.Component<Props, State> {
-	public state = {
-		nickname: '',
-		roomParameters: {} as RoomParameters
-	};
+
+	constructor(props: any) {
+		super(props);
+		const deck: { [ruleName: string]: number } = {};
+		if (this.props.availableCards) {
+			for (const card of this.props.availableCards) {
+				deck[card.ruleName] = 1;
+			}
+		}
+		this.state = {
+			nickname: '',
+			roomParameters: { deck } as RoomParameters
+		};
+	}
 
 	public handleClickSubmit = () => {
 		if (this.props.type === 'join') {
@@ -114,29 +140,62 @@ class Menu extends React.Component<Props, State> {
 	public handleChangeTurnLength = (event: React.ChangeEvent<any>) => {
 		const newParams = this.state.roomParameters;
 		newParams.turnLength = event.target.value;
-		this.setState({roomParameters: newParams});
+		this.setState({ roomParameters: newParams });
 	}
 
 	public handleChangeNStartingHand = (event: React.ChangeEvent<any>) => {
 		const newParams = this.state.roomParameters;
 		newParams.nStartingHand = event.target.value;
-		this.setState({roomParameters: newParams});
+		this.setState({ roomParameters: newParams });
 	}
 
 	public handleChangeNDraw = (event: React.ChangeEvent<any>) => {
 		const newParams = this.state.roomParameters;
 		newParams.nDraw = event.target.value;
-		this.setState({roomParameters: newParams});
+		this.setState({ roomParameters: newParams });
 	}
 
 	public handleChangeNPlay = (event: React.ChangeEvent<any>) => {
 		const newParams = this.state.roomParameters;
 		newParams.nPlay = event.target.value;
-		this.setState({roomParameters: newParams});
+		this.setState({ roomParameters: newParams });
+	}
+
+	public handleDeckChange = ruleName => (event: React.ChangeEvent<any>) => {
+		const newParams = this.state.roomParameters;
+		newParams.deck![ruleName] = event.target.value;
+		this.setState({ roomParameters: newParams });
 	}
 
 	public render() {
 		const { type, onChangeTheme, intl, classes, onChangeLocale, onChangeAvatar } = this.props;
+
+		const cardFields: JSX.Element[] = [];
+		if (this.props.availableCards) {
+			for (const card of this.props.availableCards) {
+				cardFields.push(
+					<TextField
+						className={this.props.classes.cardField}
+						label={<FormattedMessage id={card.name} />}
+						value={this.state.roomParameters.deck![card.ruleName] || 1}
+						onChange={this.handleDeckChange(card.ruleName)}
+						margin="normal"
+						type="number"
+						fullWidth
+					/>
+				);
+			}
+		}
+
+		if (Object.keys(this.state.roomParameters.deck!).length === 0 && this.props.availableCards) {
+			const newDeck: { [ruleName: string]: number } = {};
+			for (const card of this.props.availableCards) {
+				newDeck[card.ruleName] = 1;
+			}
+			const newParams = this.state.roomParameters;
+			newParams.deck = newDeck;
+			this.setState({roomParameters: newParams});
+		}
 
 		return (
 			<div className={classes.root}>
@@ -161,7 +220,7 @@ class Menu extends React.Component<Props, State> {
 							</InputAdornment>
 						}
 					/>
-					{(this.props.type !== 'join') && (
+					{(this.props.type !== 'join') && (<div className={classes.deckEditor}>
 						<ExpansionPanel className={classes.roomOptionsPanel}>
 							<ExpansionPanelSummary>
 								<FormattedMessage id="login.roomOptions" />
@@ -203,8 +262,18 @@ class Menu extends React.Component<Props, State> {
 								</div>
 							</ExpansionPanelDetails>
 						</ExpansionPanel>
-						)}
-
+						<ExpansionPanel className={classes.deckEditor}>
+							<ExpansionPanelSummary>
+								<FormattedMessage id="login.deckEditor" />
+							</ExpansionPanelSummary>
+							<ExpansionPanelDetails>
+								<div className={classes.deckEditor} >
+									{cardFields}
+								</div>
+							</ExpansionPanelDetails>
+						</ExpansionPanel>
+					</div>
+					)}
 				</div>
 			</div>
 		);

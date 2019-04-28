@@ -69,6 +69,7 @@ interface State {
 	playableCardsLeft: number;
 	ownCards: Card[];
 	activeCards: Card[];
+	availableCards?: Card[];
 	turnUserId: string | null;
 	turnTimeLeft: number; // in seconds
 	turnLength: number; // in seconds
@@ -97,6 +98,7 @@ const EMPTY_STATE: State = {
 	playableCardsLeft: 0,
 	ownCards: [],
 	activeCards: [],
+	availableCards: undefined,
 	turnUserId: null,
 	turnTimeLeft: 0,
 	turnLength: 120,
@@ -167,6 +169,11 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						variables: msg.variables
 					});
 					this.startTurnTimer(msg.turnEndTime);
+					break;
+				case 'SERVER_STATE':
+					this.setState({
+						availableCards: msg.availableCards
+					});
 					break;
 				case 'WORD_PREDICTION':
 					this.setState({suggestedWord: msg.prediction ? msg.prediction : ''});
@@ -342,6 +349,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						{(!user || !roomId) && (
 							<Menu
 								type={roomId ? 'join' : 'create'}
+								availableCards={this.state.availableCards}
 								onJoinRoom={this.requestJoinRoom}
 								onCreateRoom={this.requestCreateRoom}
 								onChangeTheme={onChangeTheme}
