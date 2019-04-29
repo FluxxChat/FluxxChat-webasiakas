@@ -137,28 +137,10 @@ class Menu extends React.Component<Props, State> {
 		this.setState({ nickname: evt.target.value });
 	}
 
-	public handleChangeTurnLength = (event: React.ChangeEvent<any>) => {
+	public HandleChangeNumericParam = (param: string) => (event: React.ChangeEvent<any>) => {
 		const newParams = this.state.roomParameters;
-		newParams.turnLength = event.target.value;
-		this.setState({ roomParameters: newParams });
-	}
-
-	public handleChangeNStartingHand = (event: React.ChangeEvent<any>) => {
-		const newParams = this.state.roomParameters;
-		newParams.nStartingHand = event.target.value;
-		this.setState({ roomParameters: newParams });
-	}
-
-	public handleChangeNDraw = (event: React.ChangeEvent<any>) => {
-		const newParams = this.state.roomParameters;
-		newParams.nDraw = event.target.value;
-		this.setState({ roomParameters: newParams });
-	}
-
-	public handleChangeNPlay = (event: React.ChangeEvent<any>) => {
-		const newParams = this.state.roomParameters;
-		newParams.nPlay = event.target.value;
-		this.setState({ roomParameters: newParams });
+		newParams[param] = event.target.value;
+		this.setState({roomParameters: newParams});
 	}
 
 	public handleDeckChange = ruleName => (event: React.ChangeEvent<any>) => {
@@ -230,7 +212,7 @@ class Menu extends React.Component<Props, State> {
 									<TextField
 										label={<FormattedMessage id="login.turnLength" />}
 										value={this.state.roomParameters.turnLength || DEFAULT_TURN_LENGTH}
-										onChange={this.handleChangeTurnLength}
+										onChange={this.HandleChangeNumericParam('turnLength')}
 										margin="normal"
 										type="number"
 										fullWidth
@@ -238,7 +220,7 @@ class Menu extends React.Component<Props, State> {
 									<TextField
 										label={<FormattedMessage id="login.nStartingHand" />}
 										value={this.state.roomParameters.nStartingHand || DEFAULT_N_STARTING_HAND}
-										onChange={this.handleChangeNStartingHand}
+										onChange={this.HandleChangeNumericParam('nStartingHand')}
 										margin="normal"
 										type="number"
 										fullWidth
@@ -246,7 +228,7 @@ class Menu extends React.Component<Props, State> {
 									<TextField
 										label={<FormattedMessage id="login.nDraw" />}
 										value={this.state.roomParameters.nDraw || DEFAULT_N_DRAW}
-										onChange={this.handleChangeNDraw}
+										onChange={this.HandleChangeNumericParam('nDraw')}
 										margin="normal"
 										type="number"
 										fullWidth
@@ -254,7 +236,7 @@ class Menu extends React.Component<Props, State> {
 									<TextField
 										label={<FormattedMessage id="login.nPlay" />}
 										value={this.state.roomParameters.nPlay || DEFAULT_N_PLAY}
-										onChange={this.handleChangeNPlay}
+										onChange={this.HandleChangeNumericParam('nPlay')}
 										margin="normal"
 										type="number"
 										fullWidth
