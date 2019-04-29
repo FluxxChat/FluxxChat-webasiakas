@@ -29,7 +29,8 @@ import {
 	RuleParameters,
 	SystemMessage,
 	UiVariables,
-	ClientLanguageChangeMessage
+	ClientLanguageChangeMessage,
+	RoomParameters
 } from 'fluxxchat-protokolla';
 import {MuiThemeProvider, createStyles, Theme, withStyles, WithStyles} from '@material-ui/core';
 import {get} from 'lodash';
@@ -68,6 +69,7 @@ interface State {
 	playableCardsLeft: number;
 	ownCards: Card[];
 	activeCards: Card[];
+	availableCards?: Card[];
 	turnUserId: string | null;
 	turnTimeLeft: number; // in seconds
 	turnLength: number; // in seconds
@@ -96,6 +98,7 @@ const EMPTY_STATE: State = {
 	playableCardsLeft: 0,
 	ownCards: [],
 	activeCards: [],
+	availableCards: undefined,
 	turnUserId: null,
 	turnTimeLeft: 0,
 	turnLength: 120,
@@ -167,6 +170,12 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					});
 					this.startTurnTimer(msg.turnEndTime);
 					break;
+				case 'SERVER_STATE':
+					if (msg.messages) { this.updateLocalization(msg.messages); }
+					this.setState({
+						availableCards: msg.availableCards
+					});
+					break;
 				case 'WORD_PREDICTION':
 					this.setState({suggestedWord: msg.prediction ? msg.prediction : ''});
 					break;
@@ -181,8 +190,6 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						this.setState({ messageBlockingRules: [] });
 					}
 					break;
-				case 'LANGUAGE_DATA':
-					this.updateLocalization(msg.messages);
 				default:
 					break;
 			}
@@ -246,10 +253,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 		this.setState({rName: nickname}, () => this.joinRoom(roomId, nickname));
 	}
 
-	public requestCreateRoom = (nickname: string) => {
+	public requestCreateRoom = (nickname: string, params: RoomParameters) => {
 		this.setState({rName: nickname}, () => {
 			if (this.state.connection) {
-				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM' };
+				const protocolMessage: CreateRoomMessage = { type: 'CREATE_ROOM', params };
 				this.state.connection.send(JSON.stringify(protocolMessage));
 			}
 		});
@@ -341,6 +348,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						{(!user || !roomId) && (
 							<Menu
 								type={roomId ? 'join' : 'create'}
+								availableCards={this.state.availableCards}
 								onJoinRoom={this.requestJoinRoom}
 								onCreateRoom={this.requestCreateRoom}
 								onChangeTheme={onChangeTheme}

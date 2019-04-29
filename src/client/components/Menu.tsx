@@ -16,11 +16,12 @@
  */
 
 import React from 'react';
-import {FormattedMessage, injectIntl, InjectedIntlProps} from 'react-intl';
-import {Theme, createStyles, withStyles, WithStyles, InputBase, Button, InputAdornment} from '@material-ui/core';
+import { FormattedMessage, injectIntl, InjectedIntlProps } from 'react-intl';
+import { Theme, createStyles, withStyles, WithStyles, InputBase, Button, InputAdornment, TextField, ExpansionPanelSummary, ExpansionPanel, ExpansionPanelDetails } from '@material-ui/core';
 import localeData from '../../../i18n/data.json';
 import Header from './Header';
 import themes from '../themes';
+import { RoomParameters, Card } from 'fluxxchat-protokolla';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -34,7 +35,8 @@ const styles = (theme: Theme) => createStyles({
 		flexDirection: 'column',
 		width: '80vw',
 		maxWidth: '50rem',
-		alignSelf: 'center'
+		alignSelf: 'center',
+		maxHeight: '80vh'
 	},
 	input: {
 		display: 'flex',
@@ -56,13 +58,29 @@ const styles = (theme: Theme) => createStyles({
 			boxShadow: theme.fluxx.menu.input.focus.shadow
 		}
 	},
+	roomOptionsPanel: {
+		borderRadius: '0.8rem',
+		marginTop: '1rem',
+		overflow: 'auto'
+	},
+	cardField: {
+		overflow: 'auto',
+		display: 'flex',
+		flexDirection: 'column'
+	},
 	focused: {}
 });
 
+const DEFAULT_TURN_LENGTH = 120; // in seconds
+const DEFAULT_N_STARTING_HAND = 5;
+const DEFAULT_N_DRAW = 3;
+const DEFAULT_N_PLAY = 3;
+
 interface OwnProps {
 	type: 'join' | 'create';
+	availableCards?: Card[];
 	onJoinRoom: (nickname: string) => any;
-	onCreateRoom: (nickname: string) => any;
+	onCreateRoom: (nickname: string, params: RoomParameters) => any;
 	onChangeTheme: (theme: keyof typeof themes) => void;
 	onChangeLocale: (locale: keyof typeof localeData) => void;
 	onChangeAvatar: (image: string) => void;
@@ -72,16 +90,30 @@ type Props = OwnProps & WithStyles<typeof styles> & InjectedIntlProps;
 
 interface State {
 	nickname: string;
+	roomParameters: RoomParameters;
 }
 
 class Menu extends React.Component<Props, State> {
-	public state = {nickname: ''};
+
+	constructor(props: any) {
+		super(props);
+		const deck: { [ruleName: string]: number } = {};
+		if (this.props.availableCards) {
+			for (const card of this.props.availableCards) {
+				deck[card.ruleName] = 1;
+			}
+		}
+		this.state = {
+			nickname: '',
+			roomParameters: { deck } as RoomParameters
+		};
+	}
 
 	public handleClickSubmit = () => {
 		if (this.props.type === 'join') {
 			this.props.onJoinRoom(this.state.nickname);
 		} else {
-			this.props.onCreateRoom(this.state.nickname);
+			this.props.onCreateRoom(this.state.nickname, this.state.roomParameters);
 		}
 	}
 
@@ -94,35 +126,129 @@ class Menu extends React.Component<Props, State> {
 	}
 
 	public handleChangeNickname = (evt: React.ChangeEvent<HTMLInputElement>) => {
-		this.setState({nickname: evt.target.value});
+		this.setState({ nickname: evt.target.value });
+	}
+
+	public HandleChangeNumericParam = (param: string) => (event: React.ChangeEvent<any>) => {
+		const newParams = this.state.roomParameters;
+		newParams[param] = event.target.value;
+		this.setState({roomParameters: newParams});
+	}
+
+	public handleDeckChange = ruleName => (event: React.ChangeEvent<any>) => {
+		const newParams = this.state.roomParameters;
+		newParams.deck![ruleName] = event.target.value;
+		this.setState({ roomParameters: newParams });
 	}
 
 	public render() {
-		const {type, onChangeTheme, intl, classes, onChangeLocale, onChangeAvatar} = this.props;
+		const { type, onChangeTheme, intl, classes, onChangeLocale, onChangeAvatar } = this.props;
+
+		const cardFields: JSX.Element[] = [];
+		if (this.props.availableCards) {
+			for (const card of this.props.availableCards) {
+				cardFields.push(
+					<TextField
+						key={card.ruleName}
+						className={this.props.classes.cardField}
+						label={<FormattedMessage id={card.name} />}
+						value={this.state.roomParameters.deck![card.ruleName] || 1}
+						onChange={this.handleDeckChange(card.ruleName)}
+						margin="normal"
+						type="number"
+						fullWidth
+					/>
+				);
+			}
+		}
+
+		if (Object.keys(this.state.roomParameters.deck!).length === 0 && this.props.availableCards) {
+			const newDeck: { [ruleName: string]: number } = {};
+			for (const card of this.props.availableCards) {
+				newDeck[card.ruleName] = 1;
+			}
+			const newParams = this.state.roomParameters;
+			newParams.deck = newDeck;
+			this.setState({roomParameters: newParams});
+		}
 
 		return (
 			<div className={classes.root}>
-				<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale} onChangeAvatar={onChangeAvatar}/>
+				<Header onChangeTheme={onChangeTheme} onChangeLocale={onChangeLocale} onChangeAvatar={onChangeAvatar} />
 				<div className={classes.menuContent}>
 					<InputBase
 						className={classes.input}
-						placeholder={intl.formatMessage({id: 'input.typeNickname'})}
+						placeholder={intl.formatMessage({ id: 'input.typeNickname' })}
 						onKeyDown={this.handleKeyDown}
 						value={this.state.nickname}
 						onChange={this.handleChangeNickname}
-						inputProps={{maxLength: 30}}
+						inputProps={{ maxLength: 30 }}
 						autoFocus
-						classes={{focused: classes.focused}}
+						classes={{ focused: classes.focused }}
 						endAdornment={
 							<InputAdornment position="end">
 								<Button size="small" onClick={this.handleClickSubmit} name="submit">
 									{type === 'join'
-										? <FormattedMessage id="login.joinRoom"/>
-										: <FormattedMessage id="login.createRoom"/>}
+										? <FormattedMessage id="login.joinRoom" />
+										: <FormattedMessage id="login.createRoom" />}
 								</Button>
 							</InputAdornment>
 						}
 					/>
+					{(this.props.type !== 'join') && (<div className={classes.roomOptionsPanel} >
+						<ExpansionPanel>
+							<ExpansionPanelSummary>
+								<FormattedMessage id="login.roomOptions" />
+							</ExpansionPanelSummary>
+							<ExpansionPanelDetails>
+								<div>
+									<TextField
+										label={<FormattedMessage id="login.turnLength" />}
+										value={this.state.roomParameters.turnLength || DEFAULT_TURN_LENGTH}
+										onChange={this.HandleChangeNumericParam('turnLength')}
+										margin="normal"
+										type="number"
+										fullWidth
+									/>
+									<TextField
+										label={<FormattedMessage id="login.nStartingHand" />}
+										value={this.state.roomParameters.nStartingHand || DEFAULT_N_STARTING_HAND}
+										onChange={this.HandleChangeNumericParam('nStartingHand')}
+										margin="normal"
+										type="number"
+										fullWidth
+									/>
+									<TextField
+										label={<FormattedMessage id="login.nDraw" />}
+										value={this.state.roomParameters.nDraw || DEFAULT_N_DRAW}
+										onChange={this.HandleChangeNumericParam('nDraw')}
+										margin="normal"
+										type="number"
+										fullWidth
+									/>
+									<TextField
+										label={<FormattedMessage id="login.nPlay" />}
+										value={this.state.roomParameters.nPlay || DEFAULT_N_PLAY}
+										onChange={this.HandleChangeNumericParam('nPlay')}
+										margin="normal"
+										type="number"
+										fullWidth
+									/>
+								</div>
+							</ExpansionPanelDetails>
+						</ExpansionPanel>
+						<ExpansionPanel>
+							<ExpansionPanelSummary>
+								<FormattedMessage id="login.deckEditor" />
+							</ExpansionPanelSummary>
+							<ExpansionPanelDetails>
+								<div>
+									{cardFields}
+								</div>
+							</ExpansionPanelDetails>
+						</ExpansionPanel>
+					</div>
+					)}
 				</div>
 			</div>
 		);
