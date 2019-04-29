@@ -25,9 +25,19 @@ interface Props {
 	value: string;
 	users: User[];
 	onChange: React.ChangeEventHandler<HTMLSelectElement | HTMLInputElement>;
+	enabled: boolean;
 }
 
-const CardParameterInput = ({ type, value, users, onChange }: Props) => {
+const CardParameterInput = ({ type, value, users, onChange, enabled }: Props) => {
+	if (!enabled) {
+		return (
+			<TextField
+				label={<FormattedMessage id="card.selectValue" />}
+				value={value}
+				disabled={true}
+			/>
+		);
+	}
 	if (Array.isArray(type)) {
 		const choices = type as string[];
 		return (
