@@ -157,6 +157,7 @@ class Menu extends React.Component<Props, State> {
 			for (const card of this.props.availableCards) {
 				cardFields.push(
 					<TextField
+						key={card.ruleName}
 						className={this.props.classes.cardField}
 						label={<FormattedMessage id={card.name} />}
 						value={this.state.roomParameters.deck![card.ruleName] || 1}

@@ -171,10 +171,10 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					this.startTurnTimer(msg.turnEndTime);
 					break;
 				case 'SERVER_STATE':
+					if (msg.messages) { this.updateLocalization(msg.messages); }
 					this.setState({
 						availableCards: msg.availableCards
 					});
-					if (msg.messages) { this.updateLocalization(msg.messages); }
 					break;
 				case 'WORD_PREDICTION':
 					this.setState({suggestedWord: msg.prediction ? msg.prediction : ''});
