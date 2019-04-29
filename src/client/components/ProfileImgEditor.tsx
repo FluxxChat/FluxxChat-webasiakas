@@ -21,7 +21,8 @@ import Dropzone from 'react-dropzone';
 import {FormattedMessage} from 'react-intl';
 import {Button} from '@material-ui/core';
 import {Slider} from '@material-ui/lab';
-import {ZoomIn, ZoomOut} from '@material-ui/icons';
+import ZoomIn from '@material-ui/icons/ZoomIn';
+import ZoomOut from '@material-ui/icons/ZoomOut';
 
 interface ImageEditorProps {
 	classes: any;
