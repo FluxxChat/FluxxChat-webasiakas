@@ -174,6 +174,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					this.setState({
 						availableCards: msg.availableCards
 					});
+					if (msg.messages) { this.updateLocalization(msg.messages); }
 					break;
 				case 'WORD_PREDICTION':
 					this.setState({suggestedWord: msg.prediction ? msg.prediction : ''});
@@ -189,8 +190,6 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 						this.setState({ messageBlockingRules: [] });
 					}
 					break;
-				case 'LANGUAGE_DATA':
-					this.updateLocalization(msg.messages);
 				default:
 					break;
 			}
