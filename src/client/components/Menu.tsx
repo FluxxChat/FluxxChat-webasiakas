@@ -58,18 +58,10 @@ const styles = (theme: Theme) => createStyles({
 			boxShadow: theme.fluxx.menu.input.focus.shadow
 		}
 	},
-	deckEditor: {
-		overflow: 'auto'
-	},
 	roomOptionsPanel: {
 		borderRadius: '0.8rem',
 		marginTop: '1rem',
-		'&:*': {
-			overflow: 'auto',
-			display: 'flex',
-			flexDirection: 'column',
-			backgroundColor: 'blue'
-		}
+		overflow: 'auto'
 	},
 	cardField: {
 		overflow: 'auto',
@@ -203,8 +195,8 @@ class Menu extends React.Component<Props, State> {
 							</InputAdornment>
 						}
 					/>
-					{(this.props.type !== 'join') && (<div className={classes.deckEditor}>
-						<ExpansionPanel className={classes.roomOptionsPanel}>
+					{(this.props.type !== 'join') && (<div className={classes.roomOptionsPanel} >
+						<ExpansionPanel>
 							<ExpansionPanelSummary>
 								<FormattedMessage id="login.roomOptions" />
 							</ExpansionPanelSummary>
@@ -245,12 +237,12 @@ class Menu extends React.Component<Props, State> {
 								</div>
 							</ExpansionPanelDetails>
 						</ExpansionPanel>
-						<ExpansionPanel className={classes.deckEditor}>
+						<ExpansionPanel>
 							<ExpansionPanelSummary>
 								<FormattedMessage id="login.deckEditor" />
 							</ExpansionPanelSummary>
 							<ExpansionPanelDetails>
-								<div className={classes.deckEditor} >
+								<div>
 									{cardFields}
 								</div>
 							</ExpansionPanelDetails>
