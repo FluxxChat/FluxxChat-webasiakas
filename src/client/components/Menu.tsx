@@ -63,6 +63,16 @@ const styles = (theme: Theme) => createStyles({
 		marginTop: '1rem',
 		overflow: 'auto'
 	},
+	roomOptionsMenu: {
+		background: theme.fluxx.menu.input.background,
+		color: theme.fluxx.text.primary
+	},
+	roomOptionsMenuItem: {
+		color: theme.fluxx.text.primary,
+		'&$focused': {
+			color: theme.fluxx.text.primary
+		}
+	},
 	cardField: {
 		overflow: 'auto',
 		display: 'flex',
@@ -153,6 +163,13 @@ class Menu extends React.Component<Props, State> {
 						margin="normal"
 						type="number"
 						fullWidth
+						InputLabelProps={{
+							className: classes.roomOptionsMenuItem,
+							classes: {
+								focused: classes.focused
+							}
+						}}
+						InputProps={{inputProps: {className: classes.roomOptionsMenuItem}}}
 					/>
 				);
 			}
@@ -191,8 +208,8 @@ class Menu extends React.Component<Props, State> {
 							</InputAdornment>
 						}
 					/>
-					{(this.props.type !== 'join') && (<div className={classes.roomOptionsPanel} >
-						<ExpansionPanel>
+					{(this.props.type !== 'join') && (<div className={classes.roomOptionsPanel}>
+						<ExpansionPanel className={classes.roomOptionsMenu}>
 							<ExpansionPanelSummary>
 								<FormattedMessage id="login.roomOptions" />
 							</ExpansionPanelSummary>
@@ -205,6 +222,13 @@ class Menu extends React.Component<Props, State> {
 										margin="normal"
 										type="number"
 										fullWidth
+										InputLabelProps={{
+											className: classes.roomOptionsMenuItem,
+											classes: {
+												focused: classes.focused
+											}
+										}}
+										InputProps={{inputProps: {className: classes.roomOptionsMenuItem}}}
 									/>
 									<TextField
 										label={<FormattedMessage id="login.nStartingHand" />}
@@ -213,6 +237,13 @@ class Menu extends React.Component<Props, State> {
 										margin="normal"
 										type="number"
 										fullWidth
+										InputLabelProps={{
+											className: classes.roomOptionsMenuItem,
+											classes: {
+												focused: classes.focused
+											}
+										}}
+										InputProps={{inputProps: {className: classes.roomOptionsMenuItem}}}
 									/>
 									<TextField
 										label={<FormattedMessage id="login.nDraw" />}
@@ -221,6 +252,13 @@ class Menu extends React.Component<Props, State> {
 										margin="normal"
 										type="number"
 										fullWidth
+										InputLabelProps={{
+											className: classes.roomOptionsMenuItem,
+											classes: {
+												focused: classes.focused
+											}
+										}}
+										InputProps={{inputProps: {className: classes.roomOptionsMenuItem}}}
 									/>
 									<TextField
 										label={<FormattedMessage id="login.nPlay" />}
@@ -229,11 +267,18 @@ class Menu extends React.Component<Props, State> {
 										margin="normal"
 										type="number"
 										fullWidth
+										InputLabelProps={{
+											className: classes.roomOptionsMenuItem,
+											classes: {
+												focused: classes.focused
+											}
+										}}
+										InputProps={{inputProps: {className: classes.roomOptionsMenuItem}}}
 									/>
 								</div>
 							</ExpansionPanelDetails>
 						</ExpansionPanel>
-						<ExpansionPanel>
+						<ExpansionPanel className={classes.roomOptionsMenu}>
 							<ExpansionPanelSummary>
 								<FormattedMessage id="login.deckEditor" />
 							</ExpansionPanelSummary>
