@@ -71,14 +71,10 @@ const styles = (theme: Theme) => createStyles({
 	focused: {}
 });
 
-const DEFAULT_TURN_LENGTH = 120; // in seconds
-const DEFAULT_N_STARTING_HAND = 5;
-const DEFAULT_N_DRAW = 3;
-const DEFAULT_N_PLAY = 3;
-
 interface OwnProps {
 	type: 'join' | 'create';
 	availableCards?: Card[];
+	defaults: RoomParameters;
 	onJoinRoom: (nickname: string) => any;
 	onCreateRoom: (nickname: string, params: RoomParameters) => any;
 	onChangeTheme: (theme: keyof typeof themes) => void;
@@ -204,7 +200,7 @@ class Menu extends React.Component<Props, State> {
 								<div>
 									<TextField
 										label={<FormattedMessage id="login.turnLength" />}
-										value={this.state.roomParameters.turnLength || DEFAULT_TURN_LENGTH}
+										value={this.state.roomParameters.turnLength || this.props.defaults.turnLength}
 										onChange={this.HandleChangeNumericParam('turnLength')}
 										margin="normal"
 										type="number"
@@ -212,7 +208,7 @@ class Menu extends React.Component<Props, State> {
 									/>
 									<TextField
 										label={<FormattedMessage id="login.nStartingHand" />}
-										value={this.state.roomParameters.nStartingHand || DEFAULT_N_STARTING_HAND}
+										value={this.state.roomParameters.nStartingHand || this.props.defaults.nStartingHand}
 										onChange={this.HandleChangeNumericParam('nStartingHand')}
 										margin="normal"
 										type="number"
@@ -220,7 +216,7 @@ class Menu extends React.Component<Props, State> {
 									/>
 									<TextField
 										label={<FormattedMessage id="login.nDraw" />}
-										value={this.state.roomParameters.nDraw || DEFAULT_N_DRAW}
+										value={this.state.roomParameters.nDraw || this.props.defaults.nDraw}
 										onChange={this.HandleChangeNumericParam('nDraw')}
 										margin="normal"
 										type="number"
@@ -228,7 +224,7 @@ class Menu extends React.Component<Props, State> {
 									/>
 									<TextField
 										label={<FormattedMessage id="login.nPlay" />}
-										value={this.state.roomParameters.nPlay || DEFAULT_N_PLAY}
+										value={this.state.roomParameters.nPlay || this.props.defaults.nPlay}
 										onChange={this.HandleChangeNumericParam('nPlay')}
 										margin="normal"
 										type="number"

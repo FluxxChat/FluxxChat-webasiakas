@@ -82,6 +82,7 @@ interface State {
 	translatedMessages: {[key: string]: {[key: string]: string}};
 	theme: keyof typeof themes;
 	alert: string[];
+	defaultRoomParameters: RoomParameters;
 }
 
 interface Props {
@@ -110,7 +111,13 @@ const EMPTY_STATE: State = {
 	variables: {},
 	locale: 'en',
 	translatedMessages: defaultMessages,
-	theme: 'light'
+	theme: 'light',
+	defaultRoomParameters: {
+		turnLength: 120,
+		nStartingHand: 5,
+		nDraw: 3,
+		nPlay: 3
+	}
 };
 
 class App extends React.Component<Props & RouteComponentProps & WithStyles<typeof styles>, State> {
@@ -172,9 +179,8 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 					break;
 				case 'SERVER_STATE':
 					if (msg.messages) { this.updateLocalization(msg.messages); }
-					this.setState({
-						availableCards: msg.availableCards
-					});
+					if (msg.availableCards) { this.setState({ availableCards: msg.availableCards }); }
+					if (msg.defaultRoomParameters) { this.setState({ defaultRoomParameters: { ...this.state.defaultRoomParameters, ...msg.defaultRoomParameters }}); }
 					break;
 				case 'WORD_PREDICTION':
 					this.setState({suggestedWord: msg.prediction ? msg.prediction : ''});
@@ -349,6 +355,7 @@ class App extends React.Component<Props & RouteComponentProps & WithStyles<typeo
 							<Menu
 								type={roomId ? 'join' : 'create'}
 								availableCards={this.state.availableCards}
+								defaults={this.state.defaultRoomParameters}
 								onJoinRoom={this.requestJoinRoom}
 								onCreateRoom={this.requestCreateRoom}
 								onChangeTheme={onChangeTheme}
