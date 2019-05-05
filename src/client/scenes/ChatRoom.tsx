@@ -264,6 +264,11 @@ class ChatRoom extends React.Component<Props, State> {
 			const defaultRuleParameters = {};
 
 			for (const key of Object.keys(this.state.selectedCard.parameterTypes)) {
+				if (this.state.selectedCard.parameters[key] !== undefined) {
+					defaultRuleParameters[key] = this.state.selectedCard.parameters[key];
+					continue;
+				}
+
 				const type = this.state.selectedCard!.parameterTypes[key];
 
 				if (Array.isArray(type)) {
@@ -487,6 +492,7 @@ class ChatRoom extends React.Component<Props, State> {
 									value={ruleParameters[key]}
 									users={users}
 									onChange={this.getParameterChangeHandler(key)}
+									enabled={selectedCard.parameters[key] === undefined}
 								/>
 							))}
 						</div>
