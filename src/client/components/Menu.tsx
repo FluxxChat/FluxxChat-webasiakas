@@ -21,7 +21,9 @@ import { Theme, createStyles, withStyles, WithStyles, InputBase, Button, InputAd
 import localeData from '../../../i18n/data.json';
 import Header from './Header';
 import themes from '../themes';
-import { RoomParameters, Card } from 'fluxxchat-protokolla';
+import { RoomParameters, Card, User, RuleParameters } from 'fluxxchat-protokolla';
+import CardPicker from './CardPicker';
+import RuleList from './RuleList';
 
 const styles = (theme: Theme) => createStyles({
 	root: {
@@ -78,7 +80,10 @@ const styles = (theme: Theme) => createStyles({
 		display: 'flex',
 		flexDirection: 'column'
 	},
-	focused: {}
+	focused: {},
+	startingCards: {
+		overflow: 'hidden'
+	}
 });
 
 interface OwnProps {
@@ -111,8 +116,16 @@ class Menu extends React.Component<Props, State> {
 		}
 		this.state = {
 			nickname: '',
-			roomParameters: { deck } as RoomParameters
+			roomParameters: { deck, startingRules: [] } as RoomParameters
 		};
+	}
+
+	public handleAddStartingRule = (card: Card, ruleParameters: RuleParameters) => {
+		const startingCard = card;
+		startingCard.parameters = ruleParameters;
+		const newRoomParams = this.state.roomParameters;
+		newRoomParams.startingRules!.push(startingCard);
+		this.setState({roomParameters: newRoomParams});
 	}
 
 	public handleClickSubmit = () => {
@@ -280,6 +293,28 @@ class Menu extends React.Component<Props, State> {
 						</ExpansionPanel>
 						<ExpansionPanel className={classes.roomOptionsMenu}>
 							<ExpansionPanelSummary>
+								<FormattedMessage id="login.startingRules" />
+							</ExpansionPanelSummary>
+							<ExpansionPanelDetails>
+								<div className={classes.startingCards}>
+									<RuleList
+										rules={this.state.roomParameters.startingRules!}
+										users={[] as User[]}
+										messageBlockingRules={[] as string[]}
+										messageBlockAnimation={false}
+										ruleChangeRevalidation={this.nullFunction}
+									/>
+									<CardPicker
+										onSendNewRule={this.handleAddStartingRule}
+										cards={this.props.availableCards || [] as Card[]}
+										users={[] as User[]}
+										disabled={false}
+									/>
+								</div>
+							</ExpansionPanelDetails>
+						</ExpansionPanel>
+						<ExpansionPanel>
+							<ExpansionPanelSummary>
 								<FormattedMessage id="login.deckEditor" />
 							</ExpansionPanelSummary>
 							<ExpansionPanelDetails>
@@ -294,6 +329,9 @@ class Menu extends React.Component<Props, State> {
 			</div>
 		);
 	}
+
+// this only exists because tslint wouldn't allow lambdas in JSX attributes
+	private nullFunction = () => undefined;
 }
 
 export default withStyles(styles)(injectIntl(Menu));

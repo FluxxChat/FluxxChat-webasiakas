@@ -29,7 +29,6 @@ const styles = (theme: Theme) => createStyles({
 		flexDirection: 'column',
 		overflowX: 'hidden',
 		boxSizing: 'border-box',
-		minHeight: '15vW',
 		maxHeight: '30vh',
 		overflowY: 'auto'
 	},

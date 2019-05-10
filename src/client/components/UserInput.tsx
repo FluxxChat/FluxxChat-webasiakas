@@ -20,7 +20,6 @@ import 'emoji-mart/css/emoji-mart.css';
 import {withStyles, createStyles, WithStyles, Theme, IconButton, InputBase, Divider, Popover, Paper, MenuItem, Popper, ClickAwayListener} from '@material-ui/core';
 import {injectIntl, InjectedIntlProps, FormattedMessage} from 'react-intl';
 import Send from '@material-ui/icons/Send';
-import ViewCarousel from '@material-ui/icons/ViewCarousel';
 import Face from '@material-ui/icons/Face';
 import Image from '@material-ui/icons/Image';
 import Mic from '@material-ui/icons/Mic';
@@ -134,7 +133,6 @@ interface OwnProps {
 	disableBackspace: boolean;
 	suggestedWord: string;
 	wordSuggestions: boolean;
-	onToggleCards: () => void;
 	onSend: () => void;
 	messageBlockedAnimation: (blocked: boolean) => void;
 	cancelResponse: () => void;
@@ -289,7 +287,6 @@ class UserInput extends React.Component<Props, State> {
 			audioMessages,
 			threads,
 			respondingTo,
-			onToggleCards,
 			cancelResponse,
 			classes,
 			intl,
@@ -333,9 +330,6 @@ class UserInput extends React.Component<Props, State> {
 					style={value.imageContent === '' ? {display: 'none'} : {display: 'block'}}
 				/>
 				<div className={valid ? classes.root : classes.disabled} >
-					<IconButton className={classes.iconButton} onClick={onToggleCards}>
-						<ViewCarousel/>
-					</IconButton>
 					{threads && respondingTo && respondingTo.senderId && (
 						<div className={classes.threadResponseWrapper}>
 							<div className={classes.threadResponseInfoContainer}>
