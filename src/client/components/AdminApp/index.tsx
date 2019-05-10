@@ -21,6 +21,8 @@ import {snakeCase} from 'lodash';
 import {withStyles, WithStyles, createStyles, Theme, Button, Table, TableHead, TableRow, TableCell, TableBody, Paper} from '@material-ui/core';
 import axios from 'axios';
 import AceEditor from 'react-ace';
+import json2csv from 'json-2-csv';
+import * as queries from './queries';
 import Login from './Login';
 
 import 'brace/mode/sql';
@@ -55,12 +57,20 @@ const styles = (theme: Theme) => createStyles({
 		padding: '2rem',
 		marginRight: '1rem'
 	},
+	presetQueries: {
+		marginBottom: '2rem'
+	},
 	queryResponseContainer: {
 		display: 'flex',
+		flexDirection: 'column',
 		flex: '1 1 100rem',
 		overflow: 'auto',
 		backgroundColor: '#fff',
-		marginLeft: '1rem'
+		marginLeft: '1rem',
+		justifyContent: 'space-between',
+		'& > button': {
+			margin: '2rem'
+		}
 	},
 	queryResponseRow: {},
 	queryResponseCell: {
@@ -111,6 +121,10 @@ class AdminApp extends React.Component<WithStyles<typeof styles>, State> {
 		this.setState({query: value});
 	}
 
+	public handleSelectQuery = (query: string) => () => {
+		this.setState({query});
+	};
+
 	public handleSubmitQuery = async () => {
 		const url = window.env.ADMIN_API_URL || 'http://localhost:3000/admin';
 
@@ -140,6 +154,21 @@ class AdminApp extends React.Component<WithStyles<typeof styles>, State> {
 		}
 	}
 
+	public handleExportCSV = async () => {
+		const csv = await json2csv.json2csvAsync(this.state.queryResponse);
+
+		const el = document.createElement('a');
+		el.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(csv));
+		el.setAttribute('download', 'data.csv');
+
+		el.style.display = 'none';
+		document.body.appendChild(el);
+
+		el.click();
+
+		document.body.removeChild(el);
+	};
+
 	public render() {
 		const {classes} = this.props;
 		const loggedIn = this.isLoggedIn();
@@ -156,6 +185,10 @@ class AdminApp extends React.Component<WithStyles<typeof styles>, State> {
 				{loggedIn && (
 					<div className={classes.queryContainer}>
 						<Paper className={classes.queryEditor}>
+							<div className={classes.presetQueries}>
+								<Button onClick={this.handleSelectQuery(queries.allRooms)}>All Rooms</Button>
+								<Button onClick={this.handleSelectQuery(queries.activeRooms)}>Active Rooms</Button>
+							</div>
 							<AceEditor
 								mode="sql"
 								theme="tomorrow"
@@ -201,6 +234,7 @@ class AdminApp extends React.Component<WithStyles<typeof styles>, State> {
 									))}
 								</TableBody>
 							</Table>
+							<Button onClick={this.handleExportCSV}>Export CSV</Button>
 						</Paper>
 					</div>
 				)}
